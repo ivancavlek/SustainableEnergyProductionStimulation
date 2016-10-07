@@ -1,4 +1,4 @@
-﻿namespace Acme.Seps.Domain.Base.Entity
+﻿namespace Acme.Domain.Base.Entity
 {
     public interface IAggregateRoot { }
 }

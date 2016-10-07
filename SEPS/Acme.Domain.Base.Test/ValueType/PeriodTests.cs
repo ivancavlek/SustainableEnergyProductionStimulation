@@ -1,9 +1,9 @@
-﻿using Acme.Seps.Domain.Base.Entity;
-using Acme.Seps.Domain.Base.ValueType;
+﻿using Acme.Domain.Base.Entity;
+using Acme.Domain.Base.ValueType;
 using FluentAssertions;
 using System;
 
-namespace Acme.Seps.Domain.Base.Test.ValueType
+namespace Acme.Domain.Base.Test.ValueType
 {
     public class PeriodTests
     {

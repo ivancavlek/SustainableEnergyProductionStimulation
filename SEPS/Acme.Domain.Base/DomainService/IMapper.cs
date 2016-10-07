@@ -1,4 +1,4 @@
-﻿namespace Acme.Seps.Domain.Base.DomainService
+﻿namespace Acme.Domain.Base.DomainService
 {
     public interface IMapper
     {

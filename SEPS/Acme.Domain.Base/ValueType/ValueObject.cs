@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Reflection;
 
-namespace Acme.Seps.Domain.Base.ValueType
+namespace Acme.Domain.Base.ValueType
 {
     /// <summary>
     /// <see href="https://lostechies.com/jimmybogard/2007/06/25/generic-value-object-equality/">Value base class credits</see>

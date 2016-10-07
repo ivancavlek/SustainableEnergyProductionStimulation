@@ -1,7 +1,7 @@
-﻿using Acme.Seps.Domain.Base.Factory;
+﻿using Acme.Domain.Base.Factory;
 using System;
 
-namespace Acme.Seps.Domain.Base.Entity
+namespace Acme.Domain.Base.Entity
 {
     /// <summary>
     /// <see href="https://ayende.com/blog/2500/generic-entity-equality">Entity base class credits</see>

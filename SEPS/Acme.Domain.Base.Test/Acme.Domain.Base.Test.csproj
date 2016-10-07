@@ -7,8 +7,8 @@
     <ProjectGuid>{1961A8F6-2CF4-4D22-BD3D-F4DFD1AE81C8}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Acme.Seps.Domain.Base.Test</RootNamespace>
-    <AssemblyName>Acme.Seps.Domain.Base.Test</AssemblyName>
+    <RootNamespace>Acme.Domain.Base.Test</RootNamespace>
+    <AssemblyName>Acme.Domain.Base.Test</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -57,14 +57,11 @@
     <None Include="Acme.Seps.Domain.Base.Test.ruleset" />
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
-    <Folder Include="Entity\" />
-    <Folder Include="Factory\" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Acme.Seps.Domain.Base\Acme.Seps.Domain.Base.csproj">
+    <ProjectReference Include="..\Acme.Domain.Base\Acme.Domain.Base.csproj">
       <Project>{8B0FBA91-2F4B-4ADB-949F-D722BCF48F34}</Project>
-      <Name>Acme.Seps.Domain.Base</Name>
+      <Name>Acme.Domain.Base</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

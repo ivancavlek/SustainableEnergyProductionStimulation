@@ -11,9 +11,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Presentation", "Presentatio
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Test", "Test", "{4A821E5F-A98F-4536-808D-595CE17E37AB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Acme.Seps.Domain.Base", "Acme.Seps.Domain.Base\Acme.Seps.Domain.Base.csproj", "{8B0FBA91-2F4B-4ADB-949F-D722BCF48F34}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Acme.Domain.Base", "Acme.Domain.Base\Acme.Domain.Base.csproj", "{8B0FBA91-2F4B-4ADB-949F-D722BCF48F34}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Acme.Seps.Domain.Base.Test", "Acme.Seps.Domain.Base.Test\Acme.Seps.Domain.Base.Test.csproj", "{1961A8F6-2CF4-4D22-BD3D-F4DFD1AE81C8}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Acme.Domain.Base.Test", "Acme.Domain.Base.Test\Acme.Domain.Base.Test.csproj", "{1961A8F6-2CF4-4D22-BD3D-F4DFD1AE81C8}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

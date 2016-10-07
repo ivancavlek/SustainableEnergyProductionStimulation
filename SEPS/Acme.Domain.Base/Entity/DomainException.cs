@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.Serialization;
 
-namespace Acme.Seps.Domain.Base.Entity
+namespace Acme.Domain.Base.Entity
 {
     [Serializable]
     public class DomainException : Exception

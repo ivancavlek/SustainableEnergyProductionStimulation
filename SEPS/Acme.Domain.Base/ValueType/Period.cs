@@ -1,7 +1,7 @@
-﻿using Acme.Seps.Domain.Base.Entity;
+﻿using Acme.Domain.Base.Entity;
 using System;
 
-namespace Acme.Seps.Domain.Base.ValueType
+namespace Acme.Domain.Base.ValueType
 {
     public class Period : ValueObject
     {

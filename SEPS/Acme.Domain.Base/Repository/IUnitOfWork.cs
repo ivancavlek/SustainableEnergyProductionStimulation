@@ -1,6 +1,6 @@
-﻿using Acme.Seps.Domain.Base.Entity;
+﻿using Acme.Domain.Base.Entity;
 
-namespace Acme.Seps.Domain.Base.Repository
+namespace Acme.Domain.Base.Repository
 {
     public interface IUnitOfWork
     {

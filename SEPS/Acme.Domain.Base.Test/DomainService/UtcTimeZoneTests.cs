@@ -1,8 +1,8 @@
-﻿using Acme.Seps.Domain.Base.DomainService;
+﻿using Acme.Domain.Base.DomainService;
 using FluentAssertions;
 using System;
 
-namespace Acme.Seps.Domain.Base.Test.DomainService
+namespace Acme.Domain.Base.Test.DomainService
 {
     public class UtcTimeZoneTests
     {

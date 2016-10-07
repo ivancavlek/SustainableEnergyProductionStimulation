@@ -1,8 +1,8 @@
-﻿using Acme.Seps.Domain.Base.Entity;
+﻿using Acme.Domain.Base.Entity;
 using System;
 using System.Security.Cryptography;
 
-namespace Acme.Seps.Domain.Base.Factory
+namespace Acme.Domain.Base.Factory
 {
     /// <summary>
     /// <see href="http://www.codeproject.com/Articles/388157/GUIDs-as-fast-primary-keys-under-multiple-database">GUID Factory credits</see>

@@ -1,4 +1,4 @@
-﻿namespace Acme.Seps.Domain.Base.Factory
+﻿namespace Acme.Domain.Base.Factory
 {
     public interface IIdentityFactory<out TKey>
     {

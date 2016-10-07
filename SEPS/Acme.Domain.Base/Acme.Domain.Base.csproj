@@ -7,8 +7,8 @@
     <ProjectGuid>{8B0FBA91-2F4B-4ADB-949F-D722BCF48F34}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Acme.Seps.Domain.Base</RootNamespace>
-    <AssemblyName>Acme.Seps.Domain.Base</AssemblyName>
+    <RootNamespace>Acme.Domain.Base</RootNamespace>
+    <AssemblyName>Acme.Domain.Base</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>

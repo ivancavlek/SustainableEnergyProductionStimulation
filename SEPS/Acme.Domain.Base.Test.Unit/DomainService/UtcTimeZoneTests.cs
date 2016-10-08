@@ -16,7 +16,7 @@ namespace Acme.Domain.Base.Test.Unit.DomainService
             _utcTimeZone = new UtcTimeZone(_timeZoneInfo);
         }
 
-        public void GetsUtcRepositoryTimeWithCorrectOffSetIncludingDaylightSavings()
+        public void RepositoryTimeIsUtcNowWithTimeZoneOffSet()
         {
             var result = _utcTimeZone.GetCurrentRepositoryDateTime();
 
@@ -24,7 +24,7 @@ namespace Acme.Domain.Base.Test.Unit.DomainService
             result.Should().HaveOffset(_timeZoneInfo.GetUtcOffset(DateTime.UtcNow));
         }
 
-        public void GetsDisplayTimeWithCorrectOffSetIncludingDaylightSavings()
+        public void DisplayTimeIsCurrentDateTimeWithoutOffset()
         {
             var result = _utcTimeZone.GetCurrentDisplayDateTime();
 
@@ -32,7 +32,7 @@ namespace Acme.Domain.Base.Test.Unit.DomainService
             result.Should().BeCloseTo(new DateTimeOffset(dateTimeNow, _timeZoneInfo.GetUtcOffset(dateTimeNow)).DateTime);
         }
 
-        public void CreatesCorrectRepositoryTimeWithDisplayTime()
+        public void CreatesRepositoryTimeWithDisplayTime()
         {
             var dateTimeNow = DateTime.Now;
 

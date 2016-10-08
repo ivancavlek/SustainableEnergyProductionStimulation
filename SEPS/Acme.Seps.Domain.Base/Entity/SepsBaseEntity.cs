@@ -22,10 +22,14 @@ namespace Acme.Seps.Domain.Base.Entity
 
         public void Archive()
         {
-            if (!IsArchived())
+            if (IsActive())
                 Period = Period.SetValidTill(_timeZone.GetCurrentRepositoryDateTime());
         }
 
-        private bool IsArchived() => Period.ValidTill.HasValue;
+        public void Delete() => Period = new Period(Period.ValidFrom, Period.ValidFrom);
+
+        public bool IsActive() => Period.IsWithin(_timeZone.GetCurrentRepositoryDateTime());
+
+        public bool IsDeleted() => Period.ValidTill.HasValue && Period.ValidFrom.Equals(Period.ValidTill);
     }
 }

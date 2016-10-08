@@ -1,4 +1,4 @@
-﻿using Acme.Domain.Base.DomainService;
+﻿using Acme.Domain.Base.Factory;
 using Acme.Domain.Base.Entity;
 using Acme.Domain.Base.ValueType;
 using System;
@@ -7,11 +7,11 @@ namespace Acme.Seps.Domain.Base.Entity
 {
     public abstract class SepsBaseEntity : BaseEntity
     {
-        private readonly ITimeZone _timeZone;
+        private readonly ITimeZoneFactory _timeZone;
 
         public Period Period { get; private set; }
 
-        protected SepsBaseEntity(ITimeZone timeZone)
+        protected SepsBaseEntity(ITimeZoneFactory timeZone)
         {
             if (timeZone == null)
                 throw new ArgumentNullException(nameof(timeZone));

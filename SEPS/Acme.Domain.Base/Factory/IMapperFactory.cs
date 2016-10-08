@@ -1,6 +1,6 @@
-﻿namespace Acme.Domain.Base.DomainService
+﻿namespace Acme.Domain.Base.Factory
 {
-    public interface IMapper
+    public interface IMapperFactory
     {
         TDestination Map<TSource, TDestination>(TSource source);
 

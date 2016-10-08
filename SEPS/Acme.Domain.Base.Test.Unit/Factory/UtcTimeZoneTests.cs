@@ -1,19 +1,19 @@
-﻿using Acme.Domain.Base.DomainService;
+﻿using Acme.Domain.Base.Factory;
 using FluentAssertions;
 using System;
 
-namespace Acme.Domain.Base.Test.Unit.DomainService
+namespace Acme.Domain.Base.Test.Unit.Factory
 {
     public class UtcTimeZoneTests
     {
-        private readonly ITimeZone _utcTimeZone;
+        private readonly ITimeZoneFactory _utcTimeZone;
 
         private readonly TimeZoneInfo _timeZoneInfo;
 
         public UtcTimeZoneTests()
         {
             _timeZoneInfo = TimeZoneInfo.FindSystemTimeZoneById("Central European Standard Time");
-            _utcTimeZone = new UtcTimeZone(_timeZoneInfo);
+            _utcTimeZone = new UtcTimeZoneFactory(_timeZoneInfo);
         }
 
         public void RepositoryTimeIsUtcNowWithTimeZoneOffSet()

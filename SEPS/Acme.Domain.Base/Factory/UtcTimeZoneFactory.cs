@@ -1,12 +1,12 @@
 ﻿using System;
 
-namespace Acme.Domain.Base.DomainService
+namespace Acme.Domain.Base.Factory
 {
-    public sealed class UtcTimeZone : ITimeZone
+    public sealed class UtcTimeZoneFactory : ITimeZoneFactory
     {
         private readonly TimeZoneInfo _timeZoneInfo;
 
-        public UtcTimeZone(TimeZoneInfo timeZoneInfo)
+        public UtcTimeZoneFactory(TimeZoneInfo timeZoneInfo)
         {
             if (timeZoneInfo == null)
                 throw new ArgumentNullException(nameof(timeZoneInfo));
@@ -14,11 +14,11 @@ namespace Acme.Domain.Base.DomainService
             _timeZoneInfo = timeZoneInfo;
         }
 
-        DateTime ITimeZone.GetCurrentDisplayDateTime() => GetCurrentRepositoryTime().DateTime;
+        DateTime ITimeZoneFactory.GetCurrentDisplayDateTime() => GetCurrentRepositoryTime().DateTime;
 
-        DateTimeOffset ITimeZone.GetCurrentRepositoryDateTime() => GetCurrentRepositoryTime();
+        DateTimeOffset ITimeZoneFactory.GetCurrentRepositoryDateTime() => GetCurrentRepositoryTime();
 
-        DateTimeOffset ITimeZone.ToRepositoryDateTime(DateTime displayDateTime) =>
+        DateTimeOffset ITimeZoneFactory.ToRepositoryDateTime(DateTime displayDateTime) =>
             new DateTimeOffset(displayDateTime, _timeZoneInfo.GetUtcOffset(displayDateTime));
 
         private DateTimeOffset GetCurrentRepositoryTime() =>

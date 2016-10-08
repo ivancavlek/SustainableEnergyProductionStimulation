@@ -1,8 +1,8 @@
 ﻿using System;
 
-namespace Acme.Domain.Base.DomainService
+namespace Acme.Domain.Base.Factory
 {
-    public interface ITimeZone
+    public interface ITimeZoneFactory
     {
         DateTime GetCurrentDisplayDateTime();
 

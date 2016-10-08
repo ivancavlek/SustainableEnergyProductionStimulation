@@ -45,7 +45,7 @@
     <Otherwise />
   </Choose>
   <ItemGroup>
-    <Compile Include="DomainService\UtcTimeZoneTests.cs" />
+    <Compile Include="Factory\UtcTimeZoneTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ValueType\PeriodTests.cs" />
   </ItemGroup>

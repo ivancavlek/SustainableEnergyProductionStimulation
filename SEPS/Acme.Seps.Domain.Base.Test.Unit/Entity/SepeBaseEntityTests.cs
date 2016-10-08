@@ -1,4 +1,4 @@
-﻿using Acme.Domain.Base.DomainService;
+﻿using Acme.Domain.Base.Factory;
 using Acme.Seps.Domain.Base.Entity;
 using FluentAssertions;
 using Moq;
@@ -8,12 +8,12 @@ namespace Acme.Seps.Domain.Base.Test.Unit.Entity
 {
     public class SepsBaseEntityTests
     {
-        private readonly Mock<ITimeZone> _timeZone;
+        private readonly Mock<ITimeZoneFactory> _timeZone;
         private readonly DateTimeOffset _repositoryTime;
 
         public SepsBaseEntityTests()
         {
-            _timeZone = new Mock<ITimeZone>();
+            _timeZone = new Mock<ITimeZoneFactory>();
             _repositoryTime = DateTimeOffset.UtcNow;
         }
 
@@ -109,7 +109,7 @@ namespace Acme.Seps.Domain.Base.Test.Unit.Entity
 
     internal class DummySepsBaseEntity : SepsBaseEntity
     {
-        public DummySepsBaseEntity(ITimeZone timeZone) : base(timeZone)
+        public DummySepsBaseEntity(ITimeZoneFactory timeZone) : base(timeZone)
         {
         }
     }

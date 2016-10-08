@@ -1,5 +1,5 @@
-﻿using Acme.Domain.Base.Factory;
-using Acme.Domain.Base.Entity;
+﻿using Acme.Domain.Base.Entity;
+using Acme.Domain.Base.Factory;
 using Acme.Domain.Base.ValueType;
 using System;
 
@@ -10,6 +10,8 @@ namespace Acme.Seps.Domain.Base.Entity
         private readonly ITimeZoneFactory _timeZone;
 
         public Period Period { get; private set; }
+
+        protected SepsBaseEntity() { }
 
         protected SepsBaseEntity(ITimeZoneFactory timeZone)
         {

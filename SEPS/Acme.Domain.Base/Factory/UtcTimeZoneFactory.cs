@@ -18,8 +18,11 @@ namespace Acme.Domain.Base.Factory
 
         DateTimeOffset ITimeZoneFactory.GetCurrentRepositoryDateTime() => GetCurrentRepositoryTime();
 
-        DateTimeOffset ITimeZoneFactory.ToRepositoryDateTime(DateTime displayDateTime) =>
-            new DateTimeOffset(displayDateTime, _timeZoneInfo.GetUtcOffset(displayDateTime));
+        DateTimeOffset ITimeZoneFactory.ToRepositoryDateTime(DateTime displayDateTime)
+        {
+            displayDateTime = DateTime.SpecifyKind(displayDateTime, DateTimeKind.Unspecified);
+            return new DateTimeOffset(displayDateTime, _timeZoneInfo.GetUtcOffset(displayDateTime));
+        }
 
         private DateTimeOffset GetCurrentRepositoryTime() =>
             TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, _timeZoneInfo);

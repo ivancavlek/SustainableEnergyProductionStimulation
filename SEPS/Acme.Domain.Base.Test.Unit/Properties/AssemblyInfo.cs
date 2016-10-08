@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("Acme.Seps.Domain.Base.Test")]
+[assembly: AssemblyTitle("Acme.Domain.Base.Test.Unit")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("Acme.Seps.Domain.Base.Test")]
+[assembly: AssemblyProduct("Acme.Domain.Base.Test.Unit")]
 [assembly: AssemblyCopyright("Copyright ©  2016")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -20,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("1961a8f6-2cf4-4d22-bd3d-f4dfd1ae81c8")]
+[assembly: Guid("1e717e67-bf3f-47a2-b8dc-8ae2db8b574d")]
 
 // Version information for an assembly consists of the following four values:
 //

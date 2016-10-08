@@ -3,7 +3,7 @@ using Acme.Domain.Base.ValueType;
 using FluentAssertions;
 using System;
 
-namespace Acme.Domain.Base.Test.ValueType
+namespace Acme.Domain.Base.Test.Unit.ValueType
 {
     public class PeriodTests
     {

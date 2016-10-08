@@ -2,7 +2,7 @@
 using FluentAssertions;
 using System;
 
-namespace Acme.Domain.Base.Test.DomainService
+namespace Acme.Domain.Base.Test.Unit.DomainService
 {
     public class UtcTimeZoneTests
     {

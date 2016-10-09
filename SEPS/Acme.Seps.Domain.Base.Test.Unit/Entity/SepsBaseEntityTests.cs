@@ -72,6 +72,21 @@ namespace Acme.Seps.Domain.Base.Test.Unit.Entity
             result.Period.ValidTill.Should().Be(_repositoryTime);
         }
 
+        public void SetsAnExpirationDateForEntity()
+        {
+            var repositoryTimePlusOneDay = _repositoryTime.AddDays(1);
+
+            _timeZone.Setup(m => m.GetCurrentRepositoryDateTime())
+                .Returns(_repositoryTime);
+
+            var result = new DummySepsBaseEntity(_timeZone.Object);
+            result.SetExpirationDateTo(repositoryTimePlusOneDay);
+
+            result.Period.ValidFrom.Should().Be(_repositoryTime);
+            result.Period.ValidTill.Should().HaveValue();
+            result.Period.ValidTill.Should().Be(repositoryTimePlusOneDay);
+        }
+
         public void DeletesTheEntity()
         {
             _timeZone.Setup(m => m.GetCurrentRepositoryDateTime())
@@ -85,7 +100,21 @@ namespace Acme.Seps.Domain.Base.Test.Unit.Entity
             result.Period.ValidTill.Should().Be(_repositoryTime);
         }
 
-        public void DeleteCheckShowsCorrectDeletedStatus()
+        public void CanOnlyBeDeletedOnce()
+        {
+            _timeZone.Setup(m => m.GetCurrentRepositoryDateTime())
+                .Returns(_repositoryTime);
+
+            var result = new DummySepsBaseEntity(_timeZone.Object);
+            result.Delete();
+            result.Delete();
+
+            result.Period.ValidFrom.Should().Be(_repositoryTime);
+            result.Period.ValidTill.Should().HaveValue();
+            result.Period.ValidTill.Should().Be(_repositoryTime);
+        }
+
+        public void DeleteCheckShowsCorrectDeletedStatusAfterDeletion()
         {
             _timeZone.Setup(m => m.GetCurrentRepositoryDateTime())
                 .Returns(_repositoryTime);
@@ -96,12 +125,25 @@ namespace Acme.Seps.Domain.Base.Test.Unit.Entity
             result.IsDeleted().Should().BeTrue();
         }
 
-        public void DeleteCheckShowsCorrectExistingStatus()
+        public void DeleteCheckShowsCorrectDeletedStatusWhenValidTillIsNotSet()
         {
             _timeZone.Setup(m => m.GetCurrentRepositoryDateTime())
                 .Returns(_repositoryTime);
 
             var result = new DummySepsBaseEntity(_timeZone.Object);
+
+            result.IsDeleted().Should().BeFalse();
+        }
+
+        public void DeleteCheckShowsCorrectDeletedStatusWhenValidTillIsSet()
+        {
+            var repositoryTimePlusOneDay = _repositoryTime.AddDays(1);
+
+            _timeZone.Setup(m => m.GetCurrentRepositoryDateTime())
+                .Returns(_repositoryTime);
+
+            var result = new DummySepsBaseEntity(_timeZone.Object);
+            result.SetExpirationDateTo(repositoryTimePlusOneDay);
 
             result.IsDeleted().Should().BeFalse();
         }

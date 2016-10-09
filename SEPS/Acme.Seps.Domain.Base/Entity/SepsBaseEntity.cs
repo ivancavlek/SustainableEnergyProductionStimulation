@@ -25,13 +25,20 @@ namespace Acme.Seps.Domain.Base.Entity
         public void Archive()
         {
             if (IsActive())
-                Period = Period.SetValidTill(_timeZone.GetCurrentRepositoryDateTime());
+                SetExpirationDateTo(_timeZone.GetCurrentRepositoryDateTime());
         }
 
-        public void Delete() => Period = new Period(Period.ValidFrom, Period.ValidFrom);
+        public void Delete()
+        {
+            if (!IsDeleted())
+                SetExpirationDateTo(Period.ValidFrom);
+        }
 
         public bool IsActive() => Period.IsWithin(_timeZone.GetCurrentRepositoryDateTime());
 
         public bool IsDeleted() => Period.ValidTill.HasValue && Period.ValidFrom.Equals(Period.ValidTill);
+
+        public void SetExpirationDateTo(DateTimeOffset expirationDate) =>
+            Period = Period.SetValidTill(expirationDate);
     }
 }

@@ -45,7 +45,7 @@
     <Otherwise />
   </Choose>
   <ItemGroup>
-    <Compile Include="Entity\SepeBaseEntityTests.cs" />
+    <Compile Include="Entity\SepsBaseEntityTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

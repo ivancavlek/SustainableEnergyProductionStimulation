@@ -19,6 +19,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Acme.Seps.Domain.Base.Test.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Acme.Domain.Base.Test.Unit", "Acme.Domain.Base.Test.Unit\Acme.Domain.Base.Test.Unit.csproj", "{1E717E67-BF3F-47A2-B8DC-8AE2DB8B574D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Acme.Seps.Domain.Parameters", "Acme.Seps.Domain.Parameters\Acme.Seps.Domain.Parameters.csproj", "{D3AB0A99-4D75-46EA-9E47-63A3B508AD2D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -41,6 +43,10 @@ Global
 		{1E717E67-BF3F-47A2-B8DC-8AE2DB8B574D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1E717E67-BF3F-47A2-B8DC-8AE2DB8B574D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1E717E67-BF3F-47A2-B8DC-8AE2DB8B574D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D3AB0A99-4D75-46EA-9E47-63A3B508AD2D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D3AB0A99-4D75-46EA-9E47-63A3B508AD2D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D3AB0A99-4D75-46EA-9E47-63A3B508AD2D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D3AB0A99-4D75-46EA-9E47-63A3B508AD2D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -50,5 +56,6 @@ Global
 		{451534FF-C6FB-4428-86C4-3827920ED96A} = {DD526306-A805-4E30-B15D-FBF6FB5D2320}
 		{48ED6B4E-1637-4249-AE1C-226FE94B123F} = {4A821E5F-A98F-4536-808D-595CE17E37AB}
 		{1E717E67-BF3F-47A2-B8DC-8AE2DB8B574D} = {4A821E5F-A98F-4536-808D-595CE17E37AB}
+		{D3AB0A99-4D75-46EA-9E47-63A3B508AD2D} = {DD526306-A805-4E30-B15D-FBF6FB5D2320}
 	EndGlobalSection
 EndGlobal

@@ -1,12 +1,13 @@
-﻿using System;
+﻿using Acme.Domain.Base.Entity;
+using System;
 
 namespace Acme.Seps.Domain.Base.ApplicationService
 {
     public abstract class SepsBaseService
     {
-        public event EventHandler<string> UseCaseExecutionProcessing = delegate { };
+        public event EventHandler<EntityExecutionLoggingEventArgs> UseCaseExecutionProcessing = delegate { };
 
-        protected void Log(string useCaseExecutionProcessingLog) =>
+        protected void Log(EntityExecutionLoggingEventArgs useCaseExecutionProcessingLog) =>
             UseCaseExecutionProcessing(this, useCaseExecutionProcessingLog);
     }
 }

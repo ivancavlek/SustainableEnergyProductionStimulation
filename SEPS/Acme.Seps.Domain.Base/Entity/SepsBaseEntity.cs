@@ -5,38 +5,26 @@ using System;
 
 namespace Acme.Seps.Domain.Base.Entity
 {
-    public abstract class SepsBaseEntity : BaseEntity
+    public abstract class SepsBaseEntity : Entity<Guid>
     {
-        private readonly ITimeZoneFactory _timeZone;
-
-        public Period Period { get; private set; }
+        public Period Period { get; protected set; }
 
         protected SepsBaseEntity() { }
 
-        protected SepsBaseEntity(ITimeZoneFactory timeZone)
+        protected SepsBaseEntity(Period period, IIdentityFactory<Guid> identityFactory)
+            : base(identityFactory)
         {
-            if (timeZone == null)
-                throw new ArgumentNullException(nameof(timeZone));
+            if (!period.ValidFrom.Day.Equals(1) ||
+                (period.ValidTill.HasValue && !period.ValidTill.Value.Day.Equals(1)))
+                throw new DomainException(Infrastructure.Base.DailyEconometricIndexNotAllowedException);
+            if (!period.ValidFrom.TimeOfDay.Equals(TimeSpan.Zero) ||
+                (period.ValidTill.HasValue && !period.ValidTill.Value.TimeOfDay.Equals(TimeSpan.Zero)))
+                throw new DomainException(Infrastructure.Base.TimeOfDayPeriodNotAllowedException);
 
-            _timeZone = timeZone;
-            Period = new Period(_timeZone.GetCurrentRepositoryDateTime());
+            Period = period;
         }
 
-        public void Archive()
-        {
-            if (IsActive())
-                SetExpirationDateTo(_timeZone.GetCurrentRepositoryDateTime());
-        }
-
-        public void Delete()
-        {
-            if (!IsDeleted())
-                SetExpirationDateTo(Period.ValidFrom);
-        }
-
-        public bool IsActive() => Period.IsWithin(_timeZone.GetCurrentRepositoryDateTime());
-
-        public bool IsDeleted() => Period.ValidTill.HasValue && Period.ValidFrom.Equals(Period.ValidTill);
+        public bool IsActiveAt(DateTimeOffset dateTime) => Period.IsWithin(dateTime);
 
         public void SetExpirationDateTo(DateTimeOffset expirationDate) =>
             Period = Period.SetValidTill(expirationDate);

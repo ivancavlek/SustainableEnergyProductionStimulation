@@ -1,4 +1,5 @@
 ﻿using Acme.Domain.Base.Factory;
+using Acme.Domain.Base.ValueType;
 using Acme.Seps.Domain.Base.Entity;
 using FluentAssertions;
 using Moq;
@@ -8,151 +9,50 @@ namespace Acme.Seps.Domain.Base.Test.Unit.Entity
 {
     public class SepsBaseEntityTests
     {
-        private readonly Mock<ITimeZoneFactory> _timeZone;
+        private readonly Mock<IIdentityFactory<Guid>> _identityFactory;
+        private readonly Period _period;
         private readonly DateTimeOffset _repositoryTime;
+        private readonly DateTimeOffset _repositoryTimePlusOneDay;
 
         public SepsBaseEntityTests()
         {
-            _timeZone = new Mock<ITimeZoneFactory>();
-            _repositoryTime = DateTimeOffset.UtcNow;
+            _identityFactory = new Mock<IIdentityFactory<Guid>>();
+            _repositoryTime = GetCorrectParameterDate(DateTimeOffset.UtcNow);
+            _repositoryTimePlusOneDay = _repositoryTime.AddDays(1);
+            _period = new Period(_repositoryTime);
         }
 
-        public void CannotBeConstructedWithoutTimeZone()
+        public void SetsGivenPeriod()
         {
-            Action action = () => new DummySepsBaseEntity(null);
+            var result = new DummySepsBaseEntity(_period, _identityFactory.Object);
 
-            action.ShouldThrow<ArgumentNullException>();
+            result.Period.ShouldBeEquivalentTo(_period);
         }
 
-        public void SetsInitialPeriodUponCreation()
+        public void ShowsIfEntityIsActiveOnGivenDate()
         {
-            _timeZone.Setup(m => m.GetCurrentRepositoryDateTime()).Returns(_repositoryTime);
+            var result = new DummySepsBaseEntity(_period, _identityFactory.Object);
 
-            var result = new DummySepsBaseEntity(_timeZone.Object);
-
-            result.Period.ValidFrom.Should().Be(_repositoryTime);
-            result.Period.ValidTill.Should().NotHaveValue();
+            result.IsActiveAt(_repositoryTimePlusOneDay);
         }
 
-        public void ArchivesTheEntity()
+        public void SetsAnExpirationDateForTheEntity()
         {
-            var repositoryTimeMinusOneMinute = _repositoryTime.AddMinutes(-1);
-            var repositoryTimePlusOneMinute = _repositoryTime.AddMinutes(1);
-            _timeZone.SetupSequence(m => m.GetCurrentRepositoryDateTime())
-                .Returns(repositoryTimeMinusOneMinute)
-                .Returns(_repositoryTime)
-                .Returns(repositoryTimePlusOneMinute);
-
-            var result = new DummySepsBaseEntity(_timeZone.Object);
-            result.Archive();
-
-            result.Period.ValidFrom.Should().Be(repositoryTimeMinusOneMinute);
-            result.Period.ValidTill.Should().HaveValue();
-            result.Period.ValidTill.Should().Be(repositoryTimePlusOneMinute);
-        }
-
-        public void CanOnlyBeArchivedOnce()
-        {
-            var repositoryTimeMinusOneMonth = _repositoryTime.AddMonths(-1);
-            var repositoryTimePlusOneMinute = _repositoryTime.AddMinutes(1);
-            _timeZone.SetupSequence(m => m.GetCurrentRepositoryDateTime())
-                .Returns(repositoryTimeMinusOneMonth)
-                .Returns(_repositoryTime)
-                .Returns(_repositoryTime)
-                .Returns(repositoryTimePlusOneMinute)
-                .Returns(repositoryTimePlusOneMinute);
-
-            var result = new DummySepsBaseEntity(_timeZone.Object);
-            result.Archive();
-            result.Archive();
-
-            result.Period.ValidFrom.Should().Be(repositoryTimeMinusOneMonth);
-            result.Period.ValidTill.Should().HaveValue();
-            result.Period.ValidTill.Should().NotBe(repositoryTimePlusOneMinute);
-            result.Period.ValidTill.Should().Be(_repositoryTime);
-        }
-
-        public void SetsAnExpirationDateForEntity()
-        {
-            var repositoryTimePlusOneDay = _repositoryTime.AddDays(1);
-
-            _timeZone.Setup(m => m.GetCurrentRepositoryDateTime())
-                .Returns(_repositoryTime);
-
-            var result = new DummySepsBaseEntity(_timeZone.Object);
-            result.SetExpirationDateTo(repositoryTimePlusOneDay);
+            var result = new DummySepsBaseEntity(_period, _identityFactory.Object);
+            result.SetExpirationDateTo(_repositoryTimePlusOneDay);
 
             result.Period.ValidFrom.Should().Be(_repositoryTime);
             result.Period.ValidTill.Should().HaveValue();
-            result.Period.ValidTill.Should().Be(repositoryTimePlusOneDay);
+            result.Period.ValidTill.Should().Be(_repositoryTimePlusOneDay);
         }
 
-        public void DeletesTheEntity()
-        {
-            _timeZone.Setup(m => m.GetCurrentRepositoryDateTime())
-                .Returns(_repositoryTime);
-
-            var result = new DummySepsBaseEntity(_timeZone.Object);
-            result.Delete();
-
-            result.Period.ValidFrom.Should().Be(_repositoryTime);
-            result.Period.ValidTill.Should().HaveValue();
-            result.Period.ValidTill.Should().Be(_repositoryTime);
-        }
-
-        public void CanOnlyBeDeletedOnce()
-        {
-            _timeZone.Setup(m => m.GetCurrentRepositoryDateTime())
-                .Returns(_repositoryTime);
-
-            var result = new DummySepsBaseEntity(_timeZone.Object);
-            result.Delete();
-            result.Delete();
-
-            result.Period.ValidFrom.Should().Be(_repositoryTime);
-            result.Period.ValidTill.Should().HaveValue();
-            result.Period.ValidTill.Should().Be(_repositoryTime);
-        }
-
-        public void DeleteCheckShowsCorrectDeletedStatusAfterDeletion()
-        {
-            _timeZone.Setup(m => m.GetCurrentRepositoryDateTime())
-                .Returns(_repositoryTime);
-
-            var result = new DummySepsBaseEntity(_timeZone.Object);
-            result.Delete();
-
-            result.IsDeleted().Should().BeTrue();
-        }
-
-        public void DeleteCheckShowsCorrectDeletedStatusWhenValidTillIsNotSet()
-        {
-            _timeZone.Setup(m => m.GetCurrentRepositoryDateTime())
-                .Returns(_repositoryTime);
-
-            var result = new DummySepsBaseEntity(_timeZone.Object);
-
-            result.IsDeleted().Should().BeFalse();
-        }
-
-        public void DeleteCheckShowsCorrectDeletedStatusWhenValidTillIsSet()
-        {
-            var repositoryTimePlusOneDay = _repositoryTime.AddDays(1);
-
-            _timeZone.Setup(m => m.GetCurrentRepositoryDateTime())
-                .Returns(_repositoryTime);
-
-            var result = new DummySepsBaseEntity(_timeZone.Object);
-            result.SetExpirationDateTo(repositoryTimePlusOneDay);
-
-            result.IsDeleted().Should().BeFalse();
-        }
+        private DateTimeOffset GetCorrectParameterDate(DateTimeOffset date) =>
+            date.Date.AddDays(1 - DateTime.Today.Day);
     }
 
     internal class DummySepsBaseEntity : SepsBaseEntity
     {
-        public DummySepsBaseEntity(ITimeZoneFactory timeZone) : base(timeZone)
-        {
-        }
+        public DummySepsBaseEntity(Period period, IIdentityFactory<Guid> identityFactory)
+            : base(period, identityFactory) { }
     }
 }

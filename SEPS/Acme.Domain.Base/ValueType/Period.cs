@@ -28,6 +28,7 @@ namespace Acme.Domain.Base.ValueType
             ((!ValidTill.HasValue) || (!ValidTill.HasValue && !dateTill.HasValue)) ||
                 ValidFrom <= dateFrom && dateTill <= ValidTill.Value;
 
-        public Period SetValidTill(DateTimeOffset validTill) => new Period(ValidFrom, validTill);
+        public virtual Period SetValidTill(DateTimeOffset validTill) =>
+            new Period(ValidFrom, validTill);
     }
 }

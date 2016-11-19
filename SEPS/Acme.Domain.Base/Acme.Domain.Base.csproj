@@ -34,9 +34,8 @@
     <CodeAnalysisRuleSet>Acme.Seps.Domain.Base.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Entity\EntityExecutionLoggingEventArgs.cs" />
     <Compile Include="Factory\IMapperFactory.cs" />
-    <Compile Include="Factory\ITimeZoneFactory.cs" />
-    <Compile Include="Factory\UtcTimeZoneFactory.cs" />
     <Compile Include="Entity\BaseEntity.cs" />
     <Compile Include="Entity\DomainException.cs" />
     <Compile Include="Entity\Entity.cs" />

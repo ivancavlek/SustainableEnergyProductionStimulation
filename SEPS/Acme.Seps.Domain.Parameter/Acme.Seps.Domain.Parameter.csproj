@@ -76,6 +76,10 @@
     <CodeAnalysisRuleSet>Acme.Seps.Domain.Parameters.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="DomainService\CogenerationParameterService.cs" />
+    <Compile Include="DomainService\CogenerationNewPeriodService.cs" />
+    <Compile Include="DomainService\ICogenerationNewPeriodService.cs" />
+    <Compile Include="DomainService\ICogenerationParameterService.cs" />
     <Compile Include="Entity\CogenerationTariff.cs" />
     <Compile Include="Entity\ConsumerPriceIndex.cs" />
     <Compile Include="Entity\YearlyEconometricIndex.cs" />
@@ -86,8 +90,6 @@
     <Compile Include="Entity\YearlyAverageElectricEnergyProductionPrice.cs" />
     <Compile Include="Entity\MonthlyAverageElectricEnergyProductionPrice.cs" />
     <Compile Include="Entity\MonthlyEconometricIndex.cs" />
-    <Compile Include="Factory\IYearlyAverageElectricEnergyProductionPriceFactory.cs" />
-    <Compile Include="Factory\YearlyAverageElectricEnergyProductionPriceFactory.cs" />
     <Compile Include="Infrastructure\Parameter.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -117,6 +119,7 @@
       <LastGenOutput>Parameter.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

@@ -4,7 +4,7 @@ using Acme.Seps.Domain.Parameter.Entity;
 using FluentAssertions;
 using Moq;
 using System;
-using System.Linq;
+using System.Collections.Generic;
 
 namespace Acme.Seps.Domain.Parameter.Test.Unit.Entity
 {
@@ -16,18 +16,25 @@ namespace Acme.Seps.Domain.Parameter.Test.Unit.Entity
 
         public YearlyAverageElectricEnergyProductionPriceTests()
         {
-            _amount = 1.123456M;
+            _amount = 0.0909M;
             _remark = nameof(_remark);
             _identityFactory = new Mock<IIdentityFactory<Guid>>();
         }
 
-        public void AmountIsProperlyRounded()
+        public void YaepIsProperlyConstructed()
         {
             var correctDate = DateTime.UtcNow.AddYears(-2);
             var period = new YearlyPeriod(correctDate.AddYears(-1), correctDate);
 
             var result = new YearlyAverageElectricEnergyProductionPrice(
-                Enumerable.Empty<MonthlyAverageElectricEnergyProductionPrice>(), _amount, _remark, period, _identityFactory.Object);
+                new List<MonthlyAverageElectricEnergyProductionPrice>
+                {
+                    new MonthlyAverageElectricEnergyProductionPrice(
+                        1M,
+                        "remark",
+                        new MonthlyPeriod(DateTime.Now.AddYears(-3), DateTime.Now.AddYears(-2)),
+                        _identityFactory.Object)
+                }, period, _identityFactory.Object);
 
             result.Amount.Should().Be(Math.Round(_amount, 4, MidpointRounding.AwayFromZero));
         }

@@ -9,7 +9,9 @@ namespace Acme.Seps.Domain.Parameter.Entity
     {
         public ConsumerPriceIndex ConsumerPriceIndex { get; }
 
-        protected RenewableEnergySourceTariff() { }
+        protected RenewableEnergySourceTariff()
+        {
+        }
 
         protected RenewableEnergySourceTariff(
             ConsumerPriceIndex consumerPriceIndex,

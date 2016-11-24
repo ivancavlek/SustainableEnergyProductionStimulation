@@ -124,11 +124,11 @@ namespace Acme.Seps.Domain.Parameter.Infrastructure {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Last quarter gas price for 2006 must be a positive number..
+        ///   Looks up a localized string similar to 1.
         /// </summary>
-        public static string LastQuarterGasPriceFor2006Exception {
+        public static string LastQuarterGasPriceFor2006 {
             get {
-                return ResourceManager.GetString("LastQuarterGasPriceFor2006Exception", resourceCulture);
+                return ResourceManager.GetString("LastQuarterGasPriceFor2006", resourceCulture);
             }
         }
         
@@ -151,11 +151,11 @@ namespace Acme.Seps.Domain.Parameter.Infrastructure {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Monthly average electric energy production amount must be a positive number..
+        ///   Looks up a localized string similar to 1.
         /// </summary>
-        public static string MaepPriceFor2006Exception {
+        public static string MaepPriceFor2006 {
             get {
-                return ResourceManager.GetString("MaepPriceFor2006Exception", resourceCulture);
+                return ResourceManager.GetString("MaepPriceFor2006", resourceCulture);
             }
         }
         

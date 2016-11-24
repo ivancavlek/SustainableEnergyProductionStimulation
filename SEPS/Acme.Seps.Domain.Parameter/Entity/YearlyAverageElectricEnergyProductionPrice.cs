@@ -10,18 +10,23 @@ namespace Acme.Seps.Domain.Parameter.Entity
     {
         public ICollection<MonthlyAverageElectricEnergyProductionPrice> MonthlyAverageElectricEnergyProductionPrices { get; }
 
-        protected YearlyAverageElectricEnergyProductionPrice() { }
+        protected YearlyAverageElectricEnergyProductionPrice()
+        {
+        }
 
         public YearlyAverageElectricEnergyProductionPrice(
-            IEnumerable<MonthlyAverageElectricEnergyProductionPrice> monthlyAverageElectricEnergyProductionPrices,
-            decimal amount,
-            string remark,
+            IEnumerable<MonthlyAverageElectricEnergyProductionPrice> maeps,
             YearlyPeriod lastYearlyPeriod,
             IIdentityFactory<Guid> guidIdentityFactory)
-            : base(amount, 4, remark, lastYearlyPeriod, guidIdentityFactory)
+            : base(
+                  maeps.Sum(m => m.Amount) / maeps.Max(m => m.Period.ValidFrom.Month),
+                  4,
+                  Infrastructure.Parameter.AutomaticEntry,
+                  lastYearlyPeriod,
+                  guidIdentityFactory)
         {
-            monthlyAverageElectricEnergyProductionPrices.ToList().ForEach(m =>
-                MonthlyAverageElectricEnergyProductionPrices.Add(m));
+            MonthlyAverageElectricEnergyProductionPrices = new List<MonthlyAverageElectricEnergyProductionPrice>();
+            maeps.ToList().ForEach(m => MonthlyAverageElectricEnergyProductionPrices.Add(m));
         }
     }
 }

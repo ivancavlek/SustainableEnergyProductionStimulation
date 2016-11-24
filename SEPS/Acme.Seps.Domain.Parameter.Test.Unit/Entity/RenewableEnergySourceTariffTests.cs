@@ -77,6 +77,7 @@ namespace Acme.Seps.Domain.Parameter.Test.Unit.Entity
         {
             var result = _existingRes.CreateNewWith(_consumerPriceIndex, _identityFactory.Object);
 
+            _existingRes.Period.ValidTill.Should().Be(_consumerPriceIndex.Period.ValidFrom);
             result.ConsumerPriceIndex.Should().Be(_consumerPriceIndex);
             result.Period.Should().Be(_consumerPriceIndex.Period);
             result.LowerRate.Should().Be(_existingRes.LowerRate);

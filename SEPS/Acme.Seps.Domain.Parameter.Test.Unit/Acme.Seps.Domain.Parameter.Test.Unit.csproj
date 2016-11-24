@@ -45,6 +45,8 @@
     <Otherwise />
   </Choose>
   <ItemGroup>
+    <Compile Include="DomainService\CogenerationNewPeriodServiceTests.cs" />
+    <Compile Include="DomainService\CogenerationParameterServiceTests.cs" />
     <Compile Include="Entity\ConsumerPriceIndexTests.cs" />
     <Compile Include="Entity\RenewableEnergySourceTariffTests.cs" />
     <Compile Include="Entity\CogenerationTariffTests.cs" />
@@ -55,7 +57,6 @@
     <Compile Include="Entity\YearlyEconometricIndexTests.cs" />
     <Compile Include="Entity\MonthlyEconometricIndexTests.cs" />
     <Compile Include="Entity\EconometricIndexTests.cs" />
-    <Compile Include="Factory\YearlyAverageElectricEnergyProductionPriceFactoryTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

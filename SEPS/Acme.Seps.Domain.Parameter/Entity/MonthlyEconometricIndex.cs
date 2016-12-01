@@ -9,7 +9,9 @@ namespace Acme.Seps.Domain.Parameter.Entity
 {
     public abstract class MonthlyEconometricIndex : EconometricIndex
     {
-        protected MonthlyEconometricIndex() { }
+        protected MonthlyEconometricIndex()
+        {
+        }
 
         protected MonthlyEconometricIndex(
             decimal amount,
@@ -29,5 +31,8 @@ namespace Acme.Seps.Domain.Parameter.Entity
                 SystemTime.CurrentMonth() <= Period.ValidFrom)
                 throw new DomainException(Infrastructure.Parameter.MonthlyParameterException);
         }
+
+        public abstract MonthlyEconometricIndex CreateNew(
+            decimal amount, string remark, DateTime validTill, IIdentityFactory<Guid> identityFactory);
     }
 }

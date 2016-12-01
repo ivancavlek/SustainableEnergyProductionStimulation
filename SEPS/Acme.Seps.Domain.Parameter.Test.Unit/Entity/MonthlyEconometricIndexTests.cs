@@ -71,5 +71,9 @@ namespace Acme.Seps.Domain.Parameter.Test.Unit.Entity
             MonthlyPeriod period,
             IIdentityFactory<Guid> identityFactory)
             : base(amount, decimalPlaces, remark, period, identityFactory) { }
+
+        public override MonthlyEconometricIndex CreateNew(
+            decimal amount, string remark, DateTime validTill, IIdentityFactory<Guid> identityFactory) =>
+            this;
     }
 }

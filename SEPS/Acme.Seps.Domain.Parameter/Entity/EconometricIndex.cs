@@ -11,7 +11,9 @@ namespace Acme.Seps.Domain.Parameter.Entity
         public decimal Amount { get; }
         public string Remark { get; }
 
-        protected EconometricIndex() { }
+        protected EconometricIndex()
+        {
+        }
 
         protected EconometricIndex(
             decimal amount,

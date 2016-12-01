@@ -76,6 +76,10 @@
     <CodeAnalysisRuleSet>Acme.Seps.Domain.Parameters.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="ApplicationService\ConsumerPriceIndexService.cs" />
+    <Compile Include="ApplicationService\IEconometricIndexService.cs" />
+    <Compile Include="DataTransferObject\YearlyEconometricIndexDto.cs" />
+    <Compile Include="DataTransferObject\MonthlyEconometricIndexDto.cs" />
     <Compile Include="DomainService\CogenerationParameterService.cs" />
     <Compile Include="DomainService\CogenerationNewPeriodService.cs" />
     <Compile Include="DomainService\ICogenerationNewPeriodService.cs" />
@@ -87,7 +91,6 @@
     <Compile Include="Entity\EconometricIndex.cs" />
     <Compile Include="Entity\RenewableEnergySourceTariff.cs" />
     <Compile Include="Entity\Tariff.cs" />
-    <Compile Include="Entity\YearlyAverageElectricEnergyProductionPrice.cs" />
     <Compile Include="Entity\MonthlyAverageElectricEnergyProductionPrice.cs" />
     <Compile Include="Entity\MonthlyEconometricIndex.cs" />
     <Compile Include="Infrastructure\Parameter.Designer.cs">
@@ -96,6 +99,8 @@
       <DependentUpon>Parameter.resx</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Repository\ITariffRepository.cs" />
+    <Compile Include="Repository\IEconometricIndexRepository.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Acme.Seps.Domain.Parameters.ruleset" />

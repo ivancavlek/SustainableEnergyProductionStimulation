@@ -9,7 +9,9 @@ namespace Acme.Seps.Domain.Parameter.Entity
 {
     public abstract class YearlyEconometricIndex : EconometricIndex
     {
-        protected YearlyEconometricIndex() { }
+        protected YearlyEconometricIndex()
+        {
+        }
 
         protected YearlyEconometricIndex(
             decimal amount,
@@ -29,5 +31,8 @@ namespace Acme.Seps.Domain.Parameter.Entity
                 SystemTime.CurrentYear().Year <= Period.ValidTill.Value.Year)
                 throw new DomainException(Infrastructure.Parameter.YearlyParameterException);
         }
+
+        public abstract YearlyEconometricIndex CreateNew(
+            decimal amount, string remark, IIdentityFactory<Guid> identityFactory);
     }
 }

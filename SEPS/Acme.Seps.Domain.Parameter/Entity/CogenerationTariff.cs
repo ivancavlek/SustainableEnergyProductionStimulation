@@ -9,7 +9,6 @@ namespace Acme.Seps.Domain.Parameter.Entity
     public class CogenerationTariff : Tariff, IAggregateRoot
     {
         public NaturalGasSellingPrice NaturalGasSellingPrice { get; }
-        public YearlyAverageElectricEnergyProductionPrice YearlyAverageElectricEnergyProductionPrice { get; }
 
         protected CogenerationTariff()
         {
@@ -17,7 +16,6 @@ namespace Acme.Seps.Domain.Parameter.Entity
 
         protected CogenerationTariff(
             NaturalGasSellingPrice naturalGasSellingPrice,
-            YearlyAverageElectricEnergyProductionPrice yearlyAverageElectricEnergyProductionPrice,
             decimal lowerRate,
             decimal higherRate,
             Period period,
@@ -25,20 +23,16 @@ namespace Acme.Seps.Domain.Parameter.Entity
             : base(lowerRate, higherRate, period, identityFactory)
         {
             NaturalGasSellingPrice = naturalGasSellingPrice;
-            YearlyAverageElectricEnergyProductionPrice = yearlyAverageElectricEnergyProductionPrice;
         }
 
         public CogenerationTariff CreateNewWith(
             decimal cogenerationParameter,
             Period newPeriod,
             NaturalGasSellingPrice naturalGasSellingPrice,
-            YearlyAverageElectricEnergyProductionPrice yaep,
             IIdentityFactory<Guid> identityFactory)
         {
             if (naturalGasSellingPrice == null)
                 throw new ArgumentNullException(null, Infrastructure.Parameter.NaturalGasSellingPriceNotSetException);
-            if (yaep == null)
-                throw new ArgumentNullException(null, Infrastructure.Parameter.YaepNotSetException);
             if (!(Period.ValidFrom < (newPeriod.ValidTill ?? newPeriod.ValidFrom) &&
                 (newPeriod.ValidTill ?? newPeriod.ValidFrom) < SystemTime.CurrentMonth()))
                 throw new DomainException(Infrastructure.Parameter.ChpDateException);
@@ -48,7 +42,6 @@ namespace Acme.Seps.Domain.Parameter.Entity
             return new CogenerationTariff
             (
                 naturalGasSellingPrice,
-                yaep,
                 cogenerationParameter * LowerRate,
                 cogenerationParameter * HigherRate,
                 newPeriod,

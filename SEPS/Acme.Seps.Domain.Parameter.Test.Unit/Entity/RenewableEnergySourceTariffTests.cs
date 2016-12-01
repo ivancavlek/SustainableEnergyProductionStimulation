@@ -24,17 +24,26 @@ namespace Acme.Seps.Domain.Parameter.Test.Unit.Entity
             _resPeriod = new YearlyPeriod(DateTime.Now.AddYears(-4), DateTime.Now.AddYears(-3));
             _identityFactory = new Mock<IIdentityFactory<Guid>>();
 
-            var resConsumerPriceIndex = new ConsumerPriceIndex(
-                100M,
-                nameof(ConsumerPriceIndex),
-                _resPeriod,
-                _identityFactory.Object);
-            _consumerPriceIndex = new ConsumerPriceIndex(
-                105M,
-                nameof(ConsumerPriceIndex),
-                new YearlyPeriod(DateTime.Now.AddYears(-3), DateTime.Now.AddYears(-2)),
-                _identityFactory.Object);
-
+            var resConsumerPriceIndex = Activator.CreateInstance(
+                typeof(ConsumerPriceIndex),
+                BindingFlags.Instance | BindingFlags.NonPublic,
+                null,
+                new object[] {
+                    100M,
+                    nameof(ConsumerPriceIndex),
+                    _resPeriod,
+                    _identityFactory.Object },
+                null) as ConsumerPriceIndex;
+            _consumerPriceIndex = Activator.CreateInstance(
+                typeof(ConsumerPriceIndex),
+                BindingFlags.Instance | BindingFlags.NonPublic,
+                null,
+                new object[] {
+                    105M,
+                    nameof(ConsumerPriceIndex),
+                    new YearlyPeriod(DateTime.Now.AddYears(-3), DateTime.Now.AddYears(-2)),
+                    _identityFactory.Object },
+                null) as ConsumerPriceIndex;
             _existingRes = Activator.CreateInstance(
                 typeof(RenewableEnergySourceTariff),
                 BindingFlags.Instance | BindingFlags.NonPublic,
@@ -54,11 +63,16 @@ namespace Acme.Seps.Domain.Parameter.Test.Unit.Entity
 
         public void CpiPeriodMustFollowResPeriod()
         {
-            var resConsumerPriceIndex = new ConsumerPriceIndex(
-                100M,
+            var resConsumerPriceIndex = (ConsumerPriceIndex)Activator.CreateInstance(
+                typeof(ConsumerPriceIndex),
+                BindingFlags.Instance | BindingFlags.NonPublic,
+                null,
+                new object[] {
+                    100M,
                 nameof(ConsumerPriceIndex),
                 new YearlyPeriod(DateTime.Now.AddYears(-3), DateTime.Now.AddYears(-2)),
-                _identityFactory.Object);
+                    _identityFactory.Object },
+                null);
             var falseRes = Activator.CreateInstance(
                 typeof(RenewableEnergySourceTariff),
                 BindingFlags.Instance | BindingFlags.NonPublic,

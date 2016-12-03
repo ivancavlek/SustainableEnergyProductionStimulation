@@ -61,15 +61,6 @@ namespace Acme.Seps.Domain.Parameter.Infrastructure {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Automatic entry.
-        /// </summary>
-        public static string AutomaticEntry {
-            get {
-                return ResourceManager.GetString("AutomaticEntry", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Lower production limit must be zero or above..
         /// </summary>
         public static string BelowZeroLowerProductionLimitException {
@@ -97,11 +88,11 @@ namespace Acme.Seps.Domain.Parameter.Infrastructure {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to CHP date must be between {0:d} and {1:d}..
+        ///   Looks up a localized string similar to Cogeneration Parameter Service must be set..
         /// </summary>
-        public static string ChpDateException {
+        public static string CogenerationParameterServiceException {
             get {
-                return ResourceManager.GetString("ChpDateException", resourceCulture);
+                return ResourceManager.GetString("CogenerationParameterServiceException", resourceCulture);
             }
         }
         
@@ -142,15 +133,6 @@ namespace Acme.Seps.Domain.Parameter.Infrastructure {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Monthly average electric energy production for yearly calculation must be set..
-        /// </summary>
-        public static string MaepForYearlyCalculationNotSetException {
-            get {
-                return ResourceManager.GetString("MaepForYearlyCalculationNotSetException", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to 1.
         /// </summary>
         public static string MaepPriceFor2006 {
@@ -165,15 +147,6 @@ namespace Acme.Seps.Domain.Parameter.Infrastructure {
         public static string MonthlyParameterException {
             get {
                 return ResourceManager.GetString("MonthlyParameterException", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Natural gas date must be between {0:d} and {1:d}..
-        /// </summary>
-        public static string NaturalGasDateException {
-            get {
-                return ResourceManager.GetString("NaturalGasDateException", resourceCulture);
             }
         }
         
@@ -205,15 +178,6 @@ namespace Acme.Seps.Domain.Parameter.Infrastructure {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Valid till date must be set..
-        /// </summary>
-        public static string PeriodValidTillNotSetException {
-            get {
-                return ResourceManager.GetString("PeriodValidTillNotSetException", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Remark must be set..
         /// </summary>
         public static string RemarkNotSetException {
@@ -232,38 +196,20 @@ namespace Acme.Seps.Domain.Parameter.Infrastructure {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Renewable energy source initial year must be set..
-        /// </summary>
-        public static string ResInitialYearException {
-            get {
-                return ResourceManager.GetString("ResInitialYearException", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Yearly average electric energy production price date must be between {0} and {1}..
-        /// </summary>
-        public static string YaepDateException {
-            get {
-                return ResourceManager.GetString("YaepDateException", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Yearly average electric energy production price must be set..
-        /// </summary>
-        public static string YaepNotSetException {
-            get {
-                return ResourceManager.GetString("YaepNotSetException", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Year must be set properly..
         /// </summary>
         public static string YearlyParameterException {
             get {
                 return ResourceManager.GetString("YearlyParameterException", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Years&apos; Natural Gas Selling Prices must be set..
+        /// </summary>
+        public static string YearsNaturalGasSellingPricesException {
+            get {
+                return ResourceManager.GetString("YearsNaturalGasSellingPricesException", resourceCulture);
             }
         }
     }

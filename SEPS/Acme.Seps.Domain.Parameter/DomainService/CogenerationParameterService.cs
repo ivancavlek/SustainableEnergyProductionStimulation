@@ -1,14 +1,22 @@
-﻿namespace Acme.Seps.Domain.Parameter.DomainService
+﻿using Acme.Seps.Domain.Parameter.Entity;
+using System.Collections.Generic;
+using System.Linq;
+
+namespace Acme.Seps.Domain.Parameter.DomainService
 {
-    public class CogenerationParameterService : ICogenerationParameterService
+    public sealed class CogenerationParameterService : ICogenerationParameterService
     {
         private const decimal _factor = 0.25M;
 
         decimal ICogenerationParameterService.GetFrom(
-            decimal yaepAmount, decimal naturalGasSellingPriceAmount) =>
-            GetYaepRate(yaepAmount, decimal.Parse(Infrastructure.Parameter.MaepPriceFor2006)) +
-                GetNaturalGasSellingPriceRate(
-                    naturalGasSellingPriceAmount, decimal.Parse(Infrastructure.Parameter.LastQuarterGasPriceFor2006));
+            IEnumerable<NaturalGasSellingPrice> yearsNaturalGasSellingPrices,
+            NaturalGasSellingPrice naturalGasSellingPrice) =>
+            GetYaepRate(
+                yearsNaturalGasSellingPrices.Sum(y => y.Amount),
+                decimal.Parse(Infrastructure.Parameter.MaepPriceFor2006)) +
+            GetNaturalGasSellingPriceRate(
+                naturalGasSellingPrice.Amount,
+                decimal.Parse(Infrastructure.Parameter.LastQuarterGasPriceFor2006));
 
         private static decimal GetYaepRate(decimal yaepAmount, decimal maepPriceFor2006) =>
             _factor * (yaepAmount / maepPriceFor2006);

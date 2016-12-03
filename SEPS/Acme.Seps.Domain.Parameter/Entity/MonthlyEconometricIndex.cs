@@ -33,6 +33,6 @@ namespace Acme.Seps.Domain.Parameter.Entity
         }
 
         public abstract MonthlyEconometricIndex CreateNew(
-            decimal amount, string remark, DateTime validTill, IIdentityFactory<Guid> identityFactory);
+            decimal amount, string remark, int month, int year, IIdentityFactory<Guid> identityFactory);
     }
 }

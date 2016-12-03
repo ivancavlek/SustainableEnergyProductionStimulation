@@ -18,9 +18,9 @@ namespace Acme.Seps.Domain.Parameter.Entity
             : base(amount, 4, remark, lastMonthlyPeriod, guidIdentityFactory) { }
 
         public override MonthlyEconometricIndex CreateNew(
-            decimal amount, string remark, DateTime validTill, IIdentityFactory<Guid> identityFactory)
+            decimal amount, string remark, int month, int year, IIdentityFactory<Guid> identityFactory)
         {
-            SetExpirationDateTo(validTill);
+            SetExpirationDateTo(new DateTime(year, month, 1));
 
             return new MonthlyAverageElectricEnergyProductionPrice(
                 amount, remark, (MonthlyPeriod)Period, identityFactory);

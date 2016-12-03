@@ -8,7 +8,7 @@ using System.Linq;
 
 namespace Acme.Seps.Domain.Parameter.ApplicationService
 {
-    public class ConsumerPriceIndexService
+    public sealed class ConsumerPriceIndexService
         : IEconometricIndexService<ConsumerPriceIndex, YearlyEconometricIndexDto>
     {
         private readonly ITariffRepository _tariffRepository;

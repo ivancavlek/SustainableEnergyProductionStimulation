@@ -77,12 +77,11 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="ApplicationService\ConsumerPriceIndexService.cs" />
+    <Compile Include="ApplicationService\NaturalGasSellingPriceService.cs" />
     <Compile Include="ApplicationService\IEconometricIndexService.cs" />
     <Compile Include="DataTransferObject\YearlyEconometricIndexDto.cs" />
     <Compile Include="DataTransferObject\MonthlyEconometricIndexDto.cs" />
     <Compile Include="DomainService\CogenerationParameterService.cs" />
-    <Compile Include="DomainService\CogenerationNewPeriodService.cs" />
-    <Compile Include="DomainService\ICogenerationNewPeriodService.cs" />
     <Compile Include="DomainService\ICogenerationParameterService.cs" />
     <Compile Include="Entity\CogenerationTariff.cs" />
     <Compile Include="Entity\ConsumerPriceIndex.cs" />
@@ -99,6 +98,7 @@
       <DependentUpon>Parameter.resx</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Repository\INaturalGasSellingPriceRepository.cs" />
     <Compile Include="Repository\ITariffRepository.cs" />
     <Compile Include="Repository\IEconometricIndexRepository.cs" />
   </ItemGroup>

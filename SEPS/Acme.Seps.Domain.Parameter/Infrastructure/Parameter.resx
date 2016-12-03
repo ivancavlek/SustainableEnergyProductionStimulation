@@ -123,9 +123,6 @@
   <data name="NaturalGasSellingPriceNotSetException" xml:space="preserve">
     <value>Natural gas selling price must be set.</value>
   </data>
-  <data name="YaepNotSetException" xml:space="preserve">
-    <value>Yearly average electric energy production price must be set.</value>
-  </data>
   <data name="ConsumerPriceIndexNotSetException" xml:space="preserve">
     <value>Consumer price index must be set.</value>
   </data>
@@ -138,32 +135,14 @@
   <data name="YearlyParameterException" xml:space="preserve">
     <value>Year must be set properly.</value>
   </data>
-  <data name="ChpDateException" xml:space="preserve">
-    <value>CHP date must be between {0:d} and {1:d}.</value>
-  </data>
   <data name="BelowZeroLowerProductionLimitException" xml:space="preserve">
     <value>Lower production limit must be zero or above.</value>
-  </data>
-  <data name="NaturalGasDateException" xml:space="preserve">
-    <value>Natural gas date must be between {0:d} and {1:d}.</value>
-  </data>
-  <data name="YaepDateException" xml:space="preserve">
-    <value>Yearly average electric energy production price date must be between {0} and {1}.</value>
-  </data>
-  <data name="ResInitialYearException" xml:space="preserve">
-    <value>Renewable energy source initial year must be set.</value>
   </data>
   <data name="BelowZeroLowerRateException" xml:space="preserve">
     <value>Lower rate must be zero or above.</value>
   </data>
   <data name="BelowZeroUpperRateException" xml:space="preserve">
     <value>Upper rate must be zero or above.</value>
-  </data>
-  <data name="MaepForYearlyCalculationNotSetException" xml:space="preserve">
-    <value>Monthly average electric energy production for yearly calculation must be set.</value>
-  </data>
-  <data name="AutomaticEntry" xml:space="preserve">
-    <value>Automatic entry</value>
   </data>
   <data name="InitialPeriod" xml:space="preserve">
     <value>2007-07-01</value>
@@ -177,13 +156,16 @@
   <data name="RenewableEnergySourceTariffPeriodException" xml:space="preserve">
     <value>Renewable energy source tariff period must be in sequence.</value>
   </data>
-  <data name="PeriodValidTillNotSetException" xml:space="preserve">
-    <value>Valid till date must be set.</value>
-  </data>
   <data name="LastQuarterGasPriceFor2006" xml:space="preserve">
     <value>1</value>
   </data>
   <data name="MaepPriceFor2006" xml:space="preserve">
     <value>1</value>
+  </data>
+  <data name="YearsNaturalGasSellingPricesException" xml:space="preserve">
+    <value>Years' Natural Gas Selling Prices must be set.</value>
+  </data>
+  <data name="CogenerationParameterServiceException" xml:space="preserve">
+    <value>Cogeneration Parameter Service must be set.</value>
   </data>
 </root>

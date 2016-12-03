@@ -37,7 +37,8 @@ namespace Acme.Seps.Domain.Parameter.Test.Unit.Entity
         {
             var validTill = DateTime.Now.AddMonths(-5);
 
-            var result = _existingMaep.CreateNew(_amount, _remark, validTill, _identityFactory.Object);
+            var result = _existingMaep.CreateNew(
+                _amount, _remark, validTill.Month, validTill.Year, _identityFactory.Object);
 
             result.Amount.Should().Be(Math.Round(_amount, 4, MidpointRounding.AwayFromZero));
         }

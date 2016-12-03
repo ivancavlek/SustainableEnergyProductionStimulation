@@ -46,7 +46,6 @@
   </Choose>
   <ItemGroup>
     <Compile Include="ApplicationService\ConsumerPriceIndexServiceTests.cs" />
-    <Compile Include="DomainService\CogenerationNewPeriodServiceTests.cs" />
     <Compile Include="DomainService\CogenerationParameterServiceTests.cs" />
     <Compile Include="Entity\ConsumerPriceIndexTests.cs" />
     <Compile Include="Entity\RenewableEnergySourceTariffTests.cs" />

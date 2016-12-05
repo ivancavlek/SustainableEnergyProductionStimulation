@@ -4,14 +4,13 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{451534FF-C6FB-4428-86C4-3827920ED96A}</ProjectGuid>
+    <ProjectGuid>{EFBF29E9-FF71-42AE-8DC8-3B10F08584E1}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Acme.Seps.Domain.Base</RootNamespace>
-    <AssemblyName>Acme.Seps.Domain.Base</AssemblyName>
+    <RootNamespace>Acme.Seps.Repository.Write.EntityFramework</RootNamespace>
+    <AssemblyName>Acme.Seps.Repository.Write.EntityFramework</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -21,7 +20,6 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <CodeAnalysisRuleSet>Acme.Seps.Domain.Base.ruleset</CodeAnalysisRuleSet>
     <RunCodeAnalysis>true</RunCodeAnalysis>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
@@ -31,40 +29,9 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <CodeAnalysisRuleSet>Acme.Seps.Domain.Base.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="Entity\SepsBaseEntity.cs" />
-    <Compile Include="Factory\ISepsDateTimeFactory.cs" />
-    <Compile Include="Factory\SepsDateTimeFactory.cs" />
-    <Compile Include="Factory\SystemTime.cs" />
-    <Compile Include="Infrastructure\Base.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Base.resx</DependentUpon>
-    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ApplicationService\SepsBaseService.cs" />
-    <Compile Include="ValueType\MonthlyPeriod.cs" />
-    <Compile Include="ValueType\YearlyPeriod.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Acme.Seps.Domain.Base.ruleset" />
-  </ItemGroup>
-  <ItemGroup>
-    <Reference Include="System" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Acme.Domain.Base\Acme.Domain.Base.csproj">
-      <Project>{8B0FBA91-2F4B-4ADB-949F-D722BCF48F34}</Project>
-      <Name>Acme.Domain.Base</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Infrastructure\Base.resx">
-      <Generator>PublicResXFileCodeGenerator</Generator>
-      <LastGenOutput>Base.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -1,15 +1,18 @@
-﻿using Acme.Domain.Base.Factory;
+﻿using Acme.Domain.Base.Entity;
+using Acme.Domain.Base.Factory;
 using Acme.Domain.Base.Repository;
+using Acme.Seps.Domain.Base.ApplicationService;
 using Acme.Seps.Domain.Parameter.DataTransferObject;
 using Acme.Seps.Domain.Parameter.Entity;
 using Acme.Seps.Domain.Parameter.Repository;
+using Humanizer;
 using System;
 using System.Linq;
 
 namespace Acme.Seps.Domain.Parameter.ApplicationService
 {
     public sealed class ConsumerPriceIndexService
-        : IEconometricIndexService<ConsumerPriceIndex, YearlyEconometricIndexDto>
+        : SepsBaseService, IEconometricIndexService<ConsumerPriceIndex, YearlyEconometricIndexDto>
     {
         private readonly ITariffRepository _tariffRepository;
         private readonly IEconometricIndexRepository _consumerPriceIndexRepository;
@@ -45,10 +48,35 @@ namespace Acme.Seps.Domain.Parameter.ApplicationService
 
             var newCpi = activeCpi.CreateNew(
                 econometricIndexDto.Amount, econometricIndexDto.Remark, _identityFactory) as ConsumerPriceIndex;
-            activeResTariffs.ToList().ForEach(art => _unitOfWork.Insert(art.CreateNewWith(newCpi, _identityFactory)));
+
+            Log(new EntityExecutionLoggingEventArgs
+            {
+                Message = string.Format(
+                    Infrastructure.Parameter.InsertParameterLog,
+                    nameof(ConsumerPriceIndex).Humanize(LetterCasing.LowerCase),
+                    newCpi.Period,
+                    newCpi.Amount)
+            });
+
+            activeResTariffs.ToList().ForEach(art =>
+            {
+                _unitOfWork.Insert(art.CreateNewWith(newCpi, _identityFactory));
+
+                Log(new EntityExecutionLoggingEventArgs
+                {
+                    Message = string.Format(
+                    Infrastructure.Parameter.InsertTariffLog,
+                    nameof(RenewableEnergySourceTariff).Humanize(LetterCasing.LowerCase),
+                    art.Period,
+                    art.LowerRate,
+                    art.HigherRate)
+                });
+            });
 
             _unitOfWork.Insert(newCpi);
             _unitOfWork.Commit();
+
+            Log(new EntityExecutionLoggingEventArgs { Message = Infrastructure.Parameter.SuccessfulSave });
         }
 
         void IEconometricIndexService<ConsumerPriceIndex, YearlyEconometricIndexDto>.UpdateLastEntry(
@@ -59,15 +87,37 @@ namespace Acme.Seps.Domain.Parameter.ApplicationService
 
             var newCpi = activeCpi.CreateNew(
                 econometricIndexDto.Amount, econometricIndexDto.Remark, _identityFactory) as ConsumerPriceIndex;
+
+            Log(new EntityExecutionLoggingEventArgs
+            {
+                Message = string.Format(
+                    Infrastructure.Parameter.UpdateParameterLog,
+                    nameof(ConsumerPriceIndex).Humanize(LetterCasing.LowerCase),
+                    newCpi.Period,
+                    newCpi.Amount)
+            });
+
             activeResTariffs.ToList().ForEach(art =>
             {
                 _unitOfWork.Insert(art.CreateNewWith(newCpi, _identityFactory));
                 _unitOfWork.Delete(art);
+
+                Log(new EntityExecutionLoggingEventArgs
+                {
+                    Message = string.Format(
+                    Infrastructure.Parameter.UpdateTariffLog,
+                    nameof(RenewableEnergySourceTariff).Humanize(LetterCasing.LowerCase),
+                    art.Period,
+                    art.LowerRate,
+                    art.HigherRate)
+                });
             });
 
             _unitOfWork.Insert(newCpi);
             _unitOfWork.Delete(activeCpi);
             _unitOfWork.Commit();
+
+            Log(new EntityExecutionLoggingEventArgs { Message = Infrastructure.Parameter.SuccessfulSave });
         }
     }
 }

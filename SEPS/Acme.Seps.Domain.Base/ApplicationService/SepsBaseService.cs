@@ -7,7 +7,7 @@ namespace Acme.Seps.Domain.Base.ApplicationService
     {
         public event EventHandler<EntityExecutionLoggingEventArgs> UseCaseExecutionProcessing = delegate { };
 
-        protected void Log(EntityExecutionLoggingEventArgs useCaseExecutionProcessingLog) =>
+        public void Log(EntityExecutionLoggingEventArgs useCaseExecutionProcessingLog) =>
             UseCaseExecutionProcessing(this, useCaseExecutionProcessingLog);
     }
 }

@@ -168,4 +168,19 @@
   <data name="CogenerationParameterServiceException" xml:space="preserve">
     <value>Cogeneration Parameter Service must be set.</value>
   </data>
+  <data name="InsertParameterLog" xml:space="preserve">
+    <value>Created {0} for period {1} with amount {2:C}.</value>
+  </data>
+  <data name="SuccessfulSave" xml:space="preserve">
+    <value>Successful save of entities to database.</value>
+  </data>
+  <data name="UpdateParameterLog" xml:space="preserve">
+    <value>Updated {0} for period {1} with amount {2:C}.</value>
+  </data>
+  <data name="UpdateTariffLog" xml:space="preserve">
+    <value>Updated {0} for period {1} with amounts {2:C}/{2:C}.</value>
+  </data>
+  <data name="InsertTariffLog" xml:space="preserve">
+    <value>Created {0} for period {1} with amounts {2:C}/{2:C}.</value>
+  </data>
 </root>

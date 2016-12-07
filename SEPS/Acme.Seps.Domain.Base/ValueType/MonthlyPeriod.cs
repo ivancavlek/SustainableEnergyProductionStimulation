@@ -5,7 +5,9 @@ namespace Acme.Seps.Domain.Base.ValueType
 {
     public class MonthlyPeriod : Period
     {
-        protected MonthlyPeriod() { }
+        protected MonthlyPeriod()
+        {
+        }
 
         public MonthlyPeriod(DateTimeOffset dateFrom, DateTimeOffset? dateTill = null)
             : base(dateFrom.AddDays(1 - dateFrom.Day).Date,
@@ -14,5 +16,8 @@ namespace Acme.Seps.Domain.Base.ValueType
 
         public override Period SetValidTill(DateTimeOffset validTill) =>
             new MonthlyPeriod(ValidFrom, validTill);
+
+        public override string ToString() =>
+            ValidTill.HasValue ? $"{ValidFrom:MM.yyyy.} - {ValidTill.Value:MM.yyyy.}" : $"{ValidFrom:MM.yyyy.} - ";
     }
 }

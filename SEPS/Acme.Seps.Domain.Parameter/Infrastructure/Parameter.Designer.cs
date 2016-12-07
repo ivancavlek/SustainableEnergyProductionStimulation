@@ -115,6 +115,24 @@ namespace Acme.Seps.Domain.Parameter.Infrastructure {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Created {0} for period {1} with amount {2:C}..
+        /// </summary>
+        public static string InsertParameterLog {
+            get {
+                return ResourceManager.GetString("InsertParameterLog", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Created {0} for period {1} with amounts {2:C}/{2:C}..
+        /// </summary>
+        public static string InsertTariffLog {
+            get {
+                return ResourceManager.GetString("InsertTariffLog", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to 1.
         /// </summary>
         public static string LastQuarterGasPriceFor2006 {
@@ -192,6 +210,33 @@ namespace Acme.Seps.Domain.Parameter.Infrastructure {
         public static string RenewableEnergySourceTariffPeriodException {
             get {
                 return ResourceManager.GetString("RenewableEnergySourceTariffPeriodException", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Successful save of entities to database..
+        /// </summary>
+        public static string SuccessfulSave {
+            get {
+                return ResourceManager.GetString("SuccessfulSave", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Updated {0} for period {1} with amount {2:C}..
+        /// </summary>
+        public static string UpdateParameterLog {
+            get {
+                return ResourceManager.GetString("UpdateParameterLog", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Updated {0} for period {1} with amounts {2:C}/{2:C}..
+        /// </summary>
+        public static string UpdateTariffLog {
+            get {
+                return ResourceManager.GetString("UpdateTariffLog", resourceCulture);
             }
         }
         

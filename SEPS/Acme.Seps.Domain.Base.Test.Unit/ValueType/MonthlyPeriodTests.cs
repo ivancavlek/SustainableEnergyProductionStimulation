@@ -34,5 +34,21 @@ namespace Acme.Seps.Domain.Base.Test.Unit.ValueType
             newMonthlyPeriod.ValidFrom.Should().Be(new DateTime(2016, 11, 1));
             newMonthlyPeriod.ValidTill.Should().Be(new DateTime(2016, 12, 1));
         }
+
+        public void StringRepresentationShowsCorrectPeriodWhenvalidTillIsNotSet()
+        {
+            var monthlyPeriod = new MonthlyPeriod(new DateTime(2016, 11, 15, 21, 4, 11));
+
+            monthlyPeriod.ToString().Should().Be($"{monthlyPeriod.ValidFrom:MM.yyyy.} - ");
+        }
+
+        public void StringRepresentationShowsCorrectPeriodWhenvalidTillIsSet()
+        {
+            var monthlyPeriod = new MonthlyPeriod(
+                new DateTime(2016, 11, 15, 21, 4, 11), new DateTime(2016, 12, 15, 21, 4, 11));
+
+            monthlyPeriod.ToString().Should().Be(
+                $"{monthlyPeriod.ValidFrom:MM.yyyy.} - {monthlyPeriod.ValidTill.Value:MM.yyyy.}");
+        }
     }
 }

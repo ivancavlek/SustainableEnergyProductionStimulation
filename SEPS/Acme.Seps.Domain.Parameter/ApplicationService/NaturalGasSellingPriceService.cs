@@ -1,15 +1,19 @@
-﻿using Acme.Domain.Base.Factory;
+﻿using Acme.Domain.Base.Entity;
+using Acme.Domain.Base.Factory;
 using Acme.Domain.Base.Repository;
+using Acme.Seps.Domain.Base.ApplicationService;
 using Acme.Seps.Domain.Parameter.DataTransferObject;
 using Acme.Seps.Domain.Parameter.DomainService;
 using Acme.Seps.Domain.Parameter.Entity;
 using Acme.Seps.Domain.Parameter.Repository;
+using Humanizer;
 using System;
 using System.Linq;
 
 namespace Acme.Seps.Domain.Parameter.ApplicationService
 {
     public sealed class NaturalGasSellingPriceService :
+        SepsBaseService,
         IEconometricIndexService<NaturalGasSellingPrice, MonthlyEconometricIndexDto>
     {
         private readonly ICogenerationParameterService _cogenerationParameterService;
@@ -61,12 +65,35 @@ namespace Acme.Seps.Domain.Parameter.ApplicationService
                 econometricIndexDto.Month,
                 econometricIndexDto.Year,
                 _identityFactory) as NaturalGasSellingPrice;
+
+            Log(new EntityExecutionLoggingEventArgs
+            {
+                Message = string.Format(
+                    Infrastructure.Parameter.InsertParameterLog,
+                    nameof(NaturalGasSellingPrice).Humanize(LetterCasing.LowerCase),
+                    newNaturalGasSellingPrice.Period,
+                    newNaturalGasSellingPrice.Amount)
+            });
+
             activeCogenerationTariffs.ToList()
-                .ForEach(act => _unitOfWork.Insert(act.CreateNewWith(
-                    yearsNaturalGasSellingPrices,
-                    _cogenerationParameterService,
-                    newNaturalGasSellingPrice,
-                    _identityFactory)));
+                .ForEach(act =>
+                {
+                    _unitOfWork.Insert(act.CreateNewWith(
+                         yearsNaturalGasSellingPrices,
+                         _cogenerationParameterService,
+                         newNaturalGasSellingPrice,
+                         _identityFactory));
+
+                    Log(new EntityExecutionLoggingEventArgs
+                    {
+                        Message = string.Format(
+                        Infrastructure.Parameter.InsertTariffLog,
+                        nameof(CogenerationTariff).Humanize(LetterCasing.LowerCase),
+                        act.Period,
+                        act.LowerRate,
+                        act.HigherRate)
+                    });
+                });
 
             _unitOfWork.Insert(newNaturalGasSellingPrice);
             _unitOfWork.Commit();
@@ -85,6 +112,16 @@ namespace Acme.Seps.Domain.Parameter.ApplicationService
                 econometricIndexDto.Month,
                 econometricIndexDto.Year,
                 _identityFactory) as NaturalGasSellingPrice;
+
+            Log(new EntityExecutionLoggingEventArgs
+            {
+                Message = string.Format(
+                    Infrastructure.Parameter.UpdateParameterLog,
+                    nameof(NaturalGasSellingPrice).Humanize(LetterCasing.LowerCase),
+                    newNaturalGasSellingPrice.Period,
+                    newNaturalGasSellingPrice.Amount)
+            });
+
             activeCogenerationTariffs.ToList().ForEach(act =>
             {
                 _unitOfWork.Insert(act.CreateNewWith(
@@ -93,6 +130,16 @@ namespace Acme.Seps.Domain.Parameter.ApplicationService
                     newNaturalGasSellingPrice,
                     _identityFactory));
                 _unitOfWork.Delete(act);
+
+                Log(new EntityExecutionLoggingEventArgs
+                {
+                    Message = string.Format(
+                    Infrastructure.Parameter.UpdateTariffLog,
+                    nameof(CogenerationTariff).Humanize(LetterCasing.LowerCase),
+                    act.Period,
+                    act.LowerRate,
+                    act.HigherRate)
+                });
             });
 
             _unitOfWork.Insert(newNaturalGasSellingPrice);

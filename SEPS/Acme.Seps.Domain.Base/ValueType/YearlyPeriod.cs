@@ -5,7 +5,9 @@ namespace Acme.Seps.Domain.Base.ValueType
 {
     public class YearlyPeriod : Period
     {
-        protected YearlyPeriod() { }
+        protected YearlyPeriod()
+        {
+        }
 
         public YearlyPeriod(DateTimeOffset dateFrom, DateTimeOffset? dateTill = null)
             : base(dateFrom.AddMonths(1 - dateFrom.Month).AddDays(1 - dateFrom.Day).Date,
@@ -14,5 +16,8 @@ namespace Acme.Seps.Domain.Base.ValueType
 
         public override Period SetValidTill(DateTimeOffset validTill) =>
             new YearlyPeriod(ValidFrom, validTill);
+
+        public override string ToString() =>
+            $"{ValidFrom:yyyy}";
     }
 }

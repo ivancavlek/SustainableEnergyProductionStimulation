@@ -34,5 +34,13 @@ namespace Acme.Seps.Domain.Base.Test.Unit.ValueType
             newYearlyPeriod.ValidFrom.Should().Be(new DateTime(2016, 1, 1));
             newYearlyPeriod.ValidTill.Should().Be(new DateTime(2017, 1, 1));
         }
+
+        public void StringRepresentationShowsCorrectPeriod()
+        {
+            var yearlyPeriod = new YearlyPeriod(
+                new DateTime(2016, 11, 15, 21, 4, 11), new DateTime(2017, 12, 15, 21, 4, 11));
+
+            yearlyPeriod.ToString().Should().Be($"{yearlyPeriod.ValidFrom:yyyy}");
+        }
     }
 }

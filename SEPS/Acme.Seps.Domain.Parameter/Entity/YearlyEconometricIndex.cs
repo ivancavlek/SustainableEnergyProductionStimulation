@@ -27,7 +27,7 @@ namespace Acme.Seps.Domain.Parameter.Entity
                   identityFactory)
         {
             if (!Period.ValidTill.HasValue ||
-                Period.ValidFrom.Year < DateTime.Parse(Infrastructure.Parameter.InitialPeriod).Year ||
+                Period.ValidFrom.Year < InitialPeriod.Year ||
                 SystemTime.CurrentYear().Year <= Period.ValidTill.Value.Year)
                 throw new DomainException(Infrastructure.Parameter.YearlyParameterException);
         }

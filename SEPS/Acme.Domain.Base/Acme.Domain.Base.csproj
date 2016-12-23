@@ -34,6 +34,9 @@
     <CodeAnalysisRuleSet>Acme.Seps.Domain.Base.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Command\BaseCommand.cs" />
+    <Compile Include="CommandHandler\CommandHandlerDecorator.cs" />
+    <Compile Include="CommandHandler\ICommandHandler.cs" />
     <Compile Include="Entity\EntityExecutionLoggingEventArgs.cs" />
     <Compile Include="Factory\IMapperFactory.cs" />
     <Compile Include="Entity\BaseEntity.cs" />

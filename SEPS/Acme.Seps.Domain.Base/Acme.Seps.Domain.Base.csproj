@@ -35,6 +35,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="ApplicationService\ISepsLogService.cs" />
+    <Compile Include="CommandHandler\BaseCommandHandler.cs" />
     <Compile Include="Entity\SepsBaseEntity.cs" />
     <Compile Include="Factory\ISepsDateTimeFactory.cs" />
     <Compile Include="Factory\SepsDateTimeFactory.cs" />

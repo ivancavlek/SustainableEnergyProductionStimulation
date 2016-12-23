@@ -70,6 +70,15 @@ namespace Acme.Seps.Domain.Base.Infrastructure {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Successful save of entities to database..
+        /// </summary>
+        public static string SuccessfulSave {
+            get {
+                return ResourceManager.GetString("SuccessfulSave", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Econometric index cannot be set to time value.
         /// </summary>
         public static string TimeOfDayPeriodNotAllowedException {

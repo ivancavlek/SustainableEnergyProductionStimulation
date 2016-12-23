@@ -80,6 +80,17 @@
     <Compile Include="ApplicationService\ConsumerPriceIndexService.cs" />
     <Compile Include="ApplicationService\NaturalGasSellingPriceService.cs" />
     <Compile Include="ApplicationService\IEconometricIndexService.cs" />
+    <Compile Include="CommandHandler\CalculateCpiCommandHandler.cs" />
+    <Compile Include="CommandHandler\CorrectActiveCpiCommandHandler.cs" />
+    <Compile Include="CommandHandler\CalculateNaturalGasCommandHandler.cs" />
+    <Compile Include="CommandHandler\CorrectActiveNaturalGasCommandHandler.cs" />
+    <Compile Include="CommandValidation\CorrectActiveNaturalGasCommandValidator.cs" />
+    <Compile Include="CommandValidation\CorrectActiveCpiCommandValidator.cs" />
+    <Compile Include="CommandValidation\CalculateNaturalGasCommandValidator.cs" />
+    <Compile Include="Command\CalculateCpiCommand.cs" />
+    <Compile Include="Command\CorrectActiveNaturalGasCommand.cs" />
+    <Compile Include="Command\CorrectActiveCpiCommand.cs" />
+    <Compile Include="Command\CalculateNaturalGasCommand.cs" />
     <Compile Include="DataTransferObject\YearlyEconometricIndexDto.cs" />
     <Compile Include="DataTransferObject\MonthlyEconometricIndexDto.cs" />
     <Compile Include="DomainService\CogenerationParameterService.cs" />
@@ -102,12 +113,17 @@
     <Compile Include="Repository\INaturalGasSellingPriceRepository.cs" />
     <Compile Include="Repository\ITariffRepository.cs" />
     <Compile Include="Repository\IEconometricIndexRepository.cs" />
+    <Compile Include="CommandValidation\CalculateCpiCommandValidator.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Acme.Seps.Domain.Parameters.ruleset" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <Reference Include="FluentValidation, Version=6.2.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\FluentValidation.6.2.1.0\lib\Net45\FluentValidation.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Humanizer, Version=2.1.0.0, Culture=neutral, PublicKeyToken=979442b78dfc278e, processorArchitecture=MSIL">
       <HintPath>..\packages\Humanizer.Core.2.1.0\lib\netstandard1.0\Humanizer.dll</HintPath>
       <Private>True</Private>
@@ -130,7 +146,9 @@
       <LastGenOutput>Parameter.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Handler\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

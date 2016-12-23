@@ -106,15 +106,6 @@ namespace Acme.Seps.Domain.Parameter.Infrastructure {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 2007-07-01.
-        /// </summary>
-        public static string InitialPeriod {
-            get {
-                return ResourceManager.GetString("InitialPeriod", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Created {0} for period {1} with amount {2:C}..
         /// </summary>
         public static string InsertParameterLog {
@@ -133,29 +124,11 @@ namespace Acme.Seps.Domain.Parameter.Infrastructure {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 1.
-        /// </summary>
-        public static string LastQuarterGasPriceFor2006 {
-            get {
-                return ResourceManager.GetString("LastQuarterGasPriceFor2006", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Upper rate must be higher than lower rate..
         /// </summary>
         public static string LowerRateAboveUpperException {
             get {
                 return ResourceManager.GetString("LowerRateAboveUpperException", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to 1.
-        /// </summary>
-        public static string MaepPriceFor2006 {
-            get {
-                return ResourceManager.GetString("MaepPriceFor2006", resourceCulture);
             }
         }
         
@@ -210,15 +183,6 @@ namespace Acme.Seps.Domain.Parameter.Infrastructure {
         public static string RenewableEnergySourceTariffPeriodException {
             get {
                 return ResourceManager.GetString("RenewableEnergySourceTariffPeriodException", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Successful save of entities to database..
-        /// </summary>
-        public static string SuccessfulSave {
-            get {
-                return ResourceManager.GetString("SuccessfulSave", resourceCulture);
             }
         }
         

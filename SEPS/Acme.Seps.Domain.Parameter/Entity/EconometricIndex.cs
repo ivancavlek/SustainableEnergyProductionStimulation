@@ -10,6 +10,7 @@ namespace Acme.Seps.Domain.Parameter.Entity
     {
         public decimal Amount { get; }
         public string Remark { get; }
+        public DateTime InitialPeriod { get { return new DateTime(2007, 07, 01); } }
 
         protected EconometricIndex()
         {

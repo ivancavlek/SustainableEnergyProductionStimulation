@@ -46,6 +46,11 @@
   </Choose>
   <ItemGroup>
     <Compile Include="ApplicationService\ConsumerPriceIndexServiceTests.cs" />
+    <Compile Include="ApplicationService\NaturalGasSellingPriceServiceTests.cs" />
+    <Compile Include="CommandHandler\CalculateCpiCommandHandlerTests.cs" />
+    <Compile Include="CommandHandler\CalculateNaturalGasCommandHandlerTests.cs" />
+    <Compile Include="CommandHandler\CorrectActiveNaturalGasCommandHandlerTests.cs" />
+    <Compile Include="CommandHandler\CorrectActiveCpiCommandHandlerTests.cs" />
     <Compile Include="DomainService\CogenerationParameterServiceTests.cs" />
     <Compile Include="Entity\ConsumerPriceIndexTests.cs" />
     <Compile Include="Entity\RenewableEnergySourceTariffTests.cs" />

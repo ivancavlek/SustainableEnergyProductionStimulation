@@ -7,6 +7,7 @@ using Acme.Seps.Domain.Parameter.Entity;
 using Acme.Seps.Domain.Parameter.Repository;
 using Humanizer;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Acme.Seps.Domain.Parameter.ApplicationService
@@ -43,81 +44,101 @@ namespace Acme.Seps.Domain.Parameter.ApplicationService
         void IEconometricIndexService<ConsumerPriceIndex, YearlyEconometricIndexDto>.CalculateNewEntry(
             YearlyEconometricIndexDto econometricIndexDto)
         {
-            var activeCpi = _consumerPriceIndexRepository.GetActive<ConsumerPriceIndex>();
-            var activeResTariffs = _tariffRepository.GetActive<RenewableEnergySourceTariff>();
+            var newCpi = GetNewCpi(econometricIndexDto);
 
-            var newCpi = activeCpi.CreateNew(
-                econometricIndexDto.Amount, econometricIndexDto.Remark, _identityFactory) as ConsumerPriceIndex;
+            _unitOfWork.Insert(newCpi);
 
-            Log(new EntityExecutionLoggingEventArgs
-            {
-                Message = string.Format(
-                    Infrastructure.Parameter.InsertParameterLog,
-                    nameof(ConsumerPriceIndex).Humanize(LetterCasing.LowerCase),
-                    newCpi.Period,
-                    newCpi.Amount)
-            });
+            LogNewCpi(newCpi);
 
-            activeResTariffs.ToList().ForEach(art =>
+            GetActiveRes().ToList().ForEach(art =>
             {
                 _unitOfWork.Insert(art.CreateNewWith(newCpi, _identityFactory));
 
-                Log(new EntityExecutionLoggingEventArgs
-                {
-                    Message = string.Format(
-                    Infrastructure.Parameter.InsertTariffLog,
-                    nameof(RenewableEnergySourceTariff).Humanize(LetterCasing.LowerCase),
-                    art.Period,
-                    art.LowerRate,
-                    art.HigherRate)
-                });
+                LogNewResTariff(art);
             });
 
-            _unitOfWork.Insert(newCpi);
             _unitOfWork.Commit();
 
-            Log(new EntityExecutionLoggingEventArgs { Message = Infrastructure.Parameter.SuccessfulSave });
+            LogSuccessfulCommit();
         }
 
         void IEconometricIndexService<ConsumerPriceIndex, YearlyEconometricIndexDto>.UpdateLastEntry(
             YearlyEconometricIndexDto econometricIndexDto)
         {
-            var activeCpi = _consumerPriceIndexRepository.GetActive<ConsumerPriceIndex>();
-            var activeResTariffs = _tariffRepository.GetActive<RenewableEnergySourceTariff>();
-
+            var activeCpi = GetActiveCpi();
             var newCpi = activeCpi.CreateNew(
                 econometricIndexDto.Amount, econometricIndexDto.Remark, _identityFactory) as ConsumerPriceIndex;
 
+            _unitOfWork.Insert(newCpi);
+            _unitOfWork.Delete(activeCpi);
+
+            LogCpiUpdate(newCpi);
+
+            GetActiveRes().ToList().ForEach(art =>
+            {
+                var newRes = art.CreateNewWith(newCpi, _identityFactory);
+
+                _unitOfWork.Insert(newRes);
+                _unitOfWork.Delete(art);
+
+                LogResTariffUpdate(newRes);
+            });
+
+            _unitOfWork.Commit();
+
+            LogSuccessfulCommit();
+        }
+
+        private ConsumerPriceIndex GetNewCpi(YearlyEconometricIndexDto econometricIndexDto) =>
+            GetActiveCpi().CreateNew(
+                econometricIndexDto.Amount, econometricIndexDto.Remark, _identityFactory) as ConsumerPriceIndex;
+
+        private ConsumerPriceIndex GetActiveCpi() =>
+            _consumerPriceIndexRepository.GetActive<ConsumerPriceIndex>();
+
+        private IEnumerable<RenewableEnergySourceTariff> GetActiveRes() =>
+            _tariffRepository.GetActive<RenewableEnergySourceTariff>();
+
+        private void LogNewCpi(ConsumerPriceIndex cpi) =>
+            Log(new EntityExecutionLoggingEventArgs
+            {
+                Message = string.Format(
+                    Infrastructure.Parameter.InsertParameterLog,
+                    nameof(ConsumerPriceIndex).Humanize(LetterCasing.LowerCase),
+                    cpi.Period,
+                    cpi.Amount)
+            });
+
+        private void LogCpiUpdate(ConsumerPriceIndex cpi) =>
             Log(new EntityExecutionLoggingEventArgs
             {
                 Message = string.Format(
                     Infrastructure.Parameter.UpdateParameterLog,
                     nameof(ConsumerPriceIndex).Humanize(LetterCasing.LowerCase),
-                    newCpi.Period,
-                    newCpi.Amount)
+                    cpi.Period,
+                    cpi.Amount)
             });
 
-            activeResTariffs.ToList().ForEach(art =>
+        private void LogNewResTariff(RenewableEnergySourceTariff res) =>
+            Log(new EntityExecutionLoggingEventArgs
             {
-                _unitOfWork.Insert(art.CreateNewWith(newCpi, _identityFactory));
-                _unitOfWork.Delete(art);
+                Message = string.Format(
+                    Infrastructure.Parameter.InsertTariffLog,
+                    nameof(RenewableEnergySourceTariff).Humanize(LetterCasing.LowerCase),
+                    res.Period,
+                    res.LowerRate,
+                    res.HigherRate)
+            });
 
-                Log(new EntityExecutionLoggingEventArgs
-                {
-                    Message = string.Format(
+        private void LogResTariffUpdate(RenewableEnergySourceTariff res) =>
+            Log(new EntityExecutionLoggingEventArgs
+            {
+                Message = string.Format(
                     Infrastructure.Parameter.UpdateTariffLog,
                     nameof(RenewableEnergySourceTariff).Humanize(LetterCasing.LowerCase),
-                    art.Period,
-                    art.LowerRate,
-                    art.HigherRate)
-                });
+                    res.Period,
+                    res.LowerRate,
+                    res.HigherRate)
             });
-
-            _unitOfWork.Insert(newCpi);
-            _unitOfWork.Delete(activeCpi);
-            _unitOfWork.Commit();
-
-            Log(new EntityExecutionLoggingEventArgs { Message = Infrastructure.Parameter.SuccessfulSave });
-        }
     }
 }

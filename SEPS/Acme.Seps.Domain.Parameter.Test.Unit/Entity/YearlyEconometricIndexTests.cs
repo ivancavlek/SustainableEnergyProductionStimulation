@@ -25,7 +25,7 @@ namespace Acme.Seps.Domain.Parameter.Test.Unit.Entity
 
         public void PeriodCannotStartBeforeInitialPeriod()
         {
-            var initialPeriodMinusYear = DateTime.Parse(Infrastructure.Parameter.InitialPeriod).AddYears(-1);
+            var initialPeriodMinusYear = new DateTime(2007, 07, 01).AddYears(-1);
             var period = new YearlyPeriod(initialPeriodMinusYear.AddYears(-2), initialPeriodMinusYear);
 
             Action action = () => new DummyYearlyEconometricIndex(

@@ -103,4 +103,7 @@
   <data name="TimeOfDayPeriodNotAllowedException" xml:space="preserve">
     <value>Econometric index cannot be set to time value</value>
   </data>
+  <data name="SuccessfulSave" xml:space="preserve">
+    <value>Successful save of entities to database.</value>
+  </data>
 </root>

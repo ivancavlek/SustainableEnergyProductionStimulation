@@ -144,9 +144,6 @@
   <data name="BelowZeroUpperRateException" xml:space="preserve">
     <value>Upper rate must be zero or above.</value>
   </data>
-  <data name="InitialPeriod" xml:space="preserve">
-    <value>2007-07-01</value>
-  </data>
   <data name="ParameterDecimalPlacesBelowZeroException" xml:space="preserve">
     <value>Decimal places must be a positive number.</value>
   </data>
@@ -156,12 +153,6 @@
   <data name="RenewableEnergySourceTariffPeriodException" xml:space="preserve">
     <value>Renewable energy source tariff period must be in sequence.</value>
   </data>
-  <data name="LastQuarterGasPriceFor2006" xml:space="preserve">
-    <value>1</value>
-  </data>
-  <data name="MaepPriceFor2006" xml:space="preserve">
-    <value>1</value>
-  </data>
   <data name="YearsNaturalGasSellingPricesException" xml:space="preserve">
     <value>Years' Natural Gas Selling Prices must be set.</value>
   </data>
@@ -170,9 +161,6 @@
   </data>
   <data name="InsertParameterLog" xml:space="preserve">
     <value>Created {0} for period {1} with amount {2:C}.</value>
-  </data>
-  <data name="SuccessfulSave" xml:space="preserve">
-    <value>Successful save of entities to database.</value>
   </data>
   <data name="UpdateParameterLog" xml:space="preserve">
     <value>Updated {0} for period {1} with amount {2:C}.</value>

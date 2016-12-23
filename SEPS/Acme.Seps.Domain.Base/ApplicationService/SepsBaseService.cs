@@ -9,5 +9,8 @@ namespace Acme.Seps.Domain.Base.ApplicationService
 
         public void Log(EntityExecutionLoggingEventArgs useCaseExecutionProcessingLog) =>
             UseCaseExecutionProcessing(this, useCaseExecutionProcessingLog);
+
+        public void LogSuccessfulCommit() =>
+            Log(new EntityExecutionLoggingEventArgs { Message = Infrastructure.Base.SuccessfulSave });
     }
 }

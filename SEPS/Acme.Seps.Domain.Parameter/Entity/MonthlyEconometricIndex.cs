@@ -27,7 +27,7 @@ namespace Acme.Seps.Domain.Parameter.Entity
                   identityFactory)
         {
             if (Period.ValidTill.HasValue ||
-                Period.ValidFrom < DateTime.Parse(Infrastructure.Parameter.InitialPeriod) ||
+                Period.ValidFrom < InitialPeriod ||
                 SystemTime.CurrentMonth() <= Period.ValidFrom)
                 throw new DomainException(Infrastructure.Parameter.MonthlyParameterException);
         }

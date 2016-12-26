@@ -110,6 +110,7 @@
       <DependentUpon>Parameter.resx</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Repository\IYearsNaturalGasSellingPricesSpecification.cs" />
     <Compile Include="Repository\INaturalGasSellingPriceRepository.cs" />
     <Compile Include="Repository\ITariffRepository.cs" />
     <Compile Include="Repository\IEconometricIndexRepository.cs" />

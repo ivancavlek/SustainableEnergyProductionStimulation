@@ -5,4 +5,11 @@ This is a never-ending project in which I continuously invest my time to improve
 By no means am I advocating that this solution is the best one for the presented problem.
 
 Technologies and architectures I used are the following
-- Domain Driven Design, CQRS, CQS, Unit testing, C# 6, Entity Framework 6, Fluent Validation, Humanizer
+- Domain Driven Design
+- CQRS
+- CQS
+- Unit testing
+- C# 6
+- Entity Framework 6
+- Fluent Validation
+- Humanizer

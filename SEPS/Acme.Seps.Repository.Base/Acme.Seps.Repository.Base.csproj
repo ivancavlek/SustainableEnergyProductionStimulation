@@ -32,7 +32,6 @@
   <ItemGroup>
     <Compile Include="IContext.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Repository\ActiveSpecification.cs" />
     <Compile Include="Repository\SepsBaseRepository.cs" />
     <Compile Include="Repository\SepsRepository.cs" />
     <Compile Include="SepsBaseContext.cs" />
@@ -62,9 +61,7 @@
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Specification\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

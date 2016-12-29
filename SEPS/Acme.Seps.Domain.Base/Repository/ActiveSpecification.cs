@@ -1,13 +1,12 @@
 ﻿using Acme.Domain.Base.Entity;
 using Acme.Domain.Base.Repository;
 using Acme.Seps.Domain.Base.Entity;
-using Acme.Seps.Domain.Base.Repository;
 using System;
 using System.Linq.Expressions;
 
-namespace Acme.Seps.Repository.Base.Repository
+namespace Acme.Seps.Domain.Base.Repository
 {
-    public class ActiveSpecification<TAggregateRoot> : IActiveSpecification<TAggregateRoot>
+    public sealed class ActiveSpecification<TAggregateRoot> : ISpecification<TAggregateRoot>
         where TAggregateRoot : SepsBaseEntity, IAggregateRoot
     {
         Expression<Func<TAggregateRoot, bool>> ISpecification<TAggregateRoot>.ToExpression() =>

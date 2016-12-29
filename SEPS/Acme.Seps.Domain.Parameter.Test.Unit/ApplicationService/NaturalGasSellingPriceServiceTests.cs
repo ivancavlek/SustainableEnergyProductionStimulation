@@ -5,7 +5,6 @@ using Acme.Seps.Domain.Parameter.ApplicationService;
 using Acme.Seps.Domain.Parameter.DataTransferObject;
 using Acme.Seps.Domain.Parameter.DomainService;
 using Acme.Seps.Domain.Parameter.Entity;
-using Acme.Seps.Domain.Parameter.Repository;
 using Moq;
 using System;
 using System.Collections.Generic;
@@ -18,9 +17,8 @@ namespace Acme.Seps.Domain.Parameter.Test.Unit.ApplicationService
         private readonly IEconometricIndexService<NaturalGasSellingPrice, MonthlyEconometricIndexDto> _naturalGasService;
 
         private readonly Mock<ICogenerationParameterService> _cogenerationParameterService;
-        private readonly Mock<INaturalGasSellingPriceRepository> _naturalGasSellingPriceRepository;
-        private readonly Mock<ITariffRepository> _tariffRepository;
-        private readonly Mock<IEconometricIndexRepository> _econometricIndexRepository;
+        private readonly Mock<IRepository<NaturalGasSellingPrice>> _naturalGasSellingPriceRepository;
+        private readonly Mock<IRepository<CogenerationTariff>> _tariffRepository;
         private readonly Mock<IUnitOfWork> _unitOfWork;
         private readonly Mock<IIdentityFactory<Guid>> _identityFactory;
 
@@ -50,14 +48,14 @@ namespace Acme.Seps.Domain.Parameter.Test.Unit.ApplicationService
                     _identityFactory.Object },
                 null) as NaturalGasSellingPrice;
 
-            _naturalGasSellingPriceRepository = new Mock<INaturalGasSellingPriceRepository>();
+            _naturalGasSellingPriceRepository = new Mock<IRepository<NaturalGasSellingPrice>>();
             _naturalGasSellingPriceRepository
-                .Setup(m => m.GetAllWithin(It.IsAny<int>()))
+                .Setup(m => m.Get(It.IsAny<ISpecification<NaturalGasSellingPrice>>()))
                 .Returns(new List<NaturalGasSellingPrice> { _naturalGasSellingPrice });
 
-            _tariffRepository = new Mock<ITariffRepository>();
+            _tariffRepository = new Mock<IRepository<CogenerationTariff>>();
             _tariffRepository
-                .Setup(m => m.GetActive<CogenerationTariff>())
+                .Setup(m => m.Get(It.IsAny<ISpecification<CogenerationTariff>>()))
                 .Returns(new List<CogenerationTariff> { Activator.CreateInstance(
                     typeof(CogenerationTariff),
                 BindingFlags.Instance | BindingFlags.NonPublic,
@@ -69,17 +67,12 @@ namespace Acme.Seps.Domain.Parameter.Test.Unit.ApplicationService
                     new MonthlyPeriod(DateTime.Now.AddMonths(-4), _lastPeriod),
                     _identityFactory.Object },
                 null) as CogenerationTariff });
-            _econometricIndexRepository = new Mock<IEconometricIndexRepository>();
-            _econometricIndexRepository
-                .Setup(m => m.GetActive<NaturalGasSellingPrice>())
-                .Returns(_naturalGasSellingPrice);
             _unitOfWork = new Mock<IUnitOfWork>();
 
             _naturalGasService = new NaturalGasSellingPriceService(
                 _cogenerationParameterService.Object,
                 _tariffRepository.Object,
                 _naturalGasSellingPriceRepository.Object,
-                _econometricIndexRepository.Object,
                 _unitOfWork.Object,
                 _identityFactory.Object);
         }
@@ -96,10 +89,9 @@ namespace Acme.Seps.Domain.Parameter.Test.Unit.ApplicationService
 
             _naturalGasService.CalculateNewEntry(maep);
 
-            _econometricIndexRepository.Verify(m => m.GetActive<NaturalGasSellingPrice>(), Times.Once);
             _unitOfWork.Verify(m => m.Insert(It.IsAny<NaturalGasSellingPrice>()), Times.Once);
-            _naturalGasSellingPriceRepository.Verify(m => m.GetAllWithin(It.IsAny<int>()), Times.Once);
-            _tariffRepository.Verify(m => m.GetActive<CogenerationTariff>(), Times.Once);
+            _naturalGasSellingPriceRepository.Verify(m => m.Get(It.IsAny<ISpecification<NaturalGasSellingPrice>>()), Times.Exactly(2));
+            _tariffRepository.Verify(m => m.Get(It.IsAny<ISpecification<CogenerationTariff>>()), Times.Once);
             _unitOfWork.Verify(m => m.Insert(It.IsAny<CogenerationTariff>()), Times.Once);
             _unitOfWork.Verify(m => m.Commit(), Times.Once);
         }
@@ -116,11 +108,10 @@ namespace Acme.Seps.Domain.Parameter.Test.Unit.ApplicationService
 
             _naturalGasService.UpdateLastEntry(maep);
 
-            _econometricIndexRepository.Verify(m => m.GetActive<NaturalGasSellingPrice>(), Times.Once);
             _unitOfWork.Verify(m => m.Insert(It.IsAny<NaturalGasSellingPrice>()), Times.Once);
             _unitOfWork.Verify(m => m.Delete(It.IsAny<NaturalGasSellingPrice>()), Times.Once);
-            _naturalGasSellingPriceRepository.Verify(m => m.GetAllWithin(It.IsAny<int>()), Times.Once);
-            _tariffRepository.Verify(m => m.GetActive<CogenerationTariff>(), Times.Once);
+            _naturalGasSellingPriceRepository.Verify(m => m.Get(It.IsAny<ISpecification<NaturalGasSellingPrice>>()), Times.Exactly(2));
+            _tariffRepository.Verify(m => m.Get(It.IsAny<ISpecification<CogenerationTariff>>()), Times.Once);
             _unitOfWork.Verify(m => m.Insert(It.IsAny<CogenerationTariff>()), Times.Once);
             _unitOfWork.Verify(m => m.Delete(It.IsAny<CogenerationTariff>()), Times.Once);
             _unitOfWork.Verify(m => m.Commit(), Times.Once);

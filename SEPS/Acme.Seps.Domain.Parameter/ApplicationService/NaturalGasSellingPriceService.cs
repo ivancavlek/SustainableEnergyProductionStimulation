@@ -2,6 +2,7 @@
 using Acme.Domain.Base.Factory;
 using Acme.Domain.Base.Repository;
 using Acme.Seps.Domain.Base.ApplicationService;
+using Acme.Seps.Domain.Base.Repository;
 using Acme.Seps.Domain.Parameter.DataTransferObject;
 using Acme.Seps.Domain.Parameter.DomainService;
 using Acme.Seps.Domain.Parameter.Entity;
@@ -18,37 +19,33 @@ namespace Acme.Seps.Domain.Parameter.ApplicationService
         IEconometricIndexService<NaturalGasSellingPrice, MonthlyEconometricIndexDto>
     {
         private readonly ICogenerationParameterService _cogenerationParameterService;
-        private readonly ITariffRepository _tariffRepository;
-        private readonly INaturalGasSellingPriceRepository _naturalGasSellingPriceRepository;
-        private readonly IEconometricIndexRepository _econometricIndexRepository;
+        private readonly IRepository<CogenerationTariff> _cogenerationTariffRepository;
+        private readonly IRepository<NaturalGasSellingPrice> _naturalGasRepository;
         private readonly IUnitOfWork _unitOfWork;
+
         private readonly IIdentityFactory<Guid> _identityFactory;
 
         public NaturalGasSellingPriceService(
             ICogenerationParameterService cogenerationParameterService,
-            ITariffRepository tariffRepository,
-            INaturalGasSellingPriceRepository naturalGasSellingPriceRepository,
-            IEconometricIndexRepository econometricIndexRepository,
+            IRepository<CogenerationTariff> cogenerationTariffRepository,
+            IRepository<NaturalGasSellingPrice> naturalGasRepository,
             IUnitOfWork unitOfWork,
             IIdentityFactory<Guid> identityFactory)
         {
             if (cogenerationParameterService == null)
                 throw new ArgumentNullException(nameof(cogenerationParameterService));
-            if (tariffRepository == null)
-                throw new ArgumentNullException(nameof(tariffRepository));
-            if (naturalGasSellingPriceRepository == null)
-                throw new ArgumentNullException(nameof(naturalGasSellingPriceRepository));
-            if (econometricIndexRepository == null)
-                throw new ArgumentNullException(nameof(econometricIndexRepository));
+            if (cogenerationTariffRepository == null)
+                throw new ArgumentNullException(nameof(cogenerationTariffRepository));
+            if (naturalGasRepository == null)
+                throw new ArgumentNullException(nameof(naturalGasRepository));
             if (unitOfWork == null)
                 throw new ArgumentNullException(nameof(unitOfWork));
             if (identityFactory == null)
                 throw new ArgumentNullException(nameof(identityFactory));
 
             _cogenerationParameterService = cogenerationParameterService;
-            _tariffRepository = tariffRepository;
-            _naturalGasSellingPriceRepository = naturalGasSellingPriceRepository;
-            _econometricIndexRepository = econometricIndexRepository;
+            _cogenerationTariffRepository = cogenerationTariffRepository;
+            _naturalGasRepository = naturalGasRepository;
             _unitOfWork = unitOfWork;
             _identityFactory = identityFactory;
         }
@@ -124,13 +121,13 @@ namespace Acme.Seps.Domain.Parameter.ApplicationService
                 _identityFactory) as NaturalGasSellingPrice;
 
         private NaturalGasSellingPrice GetActiveNaturalGasSellingPrice() =>
-            _econometricIndexRepository.GetActive<NaturalGasSellingPrice>();
+            _naturalGasRepository.Get(new ActiveSpecification<NaturalGasSellingPrice>()).SingleOrDefault();//_econometricIndexRepository.GetActive<NaturalGasSellingPrice>();
 
         private IEnumerable<NaturalGasSellingPrice> GetNaturalGasPricesWithinYear(int year) =>
-            _naturalGasSellingPriceRepository.GetAllWithin(year);
+            _naturalGasRepository.Get(new YearsNaturalGasSellingPricesSpecification(year));//_naturalGasSellingPriceRepository.GetAllWithin(year);
 
         private IEnumerable<CogenerationTariff> GetActiveCogenerations() =>
-            _tariffRepository.GetActive<CogenerationTariff>();
+            _cogenerationTariffRepository.Get(new ActiveSpecification<CogenerationTariff>());//_tariffRepository.GetActive<CogenerationTariff>();
 
         private void LogNewNaturalGasSellingPrice(NaturalGasSellingPrice naturalGasSellingPrice) =>
             Log(new EntityExecutionLoggingEventArgs

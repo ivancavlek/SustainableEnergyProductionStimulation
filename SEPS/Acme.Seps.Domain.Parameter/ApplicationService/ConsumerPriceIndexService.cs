@@ -2,9 +2,9 @@
 using Acme.Domain.Base.Factory;
 using Acme.Domain.Base.Repository;
 using Acme.Seps.Domain.Base.ApplicationService;
+using Acme.Seps.Domain.Base.Repository;
 using Acme.Seps.Domain.Parameter.DataTransferObject;
 using Acme.Seps.Domain.Parameter.Entity;
-using Acme.Seps.Domain.Parameter.Repository;
 using Humanizer;
 using System;
 using System.Collections.Generic;
@@ -15,28 +15,34 @@ namespace Acme.Seps.Domain.Parameter.ApplicationService
     public sealed class ConsumerPriceIndexService
         : SepsBaseService, IEconometricIndexService<ConsumerPriceIndex, YearlyEconometricIndexDto>
     {
-        private readonly ITariffRepository _tariffRepository;
-        private readonly IEconometricIndexRepository _consumerPriceIndexRepository;
+        private readonly IRepository<ConsumerPriceIndex> _cpiRepository;
+        private readonly IRepository<RenewableEnergySourceTariff> _resRepository;
+
+        //private readonly ITariffRepository _tariffRepository;
+        //private readonly IEconometricIndexRepository _consumerPriceIndexRepository;
         private readonly IUnitOfWork _unitOfWork;
+
         private readonly IIdentityFactory<Guid> _identityFactory;
 
         public ConsumerPriceIndexService(
-            ITariffRepository tariffRepository,
-            IEconometricIndexRepository consumerPriceIndexRepository,
+            IRepository<ConsumerPriceIndex> cpiRepository,
+            IRepository<RenewableEnergySourceTariff> resRepository,
+            //ITariffRepository tariffRepository,
+            //IEconometricIndexRepository consumerPriceIndexRepository,
             IUnitOfWork unitOfWork,
             IIdentityFactory<Guid> identityFactory)
         {
-            if (tariffRepository == null)
-                throw new ArgumentNullException(nameof(tariffRepository));
-            if (consumerPriceIndexRepository == null)
-                throw new ArgumentNullException(nameof(consumerPriceIndexRepository));
+            if (cpiRepository == null)
+                throw new ArgumentNullException(nameof(cpiRepository));
+            if (resRepository == null)
+                throw new ArgumentNullException(nameof(resRepository));
             if (unitOfWork == null)
                 throw new ArgumentNullException(nameof(unitOfWork));
             if (identityFactory == null)
                 throw new ArgumentNullException(nameof(identityFactory));
 
-            _tariffRepository = tariffRepository;
-            _consumerPriceIndexRepository = consumerPriceIndexRepository;
+            _cpiRepository = cpiRepository;
+            _resRepository = resRepository;
             _unitOfWork = unitOfWork;
             _identityFactory = identityFactory;
         }
@@ -94,10 +100,10 @@ namespace Acme.Seps.Domain.Parameter.ApplicationService
                 econometricIndexDto.Amount, econometricIndexDto.Remark, _identityFactory) as ConsumerPriceIndex;
 
         private ConsumerPriceIndex GetActiveCpi() =>
-            _consumerPriceIndexRepository.GetActive<ConsumerPriceIndex>();
+            _cpiRepository.Get(new ActiveSpecification<ConsumerPriceIndex>()).SingleOrDefault(); //_consumerPriceIndexRepository.GetActive<ConsumerPriceIndex>();
 
         private IEnumerable<RenewableEnergySourceTariff> GetActiveRes() =>
-            _tariffRepository.GetActive<RenewableEnergySourceTariff>();
+            _resRepository.Get(new ActiveSpecification<RenewableEnergySourceTariff>()); //_tariffRepository.GetActive<RenewableEnergySourceTariff>();
 
         private void LogNewCpi(ConsumerPriceIndex cpi) =>
             Log(new EntityExecutionLoggingEventArgs

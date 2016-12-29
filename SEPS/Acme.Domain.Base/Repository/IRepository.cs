@@ -5,8 +5,6 @@ namespace Acme.Domain.Base.Repository
 {
     public interface IRepository<TAggregateRoot> where TAggregateRoot : BaseEntity, IAggregateRoot
     {
-        TAggregateRoot GetSingle(ISpecification<TAggregateRoot> specification);
-
-        IReadOnlyList<TAggregateRoot> GetAll(ISpecification<TAggregateRoot> specification);
+        IReadOnlyList<TAggregateRoot> Get(ISpecification<TAggregateRoot> specification);
     }
 }

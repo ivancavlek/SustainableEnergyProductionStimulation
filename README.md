@@ -9,6 +9,8 @@ Technologies and architectures I used are the following
 - Domain Driven Design
 - CQRS
 - CQS
+- Repository pattern
+- Unit of Work
 - Unit testing
 - C# 6
 - Entity Framework 6
@@ -16,6 +18,7 @@ Technologies and architectures I used are the following
 - Humanizer
 
 Planned
+- Dependency Injection (Unity, SimpleInjector, Autofac)
 - Dapper
 - NoSql (DocumentDb or MongoDb)
 - RabbitMQ

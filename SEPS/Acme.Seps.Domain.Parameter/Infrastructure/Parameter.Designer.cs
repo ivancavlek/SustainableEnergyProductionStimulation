@@ -42,7 +42,7 @@ namespace Acme.Seps.Domain.Parameter.Infrastructure
             {
                 if (object.ReferenceEquals(resourceMan, null))
                 {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Acme.Seps.Domain.Parameter1.Infrastructure.Parameter", typeof(Parameter).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Acme.Seps.Domain.Parameter.Infrastructure.Parameter", typeof(Parameter).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;

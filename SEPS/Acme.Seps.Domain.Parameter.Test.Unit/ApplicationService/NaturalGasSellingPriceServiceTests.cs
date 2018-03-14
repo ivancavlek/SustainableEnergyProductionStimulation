@@ -15,29 +15,25 @@ namespace Acme.Seps.Domain.Parameter.Test.Unit.ApplicationService
     public class NaturalGasSellingPriceServiceTests
     {
         private readonly IEconometricIndexService<NaturalGasSellingPrice, MonthlyEconometricIndexDto> _naturalGasService;
-
-        private readonly ICogenerationParameterService _cogenerationParameterService;
         private readonly IRepository<NaturalGasSellingPrice> _naturalGasSellingPriceRepository;
         private readonly IRepository<CogenerationTariff> _tariffRepository;
         private readonly IUnitOfWork _unitOfWork;
-        private readonly IIdentityFactory<Guid> _identityFactory;
 
-        private readonly NaturalGasSellingPrice _naturalGasSellingPrice;
         private readonly DateTime _lastPeriod;
 
         public NaturalGasSellingPriceServiceTests()
         {
-            _identityFactory = Substitute.For<IIdentityFactory<Guid>>();
+            var _identityFactory = Substitute.For<IIdentityFactory<Guid>>();
             _identityFactory.CreateIdentity().Returns(Guid.NewGuid());
 
             _lastPeriod = DateTime.Now.AddMonths(-3);
 
-            _cogenerationParameterService = Substitute.For<ICogenerationParameterService>();
+            var _cogenerationParameterService = Substitute.For<ICogenerationParameterService>();
             _cogenerationParameterService
                 .GetFrom(Arg.Any<IEnumerable<NaturalGasSellingPrice>>(), Arg.Any<NaturalGasSellingPrice>())
                 .Returns(1M);
 
-            _naturalGasSellingPrice = Activator.CreateInstance(
+            var _naturalGasSellingPrice = Activator.CreateInstance(
                 typeof(NaturalGasSellingPrice),
                 BindingFlags.Instance | BindingFlags.NonPublic,
                 null,
@@ -53,20 +49,21 @@ namespace Acme.Seps.Domain.Parameter.Test.Unit.ApplicationService
                 .Get(Arg.Any<ISpecification<NaturalGasSellingPrice>>())
                 .Returns(new List<NaturalGasSellingPrice> { _naturalGasSellingPrice });
 
+            var cogenerationTariff = Activator.CreateInstance(
+                    typeof(CogenerationTariff),
+                    BindingFlags.Instance | BindingFlags.NonPublic,
+                    null,
+                    new object[] {
+                        _naturalGasSellingPrice,
+                        10M,
+                        10M,
+                        new MonthlyPeriod(DateTime.Now.AddMonths(-4), _lastPeriod),
+                        _identityFactory },
+                    null) as CogenerationTariff;
             _tariffRepository = Substitute.For<IRepository<CogenerationTariff>>();
             _tariffRepository
                 .Get(Arg.Any<ISpecification<CogenerationTariff>>())
-                .Returns(new List<CogenerationTariff> { Activator.CreateInstance(
-                    typeof(CogenerationTariff),
-                BindingFlags.Instance | BindingFlags.NonPublic,
-                null,
-                new object[] {
-                    _naturalGasSellingPrice,
-                    10M,
-                    10M,
-                    new MonthlyPeriod(DateTime.Now.AddMonths(-4), _lastPeriod),
-                    _identityFactory },
-                null) as CogenerationTariff });
+                .Returns(new List<CogenerationTariff> { cogenerationTariff });
             _unitOfWork = Substitute.For<IUnitOfWork>();
 
             _naturalGasService = new NaturalGasSellingPriceService(

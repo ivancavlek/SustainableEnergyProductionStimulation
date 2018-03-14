@@ -42,7 +42,7 @@ namespace Acme.Seps.Domain.Base.Infrastructure
             {
                 if (object.ReferenceEquals(resourceMan, null))
                 {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Acme.Seps.Domain.Base1.Infrastructure.Base", typeof(Base).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Acme.Seps.Domain.Base.Infrastructure.Base", typeof(Base).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;

@@ -14,20 +14,16 @@ namespace Acme.Seps.Domain.Parameter.Test.Unit.ApplicationService
     public class ConsumerPriceIndexServiceTests
     {
         private readonly IEconometricIndexService<ConsumerPriceIndex, YearlyEconometricIndexDto> _cpiService;
-
         private readonly IRepository<RenewableEnergySourceTariff> _resRepository;
         private readonly IRepository<ConsumerPriceIndex> _cpiRepository;
         private readonly IUnitOfWork _unitOfWork;
-        private readonly IIdentityFactory<Guid> _identityFactory;
-
-        private readonly ConsumerPriceIndex _cpi;
 
         public ConsumerPriceIndexServiceTests()
         {
-            _identityFactory = Substitute.For<IIdentityFactory<Guid>>();
+            var _identityFactory = Substitute.For<IIdentityFactory<Guid>>();
             _identityFactory.CreateIdentity().Returns(Guid.NewGuid());
 
-            _cpi = Activator.CreateInstance(
+            var _cpi = Activator.CreateInstance(
                 typeof(ConsumerPriceIndex),
                 BindingFlags.Instance | BindingFlags.NonPublic,
                 null,
@@ -38,15 +34,16 @@ namespace Acme.Seps.Domain.Parameter.Test.Unit.ApplicationService
                     _identityFactory },
                 null) as ConsumerPriceIndex;
 
-            _resRepository = Substitute.For<IRepository<RenewableEnergySourceTariff>>();
-            _resRepository
-                .Get(Arg.Any<ISpecification<RenewableEnergySourceTariff>>())
-                .Returns(new List<RenewableEnergySourceTariff> { Activator.CreateInstance(
+            var renewableEnergySourceTariff = Activator.CreateInstance(
                     typeof(RenewableEnergySourceTariff),
                     BindingFlags.Instance | BindingFlags.NonPublic,
                     null,
                     new object[] { _cpi, 5M, 10M, _identityFactory },
-                    null) as RenewableEnergySourceTariff });
+                    null) as RenewableEnergySourceTariff;
+            _resRepository = Substitute.For<IRepository<RenewableEnergySourceTariff>>();
+            _resRepository
+                .Get(Arg.Any<ISpecification<RenewableEnergySourceTariff>>())
+                .Returns(new List<RenewableEnergySourceTariff> { renewableEnergySourceTariff });
             _cpiRepository = Substitute.For<IRepository<ConsumerPriceIndex>>();
             _cpiRepository
                 .Get(Arg.Any<ISpecification<ConsumerPriceIndex>>())

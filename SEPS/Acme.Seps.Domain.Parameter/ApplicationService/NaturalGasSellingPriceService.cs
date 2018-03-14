@@ -32,22 +32,14 @@ namespace Acme.Seps.Domain.Parameter.ApplicationService
             IUnitOfWork unitOfWork,
             IIdentityFactory<Guid> identityFactory)
         {
-            if (cogenerationParameterService == null)
-                throw new ArgumentNullException(nameof(cogenerationParameterService));
-            if (cogenerationTariffRepository == null)
-                throw new ArgumentNullException(nameof(cogenerationTariffRepository));
-            if (naturalGasRepository == null)
-                throw new ArgumentNullException(nameof(naturalGasRepository));
-            if (unitOfWork == null)
-                throw new ArgumentNullException(nameof(unitOfWork));
-            if (identityFactory == null)
-                throw new ArgumentNullException(nameof(identityFactory));
-
-            _cogenerationParameterService = cogenerationParameterService;
-            _cogenerationTariffRepository = cogenerationTariffRepository;
-            _naturalGasRepository = naturalGasRepository;
-            _unitOfWork = unitOfWork;
-            _identityFactory = identityFactory;
+            _cogenerationParameterService =
+                cogenerationParameterService ?? throw new ArgumentNullException(nameof(cogenerationParameterService));
+            _cogenerationTariffRepository =
+                cogenerationTariffRepository ?? throw new ArgumentNullException(nameof(cogenerationTariffRepository));
+            _naturalGasRepository =
+                naturalGasRepository ?? throw new ArgumentNullException(nameof(naturalGasRepository));
+            _unitOfWork = unitOfWork ?? throw new ArgumentNullException(nameof(unitOfWork));
+            _identityFactory = identityFactory ?? throw new ArgumentNullException(nameof(identityFactory));
         }
 
         void IEconometricIndexService<NaturalGasSellingPrice, MonthlyEconometricIndexDto>.CalculateNewEntry(

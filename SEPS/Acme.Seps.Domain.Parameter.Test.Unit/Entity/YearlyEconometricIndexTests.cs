@@ -3,7 +3,7 @@ using Acme.Domain.Base.Factory;
 using Acme.Seps.Domain.Base.ValueType;
 using Acme.Seps.Domain.Parameter.Entity;
 using FluentAssertions;
-using Moq;
+using NSubstitute;
 using System;
 
 namespace Acme.Seps.Domain.Parameter.Test.Unit.Entity
@@ -13,14 +13,14 @@ namespace Acme.Seps.Domain.Parameter.Test.Unit.Entity
         private readonly decimal _amount;
         private readonly int _decimalPlaces;
         private readonly string _remark;
-        private readonly Mock<IIdentityFactory<Guid>> _identityFactory;
+        private readonly IIdentityFactory<Guid> _identityFactory;
 
         public YearlyEconometricIndexTests()
         {
             _amount = 1M;
             _decimalPlaces = 2;
             _remark = nameof(_remark);
-            _identityFactory = new Mock<IIdentityFactory<Guid>>();
+            _identityFactory = Substitute.For<IIdentityFactory<Guid>>();
         }
 
         public void PeriodCannotStartBeforeInitialPeriod()
@@ -29,10 +29,11 @@ namespace Acme.Seps.Domain.Parameter.Test.Unit.Entity
             var period = new YearlyPeriod(initialPeriodMinusYear.AddYears(-2), initialPeriodMinusYear);
 
             Action action = () => new DummyYearlyEconometricIndex(
-                _amount, _decimalPlaces, _remark, period, _identityFactory.Object);
+                _amount, _decimalPlaces, _remark, period, _identityFactory);
 
             action
-                .ShouldThrowExactly<DomainException>()
+                .Should()
+                .ThrowExactly<DomainException>()
                 .WithMessage(Infrastructure.Parameter.YearlyParameterException);
         }
 
@@ -42,10 +43,11 @@ namespace Acme.Seps.Domain.Parameter.Test.Unit.Entity
             var period = new YearlyPeriod(currentDate.AddYears(-1), DateTime.UtcNow);
 
             Action action = () => new DummyYearlyEconometricIndex(
-                _amount, _decimalPlaces, _remark, period, _identityFactory.Object);
+                _amount, _decimalPlaces, _remark, period, _identityFactory);
 
             action
-                .ShouldThrowExactly<DomainException>()
+                .Should()
+                .ThrowExactly<DomainException>()
                 .WithMessage(Infrastructure.Parameter.YearlyParameterException);
         }
 
@@ -55,10 +57,11 @@ namespace Acme.Seps.Domain.Parameter.Test.Unit.Entity
             var period = new YearlyPeriod(correctDate.AddYears(-1), correctDate);
 
             Action action = () => new DummyYearlyEconometricIndex(
-                _amount, _decimalPlaces, _remark, period, _identityFactory.Object);
+                _amount, _decimalPlaces, _remark, period, _identityFactory);
 
             action
-                .ShouldNotThrow<Exception>();
+                .Should()
+                .NotThrow<Exception>();
         }
     }
 

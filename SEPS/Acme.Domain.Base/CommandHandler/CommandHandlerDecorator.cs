@@ -9,10 +9,8 @@ namespace Acme.Domain.Base.CommandHandler
     {
         private readonly ICommandHandler<TCommand> _decorated;
 
-        protected CommandHandlerDecorator(ICommandHandler<TCommand> decorated)
-        {
+        protected CommandHandlerDecorator(ICommandHandler<TCommand> decorated) =>
             _decorated = decorated;
-        }
 
         public abstract void Handle(TCommand command);
     }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Acme.Domain.Base.Repository;
+using System;
 
 namespace Acme.Seps.Repository.Base.Repository
 {
@@ -6,12 +7,7 @@ namespace Acme.Seps.Repository.Base.Repository
     {
         public readonly IContext Context;
 
-        protected SepsBaseRepository(IContext context)
-        {
-            if (context == null)
-                throw new ArgumentNullException(nameof(context));
-
-            Context = context;
-        }
+        protected SepsBaseRepository(IContext context) =>
+            Context = context ?? throw new ArgumentNullException(nameof(context));
     }
 }

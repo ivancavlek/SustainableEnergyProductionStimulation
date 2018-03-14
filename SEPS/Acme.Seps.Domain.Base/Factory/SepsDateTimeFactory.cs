@@ -7,14 +7,14 @@ namespace Acme.Seps.Domain.Base.Factory
     {
         private readonly DateTimeOffset _currentDateTime;
 
-        public SepsDateTimeFactory(DateTimeOffset currentDateTime)
-        {
+        public SepsDateTimeFactory(DateTimeOffset currentDateTime) =>
             _currentDateTime = currentDateTime;
-        }
 
-        DateTime ISepsDateTimeFactory.CurrentDate => _currentDateTime.Date;
+        DateTime ISepsDateTimeFactory.CurrentDate =>
+            _currentDateTime.Date;
 
-        int ISepsDateTimeFactory.CurrentYear => _currentDateTime.Year;
+        int ISepsDateTimeFactory.CurrentYear =>
+            _currentDateTime.Year;
 
         Period ISepsDateTimeFactory.ToMonthlyPeriod(Period period)
         {

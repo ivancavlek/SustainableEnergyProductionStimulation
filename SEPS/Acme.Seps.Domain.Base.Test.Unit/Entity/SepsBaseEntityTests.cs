@@ -2,21 +2,21 @@
 using Acme.Domain.Base.ValueType;
 using Acme.Seps.Domain.Base.Entity;
 using FluentAssertions;
-using Moq;
+using NSubstitute;
 using System;
 
 namespace Acme.Seps.Domain.Base.Test.Unit.Entity
 {
     public class SepsBaseEntityTests
     {
-        private readonly Mock<IIdentityFactory<Guid>> _identityFactory;
+        private readonly IIdentityFactory<Guid> _identityFactory;
         private readonly Period _period;
         private readonly DateTimeOffset _repositoryTime;
         private readonly DateTimeOffset _repositoryTimePlusOneDay;
 
         public SepsBaseEntityTests()
         {
-            _identityFactory = new Mock<IIdentityFactory<Guid>>();
+            _identityFactory = Substitute.For<IIdentityFactory<Guid>>();
             _repositoryTime = GetCorrectParameterDate(DateTimeOffset.UtcNow);
             _repositoryTimePlusOneDay = _repositoryTime.AddDays(1);
             _period = new Period(_repositoryTime);
@@ -24,21 +24,21 @@ namespace Acme.Seps.Domain.Base.Test.Unit.Entity
 
         public void SetsGivenPeriod()
         {
-            var result = new DummySepsBaseEntity(_period, _identityFactory.Object);
+            var result = new DummySepsBaseEntity(_period, _identityFactory);
 
-            result.Period.ShouldBeEquivalentTo(_period);
+            result.Period.Should().BeEquivalentTo(_period);
         }
 
         public void ShowsIfEntityIsActiveOnGivenDate()
         {
-            var result = new DummySepsBaseEntity(_period, _identityFactory.Object);
+            var result = new DummySepsBaseEntity(_period, _identityFactory);
 
             result.IsActiveAt(_repositoryTimePlusOneDay);
         }
 
         public void SetsAnExpirationDateForTheEntity()
         {
-            var result = new DummySepsBaseEntity(_period, _identityFactory.Object);
+            var result = new DummySepsBaseEntity(_period, _identityFactory);
             result.SetExpirationDateTo(_repositoryTimePlusOneDay);
 
             result.Period.ValidFrom.Should().Be(_repositoryTime);

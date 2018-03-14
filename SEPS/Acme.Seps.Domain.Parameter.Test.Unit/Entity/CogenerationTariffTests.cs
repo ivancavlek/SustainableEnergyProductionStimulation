@@ -3,7 +3,7 @@ using Acme.Seps.Domain.Base.ValueType;
 using Acme.Seps.Domain.Parameter.DomainService;
 using Acme.Seps.Domain.Parameter.Entity;
 using FluentAssertions;
-using Moq;
+using NSubstitute;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
@@ -15,15 +15,15 @@ namespace Acme.Seps.Domain.Parameter.Test.Unit.Entity
         private readonly CogenerationTariff _existingChp;
         private readonly NaturalGasSellingPrice _naturalGasSellingPrice;
         private readonly IEnumerable<NaturalGasSellingPrice> _yearsNaturalGasSellingPrices;
-        private readonly Mock<ICogenerationParameterService> _cogenerationParameterService;
-        private readonly Mock<IIdentityFactory<Guid>> _identityFactory;
+        private readonly ICogenerationParameterService _cogenerationParameterService;
+        private readonly IIdentityFactory<Guid> _identityFactory;
         private readonly MonthlyPeriod _chpPeriod;
 
         public CogenerationTariffTests()
         {
             _chpPeriod = new MonthlyPeriod(DateTime.Now.AddMonths(-4), DateTime.Now.AddMonths(-3));
-            _identityFactory = new Mock<IIdentityFactory<Guid>>();
-            _cogenerationParameterService = new Mock<ICogenerationParameterService>();
+            _identityFactory = Substitute.For<IIdentityFactory<Guid>>();
+            _cogenerationParameterService = Substitute.For<ICogenerationParameterService>();
             _yearsNaturalGasSellingPrices = new List<NaturalGasSellingPrice> { _naturalGasSellingPrice };
 
             _naturalGasSellingPrice = Activator.CreateInstance(
@@ -34,7 +34,7 @@ namespace Acme.Seps.Domain.Parameter.Test.Unit.Entity
                     10M,
                     nameof(NaturalGasSellingPrice),
                     new MonthlyPeriod(DateTime.Now.AddMonths(-3), DateTime.Now.AddMonths(-2)),
-                    _identityFactory.Object },
+                    _identityFactory },
                 null) as NaturalGasSellingPrice;
             var chpNaturalGasSellingPrice = Activator.CreateInstance(
                 typeof(NaturalGasSellingPrice),
@@ -44,43 +44,46 @@ namespace Acme.Seps.Domain.Parameter.Test.Unit.Entity
                     100M,
                     nameof(NaturalGasSellingPrice),
                     _chpPeriod,
-                    _identityFactory.Object },
+                    _identityFactory },
                 null) as NaturalGasSellingPrice;
             _existingChp = Activator.CreateInstance(
                 typeof(CogenerationTariff),
                 BindingFlags.Instance | BindingFlags.NonPublic,
                 null,
-                new object[] { chpNaturalGasSellingPrice, 10M, 10M, _chpPeriod, _identityFactory.Object },
+                new object[] { chpNaturalGasSellingPrice, 10M, 10M, _chpPeriod, _identityFactory },
                 null) as CogenerationTariff;
         }
 
         public void YearsNaturalGasSellingPricesMustBeSet()
         {
             Action action = () => _existingChp.CreateNewWith(
-                null, _cogenerationParameterService.Object, null, _identityFactory.Object);
+                null, _cogenerationParameterService, null, _identityFactory);
 
             action
-                .ShouldThrowExactly<ArgumentNullException>()
+                .Should()
+                .ThrowExactly<ArgumentNullException>()
                 .WithMessage(Infrastructure.Parameter.YearsNaturalGasSellingPricesException);
         }
 
         public void CogenerationParameterServiceMustBeSet()
         {
             Action action = () => _existingChp.CreateNewWith(
-                _yearsNaturalGasSellingPrices, null, _naturalGasSellingPrice, _identityFactory.Object);
+                _yearsNaturalGasSellingPrices, null, _naturalGasSellingPrice, _identityFactory);
 
             action
-                .ShouldThrowExactly<ArgumentNullException>()
+                .Should()
+                .ThrowExactly<ArgumentNullException>()
                 .WithMessage(Infrastructure.Parameter.CogenerationParameterServiceException);
         }
 
         public void NaturalGasSellingPriceMustBeSet()
         {
             Action action = () => _existingChp.CreateNewWith(
-                _yearsNaturalGasSellingPrices, _cogenerationParameterService.Object, null, _identityFactory.Object);
+                _yearsNaturalGasSellingPrices, _cogenerationParameterService, null, _identityFactory);
 
             action
-                .ShouldThrowExactly<ArgumentNullException>()
+                .Should()
+                .ThrowExactly<ArgumentNullException>()
                 .WithMessage(Infrastructure.Parameter.NaturalGasSellingPriceNotSetException);
         }
 
@@ -89,14 +92,14 @@ namespace Acme.Seps.Domain.Parameter.Test.Unit.Entity
             var cogenerationParameter = 1M;
 
             _cogenerationParameterService
-                .Setup(m => m.GetFrom(It.IsAny<IEnumerable<NaturalGasSellingPrice>>(), It.IsAny<NaturalGasSellingPrice>()))
+                .GetFrom(Arg.Any<IEnumerable<NaturalGasSellingPrice>>(), Arg.Any<NaturalGasSellingPrice>())
                 .Returns(cogenerationParameter);
 
             var result = _existingChp.CreateNewWith(
                 _yearsNaturalGasSellingPrices,
-                _cogenerationParameterService.Object,
+                _cogenerationParameterService,
                 _naturalGasSellingPrice,
-                _identityFactory.Object);
+                _identityFactory);
 
             _existingChp.Period.ValidTill.Should().Be(_naturalGasSellingPrice.Period.ValidFrom);
             result.LowerRate.Should().Be(_existingChp.LowerRate * cogenerationParameter);

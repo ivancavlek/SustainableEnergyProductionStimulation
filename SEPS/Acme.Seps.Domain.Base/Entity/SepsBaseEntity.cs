@@ -9,7 +9,9 @@ namespace Acme.Seps.Domain.Base.Entity
     {
         public Period Period { get; protected set; }
 
-        protected SepsBaseEntity() { }
+        protected SepsBaseEntity()
+        {
+        }
 
         protected SepsBaseEntity(Period period, IIdentityFactory<Guid> identityFactory)
             : base(identityFactory)
@@ -24,7 +26,8 @@ namespace Acme.Seps.Domain.Base.Entity
             Period = period;
         }
 
-        public bool IsActiveAt(DateTimeOffset dateTime) => Period.IsWithin(dateTime);
+        public bool IsActiveAt(DateTimeOffset dateTime) =>
+            Period.IsWithin(dateTime);
 
         public void SetExpirationDateTo(DateTimeOffset expirationDate) =>
             Period = Period.SetValidTill(expirationDate);

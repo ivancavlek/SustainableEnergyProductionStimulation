@@ -7,7 +7,7 @@ using Acme.Seps.Domain.Base.ValueType;
 using Acme.Seps.Domain.Parameter.Command;
 using Acme.Seps.Domain.Parameter.CommandHandler;
 using Acme.Seps.Domain.Parameter.Entity;
-using Moq;
+using NSubstitute;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
@@ -17,18 +17,18 @@ namespace Acme.Seps.Domain.Parameter.Test.Unit.CommandHandler
     public class CalculateCpiCommandHandlerTests
     {
         private readonly ICommandHandler<CalculateCpiCommand> _calculateCpi;
-        private readonly Mock<IUnitOfWork> _unitOfWork;
-        private readonly Mock<IIdentityFactory<Guid>> _identityFactory;
-        private readonly Mock<ISepsLogService> _sepsLogService;
+        private readonly IUnitOfWork _unitOfWork;
+        private readonly IIdentityFactory<Guid> _identityFactory;
+        private readonly ISepsLogService _sepsLogService;
 
         private readonly ConsumerPriceIndex _cpi;
         private readonly IEnumerable<RenewableEnergySourceTariff> _resTariff;
 
         public CalculateCpiCommandHandlerTests()
         {
-            _sepsLogService = new Mock<ISepsLogService>();
-            _identityFactory = new Mock<IIdentityFactory<Guid>>();
-            _identityFactory.Setup(m => m.CreateIdentity()).Returns(Guid.NewGuid());
+            _sepsLogService = Substitute.For<ISepsLogService>();
+            _identityFactory = Substitute.For<IIdentityFactory<Guid>>();
+            _identityFactory.CreateIdentity().Returns(Guid.NewGuid());
 
             _cpi = Activator.CreateInstance(
                 typeof(ConsumerPriceIndex),
@@ -38,20 +38,19 @@ namespace Acme.Seps.Domain.Parameter.Test.Unit.CommandHandler
                     10M,
                     nameof(ConsumerPriceIndex),
                     new YearlyPeriod(DateTime.Now.AddYears(-4), DateTime.Now.AddYears(-3)),
-                    _identityFactory.Object },
+                    _identityFactory },
                 null) as ConsumerPriceIndex;
 
             _resTariff = new List<RenewableEnergySourceTariff> { Activator.CreateInstance(
                 typeof(RenewableEnergySourceTariff),
                 BindingFlags.Instance | BindingFlags.NonPublic,
                 null,
-                new object[] { _cpi, 5M, 10M, _identityFactory.Object },
+                new object[] { _cpi, 5M, 10M, _identityFactory },
                 null) as RenewableEnergySourceTariff };
 
-            _unitOfWork = new Mock<IUnitOfWork>();
+            _unitOfWork = Substitute.For<IUnitOfWork>();
 
-            _calculateCpi = new CalculateCpiCommandHandler(
-                _unitOfWork.Object, _identityFactory.Object, _sepsLogService.Object);
+            _calculateCpi = new CalculateCpiCommandHandler(_unitOfWork, _identityFactory, _sepsLogService);
         }
 
         public void ExecutesProperly()
@@ -66,10 +65,10 @@ namespace Acme.Seps.Domain.Parameter.Test.Unit.CommandHandler
 
             _calculateCpi.Handle(calculateCommand);
 
-            _unitOfWork.Verify(m => m.Insert(It.IsAny<ConsumerPriceIndex>()), Times.Once);
-            _unitOfWork.Verify(m => m.Insert(It.IsAny<RenewableEnergySourceTariff>()), Times.Once);
-            _unitOfWork.Verify(m => m.Commit(), Times.Once);
-            _sepsLogService.Verify(m => m.Log(It.IsAny<EntityExecutionLoggingEventArgs>()), Times.Exactly(3));
+            _unitOfWork.Received().Insert(Arg.Any<ConsumerPriceIndex>());
+            _unitOfWork.Received().Insert(Arg.Any<RenewableEnergySourceTariff>());
+            _unitOfWork.Received().Commit();
+            _sepsLogService.Received(3).Log(Arg.Any<EntityExecutionLoggingEventArgs>());
         }
     }
 }

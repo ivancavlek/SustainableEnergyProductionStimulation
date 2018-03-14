@@ -8,7 +8,9 @@ namespace Acme.Domain.Base.ValueType
         public DateTimeOffset ValidFrom { get; }
         public DateTimeOffset? ValidTill { get; }
 
-        protected Period() { }
+        protected Period()
+        {
+        }
 
         public Period(DateTimeOffset dateFrom, DateTimeOffset? dateTill = null)
         {
@@ -22,7 +24,8 @@ namespace Acme.Domain.Base.ValueType
         public bool IsWithin(DateTimeOffset dateTime) =>
             ValidFrom <= dateTime && (!ValidTill.HasValue || dateTime < ValidTill);
 
-        public bool IsWithin(Period period) => IsWithin(period.ValidFrom, period.ValidTill);
+        public bool IsWithin(Period period) =>
+            IsWithin(period.ValidFrom, period.ValidTill);
 
         public bool IsWithin(DateTimeOffset dateFrom, DateTimeOffset? dateTill) =>
             ((!ValidTill.HasValue) || (!ValidTill.HasValue && !dateTill.HasValue)) ||

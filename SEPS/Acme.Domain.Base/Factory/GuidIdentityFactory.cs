@@ -12,12 +12,11 @@ namespace Acme.Domain.Base.Factory
         private static readonly RNGCryptoServiceProvider Rng = new RNGCryptoServiceProvider();
         private readonly SequentialGuidType _sequentialGuidType;
 
-        public GuidIdentityFactory(SequentialGuidType sequentialGuidType)
-        {
+        public GuidIdentityFactory(SequentialGuidType sequentialGuidType) =>
             _sequentialGuidType = sequentialGuidType;
-        }
 
-        Guid IIdentityFactory<Guid>.CreateIdentity() => CreateGuid();
+        Guid IIdentityFactory<Guid>.CreateIdentity() =>
+            CreateGuid();
 
         private Guid CreateGuid()
         {

@@ -39,7 +39,7 @@ namespace Acme.Domain.Base.Test.Unit.ValueType
         {
             Action action = () => new Period(_dateTimeOffsetUtcNowPlusOneMonth, _dateTimeOffsetUtcNow);
 
-            action.ShouldThrow<DomainException>();
+            action.Should().Throw<DomainException>();
         }
 
         public void PeriodIsWithinForDateFrom()

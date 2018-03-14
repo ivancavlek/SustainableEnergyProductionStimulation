@@ -32,19 +32,10 @@ namespace Acme.Seps.Domain.Parameter.ApplicationService
             IUnitOfWork unitOfWork,
             IIdentityFactory<Guid> identityFactory)
         {
-            if (cpiRepository == null)
-                throw new ArgumentNullException(nameof(cpiRepository));
-            if (resRepository == null)
-                throw new ArgumentNullException(nameof(resRepository));
-            if (unitOfWork == null)
-                throw new ArgumentNullException(nameof(unitOfWork));
-            if (identityFactory == null)
-                throw new ArgumentNullException(nameof(identityFactory));
-
-            _cpiRepository = cpiRepository;
-            _resRepository = resRepository;
-            _unitOfWork = unitOfWork;
-            _identityFactory = identityFactory;
+            _cpiRepository = cpiRepository ?? throw new ArgumentNullException(nameof(cpiRepository));
+            _resRepository = resRepository ?? throw new ArgumentNullException(nameof(resRepository));
+            _unitOfWork = unitOfWork ?? throw new ArgumentNullException(nameof(unitOfWork));
+            _identityFactory = identityFactory ?? throw new ArgumentNullException(nameof(identityFactory));
         }
 
         void IEconometricIndexService<ConsumerPriceIndex, YearlyEconometricIndexDto>.CalculateNewEntry(

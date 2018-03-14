@@ -4,7 +4,7 @@ using Acme.Domain.Base.ValueType;
 using Acme.Seps.Domain.Base.ValueType;
 using Acme.Seps.Domain.Parameter.Entity;
 using FluentAssertions;
-using Moq;
+using NSubstitute;
 using System;
 
 namespace Acme.Seps.Domain.Parameter.Test.Unit.Entity
@@ -14,49 +14,52 @@ namespace Acme.Seps.Domain.Parameter.Test.Unit.Entity
         private readonly decimal _lowerRate;
         private readonly decimal _higherRate;
         private readonly Period _period;
-        private readonly Mock<IIdentityFactory<Guid>> _identityFactory;
+        private readonly IIdentityFactory<Guid> _identityFactory;
 
         public TariffTests()
         {
             _lowerRate = 1M;
             _higherRate = 2M;
             _period = new MonthlyPeriod(DateTime.UtcNow);
-            _identityFactory = new Mock<IIdentityFactory<Guid>>();
+            _identityFactory = Substitute.For<IIdentityFactory<Guid>>();
         }
 
         public void LowerRateMustBeAPositiveNumber()
         {
             Action action = () =>
-                new DummyTariff(-1M, _higherRate, _period, _identityFactory.Object);
+                new DummyTariff(-1M, _higherRate, _period, _identityFactory);
 
             action
-                .ShouldThrowExactly<DomainException>()
+                .Should()
+                .ThrowExactly<DomainException>()
                 .WithMessage(Infrastructure.Parameter.BelowZeroLowerRateException);
         }
 
         public void HigherRateMustBeAPositiveNumber()
         {
             Action action = () =>
-                new DummyTariff(_lowerRate, -1M, _period, _identityFactory.Object);
+                new DummyTariff(_lowerRate, -1M, _period, _identityFactory);
 
             action
-                .ShouldThrowExactly<DomainException>()
+                .Should()
+                .ThrowExactly<DomainException>()
                 .WithMessage(Infrastructure.Parameter.BelowZeroUpperRateException);
         }
 
         public void LowerRateMustBeLowerOrEqualHigherRate()
         {
             Action action = () =>
-                new DummyTariff(2M, 1M, _period, _identityFactory.Object);
+                new DummyTariff(2M, 1M, _period, _identityFactory);
 
             action
-                .ShouldThrowExactly<DomainException>()
+                .Should()
+                .ThrowExactly<DomainException>()
                 .WithMessage(Infrastructure.Parameter.LowerRateAboveUpperException);
         }
 
         public void TariffIsProperlySet()
         {
-            var result = new DummyTariff(_lowerRate, _higherRate, _period, _identityFactory.Object);
+            var result = new DummyTariff(_lowerRate, _higherRate, _period, _identityFactory);
 
             result.LowerRate.Should().Be(_lowerRate);
             result.HigherRate.Should().Be(_higherRate);

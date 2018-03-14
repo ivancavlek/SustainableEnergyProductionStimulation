@@ -4,7 +4,7 @@ using Acme.Seps.Domain.Base.ValueType;
 using Acme.Seps.Domain.Parameter.ApplicationService;
 using Acme.Seps.Domain.Parameter.DataTransferObject;
 using Acme.Seps.Domain.Parameter.Entity;
-using Moq;
+using NSubstitute;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
@@ -15,17 +15,17 @@ namespace Acme.Seps.Domain.Parameter.Test.Unit.ApplicationService
     {
         private readonly IEconometricIndexService<ConsumerPriceIndex, YearlyEconometricIndexDto> _cpiService;
 
-        private readonly Mock<IRepository<RenewableEnergySourceTariff>> _resRepository;
-        private readonly Mock<IRepository<ConsumerPriceIndex>> _cpiRepository;
-        private readonly Mock<IUnitOfWork> _unitOfWork;
-        private readonly Mock<IIdentityFactory<Guid>> _identityFactory;
+        private readonly IRepository<RenewableEnergySourceTariff> _resRepository;
+        private readonly IRepository<ConsumerPriceIndex> _cpiRepository;
+        private readonly IUnitOfWork _unitOfWork;
+        private readonly IIdentityFactory<Guid> _identityFactory;
 
         private readonly ConsumerPriceIndex _cpi;
 
         public ConsumerPriceIndexServiceTests()
         {
-            _identityFactory = new Mock<IIdentityFactory<Guid>>();
-            _identityFactory.Setup(m => m.CreateIdentity()).Returns(Guid.NewGuid());
+            _identityFactory = Substitute.For<IIdentityFactory<Guid>>();
+            _identityFactory.CreateIdentity().Returns(Guid.NewGuid());
 
             _cpi = Activator.CreateInstance(
                 typeof(ConsumerPriceIndex),
@@ -35,26 +35,26 @@ namespace Acme.Seps.Domain.Parameter.Test.Unit.ApplicationService
                     10M,
                     nameof(ConsumerPriceIndex),
                     new YearlyPeriod(DateTime.Now.AddYears(-4), DateTime.Now.AddYears(-3)),
-                    _identityFactory.Object },
+                    _identityFactory },
                 null) as ConsumerPriceIndex;
 
-            _resRepository = new Mock<IRepository<RenewableEnergySourceTariff>>();
+            _resRepository = Substitute.For<IRepository<RenewableEnergySourceTariff>>();
             _resRepository
-                .Setup(m => m.Get(It.IsAny<ISpecification<RenewableEnergySourceTariff>>()))
+                .Get(Arg.Any<ISpecification<RenewableEnergySourceTariff>>())
                 .Returns(new List<RenewableEnergySourceTariff> { Activator.CreateInstance(
                     typeof(RenewableEnergySourceTariff),
                     BindingFlags.Instance | BindingFlags.NonPublic,
                     null,
-                    new object[] { _cpi, 5M, 10M, _identityFactory.Object },
+                    new object[] { _cpi, 5M, 10M, _identityFactory },
                     null) as RenewableEnergySourceTariff });
-            _cpiRepository = new Mock<IRepository<ConsumerPriceIndex>>();
+            _cpiRepository = Substitute.For<IRepository<ConsumerPriceIndex>>();
             _cpiRepository
-                .Setup(m => m.Get(It.IsAny<ISpecification<ConsumerPriceIndex>>()))
+                .Get(Arg.Any<ISpecification<ConsumerPriceIndex>>())
                 .Returns(new List<ConsumerPriceIndex> { _cpi });
-            _unitOfWork = new Mock<IUnitOfWork>();
+            _unitOfWork = Substitute.For<IUnitOfWork>();
 
             _cpiService = new ConsumerPriceIndexService(
-                _cpiRepository.Object, _resRepository.Object, _unitOfWork.Object, _identityFactory.Object);
+                _cpiRepository, _resRepository, _unitOfWork, _identityFactory);
         }
 
         public void NewCpiIsSuccessfullyCreated()
@@ -63,11 +63,11 @@ namespace Acme.Seps.Domain.Parameter.Test.Unit.ApplicationService
 
             _cpiService.CalculateNewEntry(yaep);
 
-            _resRepository.Verify(m => m.Get(It.IsAny<ISpecification<RenewableEnergySourceTariff>>()), Times.Once);
-            _cpiRepository.Verify(m => m.Get(It.IsAny<ISpecification<ConsumerPriceIndex>>()), Times.Once);
-            _unitOfWork.Verify(m => m.Insert(It.IsAny<RenewableEnergySourceTariff>()), Times.Once);
-            _unitOfWork.Verify(m => m.Insert(It.IsAny<ConsumerPriceIndex>()), Times.Once);
-            _unitOfWork.Verify(m => m.Commit(), Times.Once);
+            _resRepository.Received().Get(Arg.Any<ISpecification<RenewableEnergySourceTariff>>());
+            _cpiRepository.Received().Get(Arg.Any<ISpecification<ConsumerPriceIndex>>());
+            _unitOfWork.Received().Insert(Arg.Any<RenewableEnergySourceTariff>());
+            _unitOfWork.Received().Insert(Arg.Any<ConsumerPriceIndex>());
+            _unitOfWork.Received().Commit();
         }
 
         public void LastCpiEntryIsSuccessfullyUpdated()
@@ -76,13 +76,13 @@ namespace Acme.Seps.Domain.Parameter.Test.Unit.ApplicationService
 
             _cpiService.UpdateLastEntry(yaep);
 
-            _resRepository.Verify(m => m.Get(It.IsAny<ISpecification<RenewableEnergySourceTariff>>()), Times.Once);
-            _cpiRepository.Verify(m => m.Get(It.IsAny<ISpecification<ConsumerPriceIndex>>()), Times.Once);
-            _unitOfWork.Verify(m => m.Delete(It.IsAny<RenewableEnergySourceTariff>()), Times.Once);
-            _unitOfWork.Verify(m => m.Insert(It.IsAny<RenewableEnergySourceTariff>()), Times.Once);
-            _unitOfWork.Verify(m => m.Delete(It.IsAny<ConsumerPriceIndex>()), Times.Once);
-            _unitOfWork.Verify(m => m.Insert(It.IsAny<ConsumerPriceIndex>()), Times.Once);
-            _unitOfWork.Verify(m => m.Commit(), Times.Once);
+            _resRepository.Received().Get(Arg.Any<ISpecification<RenewableEnergySourceTariff>>());
+            _cpiRepository.Received().Get(Arg.Any<ISpecification<ConsumerPriceIndex>>());
+            _unitOfWork.Received().Delete(Arg.Any<RenewableEnergySourceTariff>());
+            _unitOfWork.Received().Insert(Arg.Any<RenewableEnergySourceTariff>());
+            _unitOfWork.Received().Delete(Arg.Any<ConsumerPriceIndex>());
+            _unitOfWork.Received().Insert(Arg.Any<ConsumerPriceIndex>());
+            _unitOfWork.Received().Commit();
         }
     }
 }

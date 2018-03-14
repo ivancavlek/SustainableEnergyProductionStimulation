@@ -3,7 +3,7 @@ using Acme.Seps.Domain.Base.ValueType;
 using Acme.Seps.Domain.Parameter.DomainService;
 using Acme.Seps.Domain.Parameter.Entity;
 using FluentAssertions;
-using Moq;
+using NSubstitute;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
@@ -16,11 +16,11 @@ namespace Acme.Seps.Domain.Parameter.Test.Unit.Entity
 
         private readonly NaturalGasSellingPrice _naturalGasSellingPrice;
         private readonly IEnumerable<NaturalGasSellingPrice> _yearsNaturalGasSellingPrices;
-        private readonly Mock<IIdentityFactory<Guid>> _identityFactory;
+        private readonly IIdentityFactory<Guid> _identityFactory;
 
         public CogenerationParameterServiceTests()
         {
-            _identityFactory = new Mock<IIdentityFactory<Guid>>();
+            _identityFactory = Substitute.For<IIdentityFactory<Guid>>();
             _naturalGasSellingPrice = Activator.CreateInstance(
                 typeof(NaturalGasSellingPrice),
                 BindingFlags.Instance | BindingFlags.NonPublic,
@@ -29,7 +29,7 @@ namespace Acme.Seps.Domain.Parameter.Test.Unit.Entity
                     10M,
                     nameof(NaturalGasSellingPrice),
                     new MonthlyPeriod(DateTime.Now.AddMonths(-3), DateTime.Now.AddMonths(-2)),
-                    _identityFactory.Object },
+                    _identityFactory },
                 null) as NaturalGasSellingPrice;
             _yearsNaturalGasSellingPrices = new List<NaturalGasSellingPrice> { _naturalGasSellingPrice };
 

@@ -4,7 +4,7 @@ using Acme.Domain.Base.ValueType;
 using Acme.Seps.Domain.Base.ValueType;
 using Acme.Seps.Domain.Parameter.Entity;
 using FluentAssertions;
-using Moq;
+using NSubstitute;
 using System;
 
 namespace Acme.Seps.Domain.Parameter.Test.Unit.Entity
@@ -15,7 +15,7 @@ namespace Acme.Seps.Domain.Parameter.Test.Unit.Entity
         private readonly int _decimalPlaces;
         private readonly string _remark;
         private readonly Period _period;
-        private readonly Mock<IIdentityFactory<Guid>> _identityFactory;
+        private readonly IIdentityFactory<Guid> _identityFactory;
 
         public EconometricIndexTests()
         {
@@ -23,26 +23,28 @@ namespace Acme.Seps.Domain.Parameter.Test.Unit.Entity
             _decimalPlaces = 2;
             _remark = nameof(_remark);
             _period = new MonthlyPeriod(DateTime.UtcNow);
-            _identityFactory = new Mock<IIdentityFactory<Guid>>();
+            _identityFactory = Substitute.For<IIdentityFactory<Guid>>();
         }
 
         public void AmountCannotBeANegativeValue()
         {
             Action action = () =>
-                new DummyEconometricIndex(-1M, _decimalPlaces, _remark, _period, _identityFactory.Object);
+                new DummyEconometricIndex(-1M, _decimalPlaces, _remark, _period, _identityFactory);
 
             action
-                .ShouldThrowExactly<DomainException>()
+                .Should()
+                .ThrowExactly<DomainException>()
                 .WithMessage(Infrastructure.Parameter.ParameterAmountBelowOrZeroException);
         }
 
         public void AmountCannotBeZeroBased()
         {
             Action action = () =>
-                new DummyEconometricIndex(0M, _decimalPlaces, _remark, _period, _identityFactory.Object);
+                new DummyEconometricIndex(0M, _decimalPlaces, _remark, _period, _identityFactory);
 
             action
-                .ShouldThrowExactly<DomainException>()
+                .Should()
+                .ThrowExactly<DomainException>()
                 .WithMessage(Infrastructure.Parameter.ParameterAmountBelowOrZeroException);
         }
 
@@ -50,7 +52,7 @@ namespace Acme.Seps.Domain.Parameter.Test.Unit.Entity
         {
             var amount = 1.2578M;
 
-            var result = new DummyEconometricIndex(amount, _decimalPlaces, _remark, _period, _identityFactory.Object);
+            var result = new DummyEconometricIndex(amount, _decimalPlaces, _remark, _period, _identityFactory);
 
             result.Amount.Should().Be(Math.Round(amount, _decimalPlaces, MidpointRounding.AwayFromZero));
         }
@@ -58,20 +60,22 @@ namespace Acme.Seps.Domain.Parameter.Test.Unit.Entity
         public void DecimalPlacesCannotBeANegativeNumber()
         {
             Action action = () =>
-                new DummyEconometricIndex(_amount, -1, _remark, _period, _identityFactory.Object);
+                new DummyEconometricIndex(_amount, -1, _remark, _period, _identityFactory);
 
             action
-                .ShouldThrowExactly<DomainException>()
+                .Should()
+                .ThrowExactly<DomainException>()
                 .WithMessage(Infrastructure.Parameter.ParameterDecimalPlacesBelowZeroException);
         }
 
         public void RemarkMustExist()
         {
             Action action = () =>
-                new DummyEconometricIndex(_amount, _decimalPlaces, string.Empty, _period, _identityFactory.Object);
+                new DummyEconometricIndex(_amount, _decimalPlaces, string.Empty, _period, _identityFactory);
 
             action
-                .ShouldThrowExactly<DomainException>()
+                .Should()
+                .ThrowExactly<DomainException>()
                 .WithMessage(Infrastructure.Parameter.RemarkNotSetException);
         }
     }

@@ -9,10 +9,8 @@ namespace Acme.Seps.Domain.Parameter.Repository
     {
         private readonly int _year;
 
-        public YearsNaturalGasSellingPricesSpecification(int year)
-        {
+        public YearsNaturalGasSellingPricesSpecification(int year) =>
             _year = year;
-        }
 
         Expression<Func<NaturalGasSellingPrice, bool>> ISpecification<NaturalGasSellingPrice>.ToExpression() =>
             ngp => ngp.Period.IsWithin(new DateTime(_year, 1, 1), new DateTime(_year + 1, 1, 1));

@@ -57,7 +57,8 @@ namespace Acme.Seps.Domain.Parameter.CommandHandler
 
         private NaturalGasSellingPrice CreateNewNaturalGasSellingPrice(CalculateNaturalGasCommand command) =>
             command.ActiveNaturalGasSellingPrice.CreateNew(
-                command.Amount, command.Remark, command.Month, command.Year, _identityFactory) as NaturalGasSellingPrice;
+                command.Amount, command.Remark, command.Month, command.Year, _identityFactory)
+            as NaturalGasSellingPrice;
 
         private void LogNewNaturalSellingPriceCreation(NaturalGasSellingPrice naturalGasSellingPrice) =>
             SepsLogService.Log(new EntityExecutionLoggingEventArgs

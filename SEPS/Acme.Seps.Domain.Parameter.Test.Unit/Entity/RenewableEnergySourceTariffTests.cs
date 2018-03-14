@@ -3,7 +3,7 @@ using Acme.Domain.Base.Factory;
 using Acme.Seps.Domain.Base.ValueType;
 using Acme.Seps.Domain.Parameter.Entity;
 using FluentAssertions;
-using Moq;
+using NSubstitute;
 using System;
 using System.Reflection;
 
@@ -13,7 +13,7 @@ namespace Acme.Seps.Domain.Parameter.Test.Unit.Entity
     {
         private readonly RenewableEnergySourceTariff _existingRes;
         private readonly ConsumerPriceIndex _consumerPriceIndex;
-        private readonly Mock<IIdentityFactory<Guid>> _identityFactory;
+        private readonly IIdentityFactory<Guid> _identityFactory;
 
         private readonly decimal _higherRate;
         private readonly YearlyPeriod _resPeriod;
@@ -22,7 +22,7 @@ namespace Acme.Seps.Domain.Parameter.Test.Unit.Entity
         {
             _higherRate = 10M;
             _resPeriod = new YearlyPeriod(DateTime.Now.AddYears(-4), DateTime.Now.AddYears(-3));
-            _identityFactory = new Mock<IIdentityFactory<Guid>>();
+            _identityFactory = Substitute.For<IIdentityFactory<Guid>>();
 
             var resConsumerPriceIndex = Activator.CreateInstance(
                 typeof(ConsumerPriceIndex),
@@ -32,7 +32,7 @@ namespace Acme.Seps.Domain.Parameter.Test.Unit.Entity
                     100M,
                     nameof(ConsumerPriceIndex),
                     _resPeriod,
-                    _identityFactory.Object },
+                    _identityFactory },
                 null) as ConsumerPriceIndex;
             _consumerPriceIndex = Activator.CreateInstance(
                 typeof(ConsumerPriceIndex),
@@ -42,22 +42,23 @@ namespace Acme.Seps.Domain.Parameter.Test.Unit.Entity
                     105M,
                     nameof(ConsumerPriceIndex),
                     new YearlyPeriod(DateTime.Now.AddYears(-3), DateTime.Now.AddYears(-2)),
-                    _identityFactory.Object },
+                    _identityFactory },
                 null) as ConsumerPriceIndex;
             _existingRes = Activator.CreateInstance(
                 typeof(RenewableEnergySourceTariff),
                 BindingFlags.Instance | BindingFlags.NonPublic,
                 null,
-                new object[] { resConsumerPriceIndex, 5M, _higherRate, _identityFactory.Object },
+                new object[] { resConsumerPriceIndex, 5M, _higherRate, _identityFactory },
                 null) as RenewableEnergySourceTariff;
         }
 
         public void ConsumerPriceIndexMustBeSet()
         {
-            Action action = () => _existingRes.CreateNewWith(null, _identityFactory.Object);
+            Action action = () => _existingRes.CreateNewWith(null, _identityFactory);
 
             action
-                .ShouldThrowExactly<ArgumentNullException>()
+                .Should()
+                .ThrowExactly<ArgumentNullException>()
                 .WithMessage(Infrastructure.Parameter.ConsumerPriceIndexNotSetException);
         }
 
@@ -71,25 +72,26 @@ namespace Acme.Seps.Domain.Parameter.Test.Unit.Entity
                     100M,
                 nameof(ConsumerPriceIndex),
                 new YearlyPeriod(DateTime.Now.AddYears(-3), DateTime.Now.AddYears(-2)),
-                    _identityFactory.Object },
+                    _identityFactory },
                 null);
             var falseRes = Activator.CreateInstance(
                 typeof(RenewableEnergySourceTariff),
                 BindingFlags.Instance | BindingFlags.NonPublic,
                 null,
-                new object[] { resConsumerPriceIndex, 5M, _higherRate, _identityFactory.Object },
+                new object[] { resConsumerPriceIndex, 5M, _higherRate, _identityFactory },
                 null) as RenewableEnergySourceTariff;
 
-            Action action = () => falseRes.CreateNewWith(_consumerPriceIndex, _identityFactory.Object);
+            Action action = () => falseRes.CreateNewWith(_consumerPriceIndex, _identityFactory);
 
             action
-                .ShouldThrowExactly<DomainException>()
+                .Should()
+                .ThrowExactly<DomainException>()
                 .WithMessage(Infrastructure.Parameter.RenewableEnergySourceTariffPeriodException);
         }
 
         public void ResIsCorrectlyConstructed()
         {
-            var result = _existingRes.CreateNewWith(_consumerPriceIndex, _identityFactory.Object);
+            var result = _existingRes.CreateNewWith(_consumerPriceIndex, _identityFactory);
 
             _existingRes.Period.ValidTill.Should().Be(_consumerPriceIndex.Period.ValidFrom);
             result.ConsumerPriceIndex.Should().Be(_consumerPriceIndex);

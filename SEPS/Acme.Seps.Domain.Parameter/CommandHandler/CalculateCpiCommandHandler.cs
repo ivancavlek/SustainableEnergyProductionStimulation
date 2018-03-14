@@ -49,8 +49,7 @@ namespace Acme.Seps.Domain.Parameter.CommandHandler
         }
 
         private ConsumerPriceIndex CreateNewCpi(CalculateCpiCommand command) =>
-            command.ActiveCpi.CreateNew(
-                command.Amount, command.Remark, _identityFactory) as ConsumerPriceIndex;
+            command.ActiveCpi.CreateNew(command.Amount, command.Remark, _identityFactory) as ConsumerPriceIndex;
 
         private void LogNewNaturalSellingPriceCreation(ConsumerPriceIndex cpi) =>
             SepsLogService.Log(new EntityExecutionLoggingEventArgs

@@ -2,7 +2,7 @@
 using Acme.Seps.Domain.Base.ValueType;
 using Acme.Seps.Domain.Parameter.Entity;
 using FluentAssertions;
-using Moq;
+using NSubstitute;
 using System;
 using System.Reflection;
 
@@ -13,13 +13,13 @@ namespace Acme.Seps.Domain.Parameter.Test.Unit.Entity
         private readonly decimal _amount;
         private readonly string _remark;
         private readonly MonthlyAverageElectricEnergyProductionPrice _existingMaep;
-        private readonly Mock<IIdentityFactory<Guid>> _identityFactory;
+        private readonly IIdentityFactory<Guid> _identityFactory;
 
         public MonthlyAverageElectricEnergyProductionPriceTests()
         {
             _amount = 1.123456M;
             _remark = nameof(_remark);
-            _identityFactory = new Mock<IIdentityFactory<Guid>>();
+            _identityFactory = Substitute.For<IIdentityFactory<Guid>>();
 
             _existingMaep = Activator.CreateInstance(
                 typeof(MonthlyAverageElectricEnergyProductionPrice),
@@ -29,7 +29,7 @@ namespace Acme.Seps.Domain.Parameter.Test.Unit.Entity
                     10M,
                     nameof(MonthlyAverageElectricEnergyProductionPrice),
                     new MonthlyPeriod(DateTime.Now.AddYears(-3), DateTime.Now.AddYears(-2)),
-                    _identityFactory.Object },
+                    _identityFactory },
                 null) as MonthlyAverageElectricEnergyProductionPrice;
         }
 
@@ -38,7 +38,7 @@ namespace Acme.Seps.Domain.Parameter.Test.Unit.Entity
             var validTill = DateTime.Now.AddMonths(-5);
 
             var result = _existingMaep.CreateNew(
-                _amount, _remark, validTill.Month, validTill.Year, _identityFactory.Object);
+                _amount, _remark, validTill.Month, validTill.Year, _identityFactory);
 
             result.Amount.Should().Be(Math.Round(_amount, 4, MidpointRounding.AwayFromZero));
         }

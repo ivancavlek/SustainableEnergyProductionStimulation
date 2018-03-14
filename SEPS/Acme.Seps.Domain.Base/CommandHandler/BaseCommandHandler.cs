@@ -8,13 +8,8 @@ namespace Acme.Seps.Domain.Base.CommandHandler
     {
         protected readonly ISepsLogService SepsLogService;
 
-        protected BaseCommandHandler(ISepsLogService sepsLogService)
-        {
-            if (sepsLogService == null)
-                throw new ArgumentNullException(nameof(sepsLogService));
-
-            SepsLogService = sepsLogService;
-        }
+        protected BaseCommandHandler(ISepsLogService sepsLogService) =>
+            SepsLogService = sepsLogService ?? throw new ArgumentNullException(nameof(sepsLogService));
 
         protected void LogSuccessfulCommit() =>
             SepsLogService.Log(new EntityExecutionLoggingEventArgs { Message = Infrastructure.Base.SuccessfulSave });

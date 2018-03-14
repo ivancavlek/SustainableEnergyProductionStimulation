@@ -22,10 +22,8 @@ namespace Acme.Seps.Domain.Parameter.Entity
             decimal higherRate,
             Period period,
             IIdentityFactory<Guid> identityFactory)
-            : base(lowerRate, higherRate, period, identityFactory)
-        {
+            : base(lowerRate, higherRate, period, identityFactory) =>
             NaturalGasSellingPrice = naturalGasSellingPrice;
-        }
 
         public CogenerationTariff CreateNewWith(
             IEnumerable<NaturalGasSellingPrice> yearsNaturalGasSellingPrices,

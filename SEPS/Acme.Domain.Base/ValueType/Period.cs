@@ -8,9 +8,7 @@ namespace Acme.Domain.Base.ValueType
         public DateTimeOffset ValidFrom { get; }
         public DateTimeOffset? ValidTill { get; }
 
-        protected Period()
-        {
-        }
+        protected Period() { }
 
         public Period(DateTimeOffset dateFrom, DateTimeOffset? dateTill = null)
         {

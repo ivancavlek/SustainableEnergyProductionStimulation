@@ -4,7 +4,7 @@ using Acme.Seps.Domain.Parameter.Entity;
 
 namespace Acme.Seps.Domain.Parameter.ApplicationService
 {
-    public interface IEconometricIndexService<TEconometricIndex, TEconometricIndexDto>
+    public interface IEconometricIndexService<TEconometricIndex, in TEconometricIndexDto>
         : ISepsLogService
         where TEconometricIndex : EconometricIndex
         where TEconometricIndexDto : YearlyEconometricIndexDto

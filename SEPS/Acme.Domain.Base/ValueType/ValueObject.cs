@@ -9,7 +9,9 @@ namespace Acme.Domain.Base.ValueType
     /// </summary>
     public abstract class ValueObject : IEquatable<ValueObject>
     {
-        protected ValueObject() { }
+        protected ValueObject()
+        {
+        }
 
         public override bool Equals(object obj)
         {
@@ -84,8 +86,10 @@ namespace Acme.Domain.Base.ValueType
             return fields;
         }
 
-        public static bool operator ==(ValueObject x, ValueObject y) => x.Equals(y);
+        public static bool operator ==(ValueObject x, ValueObject y) =>
+            x.Equals(y);
 
-        public static bool operator !=(ValueObject x, ValueObject y) => !(x == y);
+        public static bool operator !=(ValueObject x, ValueObject y) =>
+            !(x == y);
     }
 }

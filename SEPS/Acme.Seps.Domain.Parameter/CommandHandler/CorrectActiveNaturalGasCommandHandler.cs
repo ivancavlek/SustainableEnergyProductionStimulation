@@ -27,16 +27,9 @@ namespace Acme.Seps.Domain.Parameter.CommandHandler
             IIdentityFactory<Guid> identityFactory,
             ISepsLogService sepsLogService) : base(sepsLogService)
         {
-            if (cogenerationParameterService == null)
-                throw new ArgumentNullException(nameof(cogenerationParameterService));
-            if (unitOfWork == null)
-                throw new ArgumentNullException(nameof(unitOfWork));
-            if (identityFactory == null)
-                throw new ArgumentNullException(nameof(identityFactory));
-
-            _cogenerationParameterService = cogenerationParameterService;
-            _unitOfWork = unitOfWork;
-            _identityFactory = identityFactory;
+            _cogenerationParameterService = cogenerationParameterService ?? throw new ArgumentNullException(nameof(cogenerationParameterService));
+            _unitOfWork = unitOfWork ?? throw new ArgumentNullException(nameof(unitOfWork));
+            _identityFactory = identityFactory ?? throw new ArgumentNullException(nameof(identityFactory));
         }
 
         void ICommandHandler<CorrectActiveNaturalGasCommand>.Handle(

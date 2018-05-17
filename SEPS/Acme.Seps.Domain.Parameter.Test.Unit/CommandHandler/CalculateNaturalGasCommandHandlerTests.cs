@@ -20,6 +20,8 @@ namespace Acme.Seps.Domain.Parameter.Test.Unit.CommandHandler
         private readonly ICommandHandler<CalculateNaturalGasCommand> _calculateNaturalGas;
         private readonly ICogenerationParameterService _cogenerationParameterService;
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IRepository<NaturalGasSellingPrice> _naturalGasSellingPriceRepository;
+        private readonly IRepository<CogenerationTariff> _tariffRepository;
         private readonly IIdentityFactory<Guid> _identityFactory;
         private readonly ISepsLogService _sepsLogService;
 
@@ -51,23 +53,34 @@ namespace Acme.Seps.Domain.Parameter.Test.Unit.CommandHandler
                     _identityFactory },
                 null) as NaturalGasSellingPrice;
 
-            _cogenerationTariff = new List<CogenerationTariff> { Activator.CreateInstance(
+            _naturalGasSellingPriceRepository = Substitute.For<IRepository<NaturalGasSellingPrice>>();
+            _naturalGasSellingPriceRepository
+                .Get(Arg.Any<ISpecification<NaturalGasSellingPrice>>())
+                .Returns(new List<NaturalGasSellingPrice> { _naturalGasSellingPrice });
+
+            var cogenerationTariff = Activator.CreateInstance(
                     typeof(CogenerationTariff),
-                BindingFlags.Instance | BindingFlags.NonPublic,
-                null,
-                new object[] {
-                    _naturalGasSellingPrice,
-                    10M,
-                    10M,
-                    new MonthlyPeriod(DateTime.Now.AddMonths(-4), _lastPeriod),
-                    _identityFactory },
-                null) as CogenerationTariff };
+                    BindingFlags.Instance | BindingFlags.NonPublic,
+                    null,
+                    new object[] {
+                        _naturalGasSellingPrice,
+                        10M,
+                        10M,
+                        new MonthlyPeriod(DateTime.Now.AddMonths(-4), _lastPeriod),
+                        _identityFactory },
+                    null) as CogenerationTariff;
+            _tariffRepository = Substitute.For<IRepository<CogenerationTariff>>();
+            _tariffRepository
+                .Get(Arg.Any<ISpecification<CogenerationTariff>>())
+                .Returns(new List<CogenerationTariff> { cogenerationTariff });
 
             _unitOfWork = Substitute.For<IUnitOfWork>();
 
             _calculateNaturalGas = new CalculateNaturalGasCommandHandler(
                 _cogenerationParameterService,
                 _unitOfWork,
+                _tariffRepository,
+                _naturalGasSellingPriceRepository,
                 _identityFactory,
                 _sepsLogService);
         }
@@ -76,13 +89,10 @@ namespace Acme.Seps.Domain.Parameter.Test.Unit.CommandHandler
         {
             var calculateNaturalGasCommand = new CalculateNaturalGasCommand
             {
-                ActiveNaturalGasSellingPrice = _naturalGasSellingPrice,
-                ActiveCogenerationTariffs = _cogenerationTariff,
                 Amount = 100M,
                 Month = _lastPeriod.Month,
                 Remark = nameof(CalculateNaturalGasCommand),
                 Year = _lastPeriod.Year,
-                YearsNaturalGasSellingPrices = new List<NaturalGasSellingPrice> { _naturalGasSellingPrice }
             };
 
             _calculateNaturalGas.Handle(calculateNaturalGasCommand);

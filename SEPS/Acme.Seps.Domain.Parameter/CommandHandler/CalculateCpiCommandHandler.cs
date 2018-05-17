@@ -4,10 +4,12 @@ using Acme.Domain.Base.Factory;
 using Acme.Domain.Base.Repository;
 using Acme.Seps.Domain.Base.ApplicationService;
 using Acme.Seps.Domain.Base.CommandHandler;
+using Acme.Seps.Domain.Base.Repository;
 using Acme.Seps.Domain.Parameter.Command;
 using Acme.Seps.Domain.Parameter.Entity;
 using Humanizer;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Acme.Seps.Domain.Parameter.CommandHandler
@@ -16,12 +18,18 @@ namespace Acme.Seps.Domain.Parameter.CommandHandler
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IIdentityFactory<Guid> _identityFactory;
+        private readonly IRepository<ConsumerPriceIndex> _cpiRepository;
+        private readonly IRepository<RenewableEnergySourceTariff> _resRepository;
 
         public CalculateCpiCommandHandler(
+            IRepository<ConsumerPriceIndex> cpiRepository,
+            IRepository<RenewableEnergySourceTariff> resRepository,
             IUnitOfWork unitOfWork,
             IIdentityFactory<Guid> identityFactory,
             ISepsLogService sepsLogService) : base(sepsLogService)
         {
+            _cpiRepository = cpiRepository ?? throw new ArgumentNullException(nameof(cpiRepository));
+            _resRepository = resRepository ?? throw new ArgumentNullException(nameof(resRepository));
             _unitOfWork = unitOfWork ?? throw new ArgumentNullException(nameof(unitOfWork));
             _identityFactory = identityFactory ?? throw new ArgumentNullException(nameof(identityFactory));
         }
@@ -32,7 +40,7 @@ namespace Acme.Seps.Domain.Parameter.CommandHandler
             _unitOfWork.Insert(newCpi);
             LogNewNaturalSellingPriceCreation(newCpi);
 
-            command.ActiveResTariffs.ToList().ForEach(art =>
+            GetActiveRes().ToList().ForEach(art =>
             {
                 var newRenewableEnergyTariff = CreateNewRenewableEnergySourceTariff(art, newCpi);
                 _unitOfWork.Insert(newRenewableEnergyTariff);
@@ -44,7 +52,13 @@ namespace Acme.Seps.Domain.Parameter.CommandHandler
         }
 
         private ConsumerPriceIndex CreateNewCpi(CalculateCpiCommand command) =>
-            command.ActiveCpi.CreateNew(command.Amount, command.Remark, _identityFactory) as ConsumerPriceIndex;
+            GetActiveCpi().CreateNew(command.Amount, command.Remark, _identityFactory) as ConsumerPriceIndex;
+
+        private ConsumerPriceIndex GetActiveCpi() =>
+            _cpiRepository.Get(new ActiveSpecification<ConsumerPriceIndex>()).SingleOrDefault();
+
+        private IEnumerable<RenewableEnergySourceTariff> GetActiveRes() =>
+            _resRepository.Get(new ActiveSpecification<RenewableEnergySourceTariff>());
 
         private void LogNewNaturalSellingPriceCreation(ConsumerPriceIndex cpi) =>
             SepsLogService.Log(new EntityExecutionLoggingEventArgs

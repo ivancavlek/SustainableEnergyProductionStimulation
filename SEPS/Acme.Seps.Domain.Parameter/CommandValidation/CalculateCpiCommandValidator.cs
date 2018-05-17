@@ -7,12 +7,6 @@ namespace Acme.Seps.Domain.Parameter.CommandValidation
     {
         public CalculateCpiCommandValidator()
         {
-            RuleFor(customer => customer.ActiveCpi)
-                .NotNull()
-                .WithMessage(Infrastructure.Parameter.ConsumerPriceIndexNotSetException);
-            RuleForEach(customer => customer.ActiveResTariffs)
-                .NotNull()
-                .WithMessage(Infrastructure.Parameter.RemarkNotSetException);
             RuleFor(cfc => cfc.Amount)
                 .GreaterThan(0M)
                 .WithMessage(Infrastructure.Parameter.ParameterAmountBelowOrZeroException);

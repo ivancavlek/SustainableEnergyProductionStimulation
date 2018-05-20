@@ -5,7 +5,8 @@ using System.Linq.Expressions;
 
 namespace Acme.Seps.Domain.Parameter.Repository
 {
-    public sealed class YearsNaturalGasSellingPricesSpecification : ISpecification<NaturalGasSellingPrice>
+    public sealed class YearsNaturalGasSellingPricesSpecification
+        : BaseSpecification<NaturalGasSellingPrice>, ISpecification<NaturalGasSellingPrice>
     {
         private readonly int _year;
 

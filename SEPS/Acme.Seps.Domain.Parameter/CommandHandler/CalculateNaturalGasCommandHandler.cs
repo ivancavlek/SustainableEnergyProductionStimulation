@@ -19,25 +19,20 @@ namespace Acme.Seps.Domain.Parameter.CommandHandler
     public sealed class CalculateNaturalGasCommandHandler : BaseCommandHandler, ICommandHandler<CalculateNaturalGasCommand>
     {
         private readonly IUnitOfWork _unitOfWork;
-        private readonly IRepository<CogenerationTariff> _cogenerationTariffRepository;
-        private readonly IRepository<NaturalGasSellingPrice> _naturalGasRepository;
+        private readonly IRepository _repository;
         private readonly IIdentityFactory<Guid> _identityFactory;
         private readonly ICogenerationParameterService _cogenerationParameterService;
 
         public CalculateNaturalGasCommandHandler(
             ICogenerationParameterService cogenerationParameterService,
             IUnitOfWork unitOfWork,
-            IRepository<CogenerationTariff> cogenerationTariffRepository,
-            IRepository<NaturalGasSellingPrice> naturalGasRepository,
+            IRepository repository,
             IIdentityFactory<Guid> identityFactory,
             ISepsLogService sepsLogService) : base(sepsLogService)
         {
             _cogenerationParameterService = cogenerationParameterService ?? throw new ArgumentNullException(nameof(cogenerationParameterService));
             _unitOfWork = unitOfWork ?? throw new ArgumentNullException(nameof(unitOfWork));
-            _cogenerationTariffRepository =
-                cogenerationTariffRepository ?? throw new ArgumentNullException(nameof(cogenerationTariffRepository));
-            _naturalGasRepository =
-                naturalGasRepository ?? throw new ArgumentNullException(nameof(naturalGasRepository));
+            _repository = repository ?? throw new ArgumentNullException(nameof(repository));
             _identityFactory = identityFactory ?? throw new ArgumentNullException(nameof(identityFactory));
         }
 
@@ -68,13 +63,13 @@ namespace Acme.Seps.Domain.Parameter.CommandHandler
             as NaturalGasSellingPrice;
 
         private NaturalGasSellingPrice GetActiveNaturalGasSellingPrice() =>
-            _naturalGasRepository.Get(new ActiveSpecification<NaturalGasSellingPrice>()).SingleOrDefault();
+            _repository.GetSingle(new ActiveSpecification<NaturalGasSellingPrice>());
 
-        private IEnumerable<CogenerationTariff> GetActiveCogenerations() =>
-            _cogenerationTariffRepository.Get(new ActiveSpecification<CogenerationTariff>());
+        private IReadOnlyList<CogenerationTariff> GetActiveCogenerations() =>
+            _repository.GetAll(new ActiveSpecification<CogenerationTariff>());
 
-        private IEnumerable<NaturalGasSellingPrice> GetNaturalGasPricesWithinYear(int year) =>
-           _naturalGasRepository.Get(new YearsNaturalGasSellingPricesSpecification(year));
+        private IReadOnlyList<NaturalGasSellingPrice> GetNaturalGasPricesWithinYear(int year) =>
+           _repository.GetAll(new YearsNaturalGasSellingPricesSpecification(year));
 
         private void LogNewNaturalSellingPriceCreation(NaturalGasSellingPrice naturalGasSellingPrice) =>
             SepsLogService.Log(new EntityExecutionLoggingEventArgs

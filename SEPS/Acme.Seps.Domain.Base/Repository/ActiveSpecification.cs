@@ -6,7 +6,8 @@ using System.Linq.Expressions;
 
 namespace Acme.Seps.Domain.Base.Repository
 {
-    public sealed class ActiveSpecification<TAggregateRoot> : ISpecification<TAggregateRoot>
+    public sealed class ActiveSpecification<TAggregateRoot>
+        : BaseSpecification<TAggregateRoot>, ISpecification<TAggregateRoot>
         where TAggregateRoot : SepsBaseEntity, IAggregateRoot
     {
         Expression<Func<TAggregateRoot, bool>> ISpecification<TAggregateRoot>.ToExpression() =>

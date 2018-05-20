@@ -3,8 +3,12 @@ using System.Collections.Generic;
 
 namespace Acme.Domain.Base.Repository
 {
-    public interface IRepository<TAggregateRoot> where TAggregateRoot : BaseEntity, IAggregateRoot
+    public interface IRepository
     {
-        IReadOnlyList<TAggregateRoot> Get(ISpecification<TAggregateRoot> specification);
+        IReadOnlyList<TAggregateRoot> GetAll<TAggregateRoot>(ISpecification<TAggregateRoot> specification)
+            where TAggregateRoot : BaseEntity, IAggregateRoot;
+
+        TAggregateRoot GetSingle<TAggregateRoot>(ISpecification<TAggregateRoot> specification)
+            where TAggregateRoot : BaseEntity, IAggregateRoot;
     }
 }

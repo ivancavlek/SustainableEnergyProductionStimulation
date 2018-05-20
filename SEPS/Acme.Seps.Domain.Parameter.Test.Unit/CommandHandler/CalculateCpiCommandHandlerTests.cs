@@ -18,8 +18,7 @@ namespace Acme.Seps.Domain.Parameter.Test.Unit.CommandHandler
     {
         private readonly ICommandHandler<CalculateCpiCommand> _calculateCpi;
         private readonly IUnitOfWork _unitOfWork;
-        private readonly IRepository<RenewableEnergySourceTariff> _resRepository;
-        private readonly IRepository<ConsumerPriceIndex> _cpiRepository;
+        private readonly IRepository _repository;
         private readonly IIdentityFactory<Guid> _identityFactory;
         private readonly ISepsLogService _sepsLogService;
 
@@ -46,19 +45,18 @@ namespace Acme.Seps.Domain.Parameter.Test.Unit.CommandHandler
                     null,
                     new object[] { _cpi, 5M, 10M, _identityFactory },
                     null) as RenewableEnergySourceTariff;
-            _resRepository = Substitute.For<IRepository<RenewableEnergySourceTariff>>();
-            _resRepository
-                .Get(Arg.Any<ISpecification<RenewableEnergySourceTariff>>())
+            _repository = Substitute.For<IRepository>();
+            _repository
+                .GetAll(Arg.Any<ISpecification<RenewableEnergySourceTariff>>())
                 .Returns(new List<RenewableEnergySourceTariff> { renewableEnergySourceTariff });
-            _cpiRepository = Substitute.For<IRepository<ConsumerPriceIndex>>();
-            _cpiRepository
-                .Get(Arg.Any<ISpecification<ConsumerPriceIndex>>())
-                .Returns(new List<ConsumerPriceIndex> { _cpi });
+            _repository
+                .GetSingle(Arg.Any<ISpecification<ConsumerPriceIndex>>())
+                .Returns(_cpi);
 
             _unitOfWork = Substitute.For<IUnitOfWork>();
 
             _calculateCpi = new CalculateCpiCommandHandler(
-                _cpiRepository, _resRepository, _unitOfWork, _identityFactory, _sepsLogService);
+                _repository, _unitOfWork, _identityFactory, _sepsLogService);
         }
 
         public void ExecutesProperly()

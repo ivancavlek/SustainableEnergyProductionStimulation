@@ -9,6 +9,8 @@ namespace Acme.Domain.Base.Repository
     {
         List<Expression<Func<TAggregateRoot, BaseEntity>>> Includes { get; }
 
+        bool IsSatisfiedBy(TAggregateRoot entity);
+
         Expression<Func<TAggregateRoot, bool>> ToExpression();
     }
 }

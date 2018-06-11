@@ -5,8 +5,8 @@ using System.Linq.Expressions;
 
 namespace Acme.Domain.Base.Repository
 {
-    // eliminate in C# 8
     public abstract class BaseSpecification<TAggregateRoot>
+        : ISpecification<TAggregateRoot> where TAggregateRoot : BaseEntity, IAggregateRoot
     {
         public List<Expression<Func<TAggregateRoot, BaseEntity>>> Includes { get; } =
             new List<Expression<Func<TAggregateRoot, BaseEntity>>>();
@@ -15,5 +15,13 @@ namespace Acme.Domain.Base.Repository
         {
             Includes.Add(includeExpression);
         }
+
+        public bool IsSatisfiedBy(TAggregateRoot entity)
+        {
+            Func<TAggregateRoot, bool> predicate = ToExpression().Compile();
+            return predicate(entity);
+        }
+
+        public abstract Expression<Func<TAggregateRoot, bool>> ToExpression();
     }
 }

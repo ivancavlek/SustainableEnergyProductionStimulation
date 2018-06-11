@@ -1,4 +1,4 @@
-﻿using Acme.Domain.Base.ValueType;
+﻿using Acme.Seps.Domain.Base.ValueType;
 using System;
 
 namespace Acme.Seps.Domain.Base.Factory

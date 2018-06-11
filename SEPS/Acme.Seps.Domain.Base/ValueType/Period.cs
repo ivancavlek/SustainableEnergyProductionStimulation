@@ -1,14 +1,17 @@
 ﻿using Acme.Domain.Base.Entity;
+using Acme.Domain.Base.ValueType;
 using System;
 
-namespace Acme.Domain.Base.ValueType
+namespace Acme.Seps.Domain.Base.ValueType
 {
     public class Period : ValueObject
     {
         public DateTimeOffset ValidFrom { get; }
         public DateTimeOffset? ValidTill { get; }
 
-        protected Period() { }
+        protected Period()
+        {
+        }
 
         public Period(DateTimeOffset dateFrom, DateTimeOffset? dateTill = null)
         {
@@ -18,16 +21,6 @@ namespace Acme.Domain.Base.ValueType
             ValidFrom = dateFrom;
             ValidTill = dateTill;
         }
-
-        public bool IsWithin(DateTimeOffset dateTime) =>
-            ValidFrom <= dateTime && (!ValidTill.HasValue || dateTime < ValidTill);
-
-        public bool IsWithin(Period period) =>
-            IsWithin(period.ValidFrom, period.ValidTill);
-
-        public bool IsWithin(DateTimeOffset dateFrom, DateTimeOffset? dateTill) =>
-            ((!ValidTill.HasValue) || (!ValidTill.HasValue && !dateTill.HasValue)) ||
-                ValidFrom <= dateFrom && dateTill <= ValidTill.Value;
 
         public virtual Period SetValidTill(DateTimeOffset validTill) =>
             new Period(ValidFrom, validTill);

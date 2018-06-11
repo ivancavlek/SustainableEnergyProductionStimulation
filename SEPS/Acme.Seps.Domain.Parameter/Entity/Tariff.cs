@@ -1,19 +1,21 @@
 ﻿using Acme.Domain.Base.Entity;
 using Acme.Domain.Base.Factory;
-using Acme.Domain.Base.ValueType;
 using Acme.Seps.Domain.Base.Entity;
+using Acme.Seps.Domain.Base.ValueType;
 using System;
 
 namespace Acme.Seps.Domain.Parameter.Entity
 {
-    public abstract class Tariff : SepsBaseEntity, IAggregateRoot
+    public abstract class Tariff : SepsBaseAggregate
     {
         public int LowerProductionLimit { get; }
         public int UpperProductionLimit { get; }
         public decimal LowerRate { get; }
         public decimal HigherRate { get; }
 
-        protected Tariff() { }
+        protected Tariff()
+        {
+        }
 
         protected Tariff(
             decimal lowerRate,

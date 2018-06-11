@@ -6,14 +6,14 @@ using System.Linq.Expressions;
 namespace Acme.Seps.Domain.Parameter.Repository
 {
     public sealed class YearsNaturalGasSellingPricesSpecification
-        : BaseSpecification<NaturalGasSellingPrice>, ISpecification<NaturalGasSellingPrice>
+        : BaseSpecification<NaturalGasSellingPrice>
     {
         private readonly int _year;
 
         public YearsNaturalGasSellingPricesSpecification(int year) =>
             _year = year;
 
-        Expression<Func<NaturalGasSellingPrice, bool>> ISpecification<NaturalGasSellingPrice>.ToExpression() =>
-            ngp => ngp.Period.IsWithin(new DateTime(_year, 1, 1), new DateTime(_year + 1, 1, 1));
+        public override Expression<Func<NaturalGasSellingPrice, bool>> ToExpression() =>
+            ngp => ngp.IsWithin(new DateTime(_year, 1, 1), new DateTime(_year + 1, 1, 1));
     }
 }

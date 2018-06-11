@@ -1,12 +1,12 @@
 ﻿using Acme.Domain.Base.Entity;
 using Acme.Domain.Base.Factory;
-using Acme.Domain.Base.ValueType;
 using Acme.Seps.Domain.Base.Entity;
+using Acme.Seps.Domain.Base.ValueType;
 using System;
 
 namespace Acme.Seps.Domain.Parameter.Entity
 {
-    public abstract class EconometricIndex : SepsBaseEntity, IAggregateRoot
+    public abstract class EconometricIndex : SepsBaseAggregate
     {
         public decimal Amount { get; }
         public string Remark { get; }

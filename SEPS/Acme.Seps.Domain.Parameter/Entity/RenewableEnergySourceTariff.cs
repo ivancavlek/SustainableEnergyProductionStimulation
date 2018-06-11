@@ -1,11 +1,10 @@
 ﻿using Acme.Domain.Base.Entity;
 using Acme.Domain.Base.Factory;
-using Acme.Domain.Base.ValueType;
 using System;
 
 namespace Acme.Seps.Domain.Parameter.Entity
 {
-    public class RenewableEnergySourceTariff : Tariff, IAggregateRoot
+    public class RenewableEnergySourceTariff : Tariff
     {
         public ConsumerPriceIndex ConsumerPriceIndex { get; }
 

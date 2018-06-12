@@ -1,4 +1,5 @@
-﻿using Acme.Seps.Domain.Base.ValueType;
+﻿using Acme.Seps.Domain.Base.Utility;
+using Acme.Seps.Domain.Base.ValueType;
 using System;
 
 namespace Acme.Seps.Domain.Base.Factory
@@ -18,16 +19,16 @@ namespace Acme.Seps.Domain.Base.Factory
 
         Period ISepsDateTimeFactory.ToMonthlyPeriod(Period period)
         {
-            var start = period.ValidFrom.AddDays(1 - period.ValidFrom.Day).DateTime;
-            var end = period.ValidTill?.AddDays(1 - period.ValidTill.Value.Day).DateTime;
+            var start = period.ValidFrom.ToFirstDayOfTheMonth();
+            var end = period.ValidTill?.ToFirstDayOfTheMonth();
 
             return new Period(start, end);
         }
 
         Period ISepsDateTimeFactory.ToYearlyPeriod(Period period)
         {
-            var start = period.ValidFrom.AddMonths(1 - period.ValidFrom.Month).DateTime;
-            var end = period.ValidTill?.AddMonths(1 - period.ValidTill.Value.Month).DateTime;
+            var start = period.ValidFrom.ToFirstMonthOfTheYear();
+            var end = period.ValidTill?.ToFirstMonthOfTheYear();
 
             return new Period(start, end);
         }

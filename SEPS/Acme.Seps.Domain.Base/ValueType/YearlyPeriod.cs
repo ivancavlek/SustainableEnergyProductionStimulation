@@ -1,4 +1,4 @@
-﻿using Acme.Domain.Base.ValueType;
+﻿using Acme.Seps.Domain.Base.Utility;
 using System;
 
 namespace Acme.Seps.Domain.Base.ValueType
@@ -9,9 +9,12 @@ namespace Acme.Seps.Domain.Base.ValueType
         {
         }
 
-        public YearlyPeriod(DateTimeOffset dateFrom, DateTimeOffset? dateTill = null)
-            : base(dateFrom.AddMonths(1 - dateFrom.Month).AddDays(1 - dateFrom.Day).Date,
-                  dateTill?.AddMonths(1 - dateTill.Value.Month).AddDays(1 - dateTill.Value.Day).Date)
+        public YearlyPeriod(DateTimeOffset dateFrom)
+            : base(dateFrom.ToFirstMonthOfTheYear().ToFirstDayOfTheMonth(), null) { }
+
+        public YearlyPeriod(DateTimeOffset dateFrom, DateTimeOffset dateTill)
+            : base(dateFrom.ToFirstMonthOfTheYear().ToFirstDayOfTheMonth(),
+                  dateTill.ToFirstMonthOfTheYear().ToFirstDayOfTheMonth())
         { }
 
         public override Period SetValidTill(DateTimeOffset validTill) =>

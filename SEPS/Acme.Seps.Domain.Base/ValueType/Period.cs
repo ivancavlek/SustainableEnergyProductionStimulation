@@ -13,7 +13,10 @@ namespace Acme.Seps.Domain.Base.ValueType
         {
         }
 
-        public Period(DateTimeOffset dateFrom, DateTimeOffset? dateTill = null)
+        public Period(DateTimeOffset dateFrom)
+            : this(dateFrom, null) { }
+
+        public Period(DateTimeOffset dateFrom, DateTimeOffset? dateTill)
         {
             if (dateTill.HasValue && dateTill < dateFrom)
                 throw new DomainException("Valid till must be after valid from");

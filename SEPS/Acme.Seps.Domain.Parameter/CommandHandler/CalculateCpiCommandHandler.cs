@@ -52,10 +52,10 @@ namespace Acme.Seps.Domain.Parameter.CommandHandler
             GetActiveCpi().CreateNew(command.Amount, command.Remark, _identityFactory) as ConsumerPriceIndex;
 
         private ConsumerPriceIndex GetActiveCpi() =>
-            _repository.GetSingle(new ActiveSpecification<ConsumerPriceIndex>());
+            _repository.GetSingle(new ActiveAtDateSpecification<ConsumerPriceIndex>());
 
         private IReadOnlyList<RenewableEnergySourceTariff> GetActiveRes() =>
-            _repository.GetAll(new ActiveSpecification<RenewableEnergySourceTariff>());
+            _repository.GetAll(new ActiveAtDateSpecification<RenewableEnergySourceTariff>());
 
         private void LogNewNaturalSellingPriceCreation(ConsumerPriceIndex cpi) =>
             SepsLogService.Log(new EntityExecutionLoggingEventArgs

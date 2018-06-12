@@ -28,14 +28,13 @@ namespace Acme.Seps.Domain.Base.Entity
         }
 
         public bool IsActiveAt(DateTimeOffset dateTime) =>
-            new ActiveSpecification<SepsBaseAggregate>(dateTime).IsSatisfiedBy(this);
+            new ActiveAtDateSpecification<SepsBaseAggregate>(dateTime).IsSatisfiedBy(this);
 
         public bool IsWithin(Period period) =>
             IsWithin(period.ValidFrom, period.ValidTill);
 
         public bool IsWithin(DateTimeOffset dateFrom, DateTimeOffset? dateTill) =>
-            ((!Period.ValidTill.HasValue) || (!Period.ValidTill.HasValue && !dateTill.HasValue)) ||
-                Period.ValidFrom <= dateFrom && dateTill <= Period.ValidTill.Value;
+            new ActiveWithinDatesSpecification<SepsBaseAggregate>(dateFrom, dateTill).IsSatisfiedBy(this);
 
         public void SetExpirationDateTo(DateTimeOffset expirationDate) =>
             Period = Period.SetValidTill(expirationDate);

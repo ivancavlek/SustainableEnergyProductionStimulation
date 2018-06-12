@@ -6,17 +6,17 @@ using System.Linq.Expressions;
 
 namespace Acme.Seps.Domain.Base.Repository
 {
-    public sealed class ActiveSpecification<TAggregateRoot>
+    public class ActiveAtDateSpecification<TAggregateRoot>
         : BaseSpecification<TAggregateRoot> where TAggregateRoot : SepsBaseAggregate
     {
         private readonly DateTimeOffset _dateTime;
 
-        public ActiveSpecification()
+        public ActiveAtDateSpecification()
         {
             _dateTime = SystemTime.CurrentDateTime();
         }
 
-        public ActiveSpecification(DateTimeOffset dateTime)
+        public ActiveAtDateSpecification(DateTimeOffset dateTime)
         {
             _dateTime = dateTime;
         }

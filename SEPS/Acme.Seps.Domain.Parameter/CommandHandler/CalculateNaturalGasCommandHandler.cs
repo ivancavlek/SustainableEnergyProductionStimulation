@@ -63,10 +63,10 @@ namespace Acme.Seps.Domain.Parameter.CommandHandler
             as NaturalGasSellingPrice;
 
         private NaturalGasSellingPrice GetActiveNaturalGasSellingPrice() =>
-            _repository.GetSingle(new ActiveSpecification<NaturalGasSellingPrice>());
+            _repository.GetSingle(new ActiveAtDateSpecification<NaturalGasSellingPrice>());
 
         private IReadOnlyList<CogenerationTariff> GetActiveCogenerations() =>
-            _repository.GetAll(new ActiveSpecification<CogenerationTariff>());
+            _repository.GetAll(new ActiveAtDateSpecification<CogenerationTariff>());
 
         private IReadOnlyList<NaturalGasSellingPrice> GetNaturalGasPricesWithinYear(int year) =>
            _repository.GetAll(new YearsNaturalGasSellingPricesSpecification(year));

@@ -1,9 +1,11 @@
 ﻿using Acme.Domain.Base.Entity;
 using Acme.Domain.Base.Factory;
-using Acme.Domain.Base.ValueType;
 using Acme.Seps.Domain.Base.Factory;
 using Acme.Seps.Domain.Base.ValueType;
+using Light.GuardClauses;
+
 using System;
+using Message = Acme.Seps.Domain.Parameter.Infrastructure.Parameter;
 
 namespace Acme.Seps.Domain.Parameter.Entity
 {
@@ -26,10 +28,9 @@ namespace Acme.Seps.Domain.Parameter.Entity
                   new YearlyPeriod(lastYearlyPeriod.ValidTill.Value, lastYearlyPeriod.ValidTill.Value.AddYears(1)),
                   identityFactory)
         {
-            if (!Period.ValidTill.HasValue ||
-                Period.ValidFrom.Year < InitialPeriod.Year ||
-                SystemTime.CurrentYear().Year <= Period.ValidTill.Value.Year)
-                throw new DomainException(Infrastructure.Parameter.YearlyParameterException);
+            Period.ValidFrom.Year.MustBeGreaterThanOrEqualTo(InitialPeriod.Year, exception: () => new DomainException(Message.YearlyParameterException));
+            Period.ValidTill.MustHaveValue(exception: () => new DomainException(Message.YearlyParameterException));
+            Period.ValidTill.Value.Year.MustBeLessThan(SystemTime.CurrentYear().Year, exception: () => new DomainException(Message.YearlyParameterException));
         }
 
         public abstract YearlyEconometricIndex CreateNew(

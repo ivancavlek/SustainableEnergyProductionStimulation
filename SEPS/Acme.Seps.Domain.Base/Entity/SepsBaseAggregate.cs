@@ -2,7 +2,9 @@
 using Acme.Domain.Base.Factory;
 using Acme.Seps.Domain.Base.Repository;
 using Acme.Seps.Domain.Base.ValueType;
+using Light.GuardClauses;
 using System;
+using Message = Acme.Seps.Domain.Base.Infrastructure.Base;
 
 namespace Acme.Seps.Domain.Base.Entity
 {
@@ -17,12 +19,13 @@ namespace Acme.Seps.Domain.Base.Entity
         protected SepsBaseAggregate(Period period, IIdentityFactory<Guid> identityFactory)
             : base(identityFactory)
         {
-            if (!period.ValidFrom.Day.Equals(1) ||
-                (period.ValidTill.HasValue && !period.ValidTill.Value.Day.Equals(1)))
-                throw new DomainException(Infrastructure.Base.DailyEconometricIndexNotAllowedException);
-            if (!period.ValidFrom.TimeOfDay.Equals(TimeSpan.Zero) ||
-                (period.ValidTill.HasValue && !period.ValidTill.Value.TimeOfDay.Equals(TimeSpan.Zero)))
-                throw new DomainException(Infrastructure.Base.TimeOfDayPeriodNotAllowedException);
+            period.ValidFrom.Day.MustBe(1, exception: () => new DomainException(Message.DailyEconometricIndexNotAllowedException));
+            period.ValidFrom.TimeOfDay.MustBe(TimeSpan.Zero, exception: () => new DomainException(Message.TimeOfDayPeriodNotAllowedException));
+            if (period.ValidTill.HasValue)
+            {
+                period.ValidTill.Value.Day.MustBe(1, exception: () => new DomainException(Message.DailyEconometricIndexNotAllowedException));
+                period.ValidTill.Value.TimeOfDay.MustBe(TimeSpan.Zero, exception: () => new DomainException(Message.TimeOfDayPeriodNotAllowedException));
+            }
 
             Period = period;
         }

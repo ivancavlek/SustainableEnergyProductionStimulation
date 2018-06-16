@@ -2,7 +2,9 @@
 using Acme.Domain.Base.Factory;
 using Acme.Seps.Domain.Base.Entity;
 using Acme.Seps.Domain.Base.ValueType;
+using Light.GuardClauses;
 using System;
+using Message = Acme.Seps.Domain.Parameter.Infrastructure.Parameter;
 
 namespace Acme.Seps.Domain.Parameter.Entity
 {
@@ -24,12 +26,9 @@ namespace Acme.Seps.Domain.Parameter.Entity
             IIdentityFactory<Guid> identityFactory)
             : base(period, identityFactory)
         {
-            if (amount <= 0)
-                throw new DomainException(Infrastructure.Parameter.ParameterAmountBelowOrZeroException);
-            if (decimalPlaces < 0)
-                throw new DomainException(Infrastructure.Parameter.ParameterDecimalPlacesBelowZeroException);
-            if (string.IsNullOrWhiteSpace(remark))
-                throw new DomainException(Infrastructure.Parameter.RemarkNotSetException);
+            amount.MustBeGreaterThan(0m, exception: () => new DomainException(Message.ParameterAmountBelowOrZeroException));
+            decimalPlaces.MustBeGreaterThanOrEqualTo(0, exception: () => new DomainException(Message.ParameterDecimalPlacesBelowZeroException));
+            remark.MustNotBeNullOrWhiteSpace(exception: () => new DomainException(Message.RemarkNotSetException));
 
             Amount = Math.Round(amount, decimalPlaces, MidpointRounding.AwayFromZero);
             Remark = remark;

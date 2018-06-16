@@ -2,7 +2,9 @@
 using Acme.Domain.Base.Factory;
 using Acme.Seps.Domain.Base.Entity;
 using Acme.Seps.Domain.Base.ValueType;
+using Light.GuardClauses;
 using System;
+using Message = Acme.Seps.Domain.Parameter.Infrastructure.Parameter;
 
 namespace Acme.Seps.Domain.Parameter.Entity
 {
@@ -23,12 +25,9 @@ namespace Acme.Seps.Domain.Parameter.Entity
             Period period,
             IIdentityFactory<Guid> identityFactory) : base(period, identityFactory)
         {
-            if (lowerRate < 0)
-                throw new DomainException(Infrastructure.Parameter.BelowZeroLowerRateException);
-            if (higherRate < 0)
-                throw new DomainException(Infrastructure.Parameter.BelowZeroUpperRateException);
-            if (lowerRate > higherRate)
-                throw new DomainException(Infrastructure.Parameter.LowerRateAboveUpperException);
+            lowerRate.MustBeGreaterThanOrEqualTo(0m, exception: () => new DomainException(Message.BelowZeroLowerRateException));
+            higherRate.MustBeGreaterThanOrEqualTo(0m, exception: () => new DomainException(Message.BelowZeroUpperRateException));
+            lowerRate.MustBeLessThanOrEqualTo(higherRate, exception: () => new DomainException(Message.LowerRateAboveUpperException));
 
             LowerRate = lowerRate;
             HigherRate = higherRate;

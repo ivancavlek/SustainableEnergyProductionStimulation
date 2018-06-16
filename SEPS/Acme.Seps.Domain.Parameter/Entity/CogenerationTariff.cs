@@ -2,9 +2,10 @@
 using Acme.Domain.Base.Factory;
 using Acme.Seps.Domain.Base.ValueType;
 using Acme.Seps.Domain.Parameter.DomainService;
+using Light.GuardClauses;
 using System;
 using System.Collections.Generic;
-using System.Linq;
+using Message = Acme.Seps.Domain.Parameter.Infrastructure.Parameter;
 
 namespace Acme.Seps.Domain.Parameter.Entity
 {
@@ -31,12 +32,9 @@ namespace Acme.Seps.Domain.Parameter.Entity
             NaturalGasSellingPrice naturalGasSellingPrice,
             IIdentityFactory<Guid> identityFactory)
         {
-            if (yearsNaturalGasSellingPrices == null || !yearsNaturalGasSellingPrices.Any())
-                throw new ArgumentNullException(null, Infrastructure.Parameter.YearsNaturalGasSellingPricesException);
-            if (cogenerationParameterService == null)
-                throw new ArgumentNullException(null, Infrastructure.Parameter.CogenerationParameterServiceException);
-            if (naturalGasSellingPrice == null)
-                throw new ArgumentNullException(null, Infrastructure.Parameter.NaturalGasSellingPriceNotSetException);
+            yearsNaturalGasSellingPrices.MustNotBeNullOrEmpty(message: Message.YearsNaturalGasSellingPricesException);
+            cogenerationParameterService.MustNotBeNull(message: Message.CogenerationParameterServiceException);
+            naturalGasSellingPrice.MustNotBeNull(message: Message.NaturalGasSellingPriceNotSetException);
 
             SetExpirationDateTo(naturalGasSellingPrice.Period.ValidFrom);
 

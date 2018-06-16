@@ -1,6 +1,8 @@
 ﻿using Acme.Domain.Base.Entity;
 using Acme.Domain.Base.Factory;
+using Light.GuardClauses;
 using System;
+using Message = Acme.Seps.Domain.Parameter.Infrastructure.Parameter;
 
 namespace Acme.Seps.Domain.Parameter.Entity
 {
@@ -25,10 +27,8 @@ namespace Acme.Seps.Domain.Parameter.Entity
         public RenewableEnergySourceTariff CreateNewWith(
             ConsumerPriceIndex consumerPriceIndex, IIdentityFactory<Guid> identityFactory)
         {
-            if (consumerPriceIndex == null)
-                throw new ArgumentNullException(null, Infrastructure.Parameter.ConsumerPriceIndexNotSetException);
-
-            CheckPeriodFor(consumerPriceIndex.Period.ValidFrom.Year);
+            consumerPriceIndex.MustNotBeNull(message: Message.ConsumerPriceIndexNotSetException);
+            Period.ValidTill.Value.Year.MustBe(consumerPriceIndex.Period.ValidFrom.Year, exception: () => new DomainException(Message.RenewableEnergySourceTariffPeriodException));
 
             var calculatedHigherRate = HigherRate * CalculatedCpiRate(consumerPriceIndex.Amount);
 
@@ -39,12 +39,6 @@ namespace Acme.Seps.Domain.Parameter.Entity
                 calculatedHigherRate,
                 identityFactory
             );
-        }
-
-        private void CheckPeriodFor(int newYearPeriod)
-        {
-            if (!Period.ValidTill.Value.Year.Equals(newYearPeriod))
-                throw new DomainException(Infrastructure.Parameter.RenewableEnergySourceTariffPeriodException);
         }
 
         private decimal CalculatedCpiRate(decimal cpiAmount) =>

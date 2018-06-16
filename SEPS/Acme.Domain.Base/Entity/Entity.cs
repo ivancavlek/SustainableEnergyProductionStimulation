@@ -1,4 +1,5 @@
 ﻿using Acme.Domain.Base.Factory;
+using Light.GuardClauses;
 using System;
 
 namespace Acme.Domain.Base.Entity
@@ -18,8 +19,7 @@ namespace Acme.Domain.Base.Entity
 
         protected Entity(IIdentityFactory<TKey> identityFactory)
         {
-            if (identityFactory == null)
-                throw new ArgumentNullException(nameof(identityFactory));
+            identityFactory.MustNotBeNull(nameof(identityFactory));
 
             Id = identityFactory.CreateIdentity();
         }

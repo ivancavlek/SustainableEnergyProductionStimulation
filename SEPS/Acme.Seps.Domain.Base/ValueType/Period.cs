@@ -1,6 +1,8 @@
 ﻿using Acme.Domain.Base.Entity;
 using Acme.Domain.Base.ValueType;
+using Light.GuardClauses;
 using System;
+using Message = Acme.Seps.Domain.Base.Infrastructure.Base;
 
 namespace Acme.Seps.Domain.Base.ValueType
 {
@@ -18,8 +20,8 @@ namespace Acme.Seps.Domain.Base.ValueType
 
         public Period(DateTimeOffset dateFrom, DateTimeOffset? dateTill)
         {
-            if (dateTill.HasValue && dateTill < dateFrom)
-                throw new DomainException("Valid till must be after valid from");
+            if (dateTill.HasValue)
+                dateTill.Value.MustBeGreaterThanOrEqualTo(dateFrom, exception: () => new DomainException(Message.ValidTillGreaterThanValidFromException));
 
             ValidFrom = dateFrom;
             ValidTill = dateTill;

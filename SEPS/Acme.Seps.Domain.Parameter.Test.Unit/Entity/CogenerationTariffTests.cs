@@ -61,7 +61,7 @@ namespace Acme.Seps.Domain.Parameter.Test.Unit.Entity
 
             action
                 .Should()
-                .ThrowExactly<ArgumentNullException>()
+                .Throw<Exception>()
                 .WithMessage(Infrastructure.Parameter.YearsNaturalGasSellingPricesException);
         }
 

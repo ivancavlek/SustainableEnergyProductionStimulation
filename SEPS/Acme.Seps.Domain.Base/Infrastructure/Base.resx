@@ -106,4 +106,7 @@
   <data name="SuccessfulSave" xml:space="preserve">
     <value>Successful save of entities to database.</value>
   </data>
+  <data name="ValidTillGreaterThanValidFromException" xml:space="preserve">
+    <value>Valid till must be after valid from</value>
+  </data>
 </root>

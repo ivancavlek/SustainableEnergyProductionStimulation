@@ -2,7 +2,6 @@
 using Acme.Domain.Base.Entity;
 using Acme.Domain.Base.Factory;
 using Acme.Domain.Base.Repository;
-using Acme.Seps.Domain.Base.ApplicationService;
 using Acme.Seps.Domain.Base.CommandHandler;
 using Acme.Seps.Domain.Base.Repository;
 using Acme.Seps.Domain.Parameter.Command;
@@ -14,7 +13,7 @@ using System.Linq;
 
 namespace Acme.Seps.Domain.Parameter.CommandHandler
 {
-    public sealed class CalculateCpiCommandHandler : BaseCommandHandler, ICommandHandler<CalculateCpiCommand>
+    public sealed class CalculateCpiCommandHandler : BaseCommandHandler, ISepsCommandHandler<CalculateCpiCommand>
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IIdentityFactory<Guid> _identityFactory;
@@ -23,8 +22,7 @@ namespace Acme.Seps.Domain.Parameter.CommandHandler
         public CalculateCpiCommandHandler(
             IRepository repository,
             IUnitOfWork unitOfWork,
-            IIdentityFactory<Guid> identityFactory,
-            ISepsLogService sepsLogService) : base(sepsLogService)
+            IIdentityFactory<Guid> identityFactory)
         {
             _repository = repository ?? throw new ArgumentNullException(nameof(repository));
             _unitOfWork = unitOfWork ?? throw new ArgumentNullException(nameof(unitOfWork));
@@ -58,7 +56,7 @@ namespace Acme.Seps.Domain.Parameter.CommandHandler
             _repository.GetAll(new ActiveAtDateSpecification<RenewableEnergySourceTariff>());
 
         private void LogNewNaturalSellingPriceCreation(ConsumerPriceIndex cpi) =>
-            SepsLogService.Log(new EntityExecutionLoggingEventArgs
+            Log(new EntityExecutionLoggingEventArgs
             {
                 Message = string.Format(
                     Infrastructure.Parameter.InsertParameterLog,
@@ -72,7 +70,7 @@ namespace Acme.Seps.Domain.Parameter.CommandHandler
             resTariff.CreateNewWith(cpi, _identityFactory);
 
         private void LogNewRenewableEnergySourceTariffCreation(RenewableEnergySourceTariff resTariff) =>
-            SepsLogService.Log(new EntityExecutionLoggingEventArgs
+            Log(new EntityExecutionLoggingEventArgs
             {
                 Message = string.Format(
                     Infrastructure.Parameter.InsertTariffLog,

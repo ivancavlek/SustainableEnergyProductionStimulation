@@ -2,7 +2,6 @@
 using Acme.Domain.Base.Entity;
 using Acme.Domain.Base.Factory;
 using Acme.Domain.Base.Repository;
-using Acme.Seps.Domain.Base.ApplicationService;
 using Acme.Seps.Domain.Base.CommandHandler;
 using Acme.Seps.Domain.Base.Repository;
 using Acme.Seps.Domain.Parameter.Command;
@@ -16,7 +15,8 @@ using System.Linq;
 
 namespace Acme.Seps.Domain.Parameter.CommandHandler
 {
-    public sealed class CalculateNaturalGasCommandHandler : BaseCommandHandler, ICommandHandler<CalculateNaturalGasCommand>
+    public sealed class CalculateNaturalGasCommandHandler
+        : BaseCommandHandler, ISepsCommandHandler<CalculateNaturalGasCommand>
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IRepository _repository;
@@ -27,8 +27,7 @@ namespace Acme.Seps.Domain.Parameter.CommandHandler
             ICogenerationParameterService cogenerationParameterService,
             IUnitOfWork unitOfWork,
             IRepository repository,
-            IIdentityFactory<Guid> identityFactory,
-            ISepsLogService sepsLogService) : base(sepsLogService)
+            IIdentityFactory<Guid> identityFactory)
         {
             _cogenerationParameterService = cogenerationParameterService ?? throw new ArgumentNullException(nameof(cogenerationParameterService));
             _unitOfWork = unitOfWork ?? throw new ArgumentNullException(nameof(unitOfWork));
@@ -72,7 +71,7 @@ namespace Acme.Seps.Domain.Parameter.CommandHandler
            _repository.GetAll(new YearsNaturalGasSellingPricesSpecification(year));
 
         private void LogNewNaturalSellingPriceCreation(NaturalGasSellingPrice naturalGasSellingPrice) =>
-            SepsLogService.Log(new EntityExecutionLoggingEventArgs
+            Log(new EntityExecutionLoggingEventArgs
             {
                 Message = string.Format(
                     Infrastructure.Parameter.InsertParameterLog,
@@ -92,7 +91,7 @@ namespace Acme.Seps.Domain.Parameter.CommandHandler
                 _identityFactory);
 
         private void LogNewCogenerationTariffCreation(CogenerationTariff cogenerationTariff) =>
-            SepsLogService.Log(new EntityExecutionLoggingEventArgs
+            Log(new EntityExecutionLoggingEventArgs
             {
                 Message = string.Format(
                     Infrastructure.Parameter.InsertTariffLog,

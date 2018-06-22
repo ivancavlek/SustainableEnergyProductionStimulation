@@ -2,7 +2,6 @@
 using Acme.Domain.Base.Entity;
 using Acme.Domain.Base.Factory;
 using Acme.Domain.Base.Repository;
-using Acme.Seps.Domain.Base.ApplicationService;
 using Acme.Seps.Domain.Base.CommandHandler;
 using Acme.Seps.Domain.Parameter.Command;
 using Acme.Seps.Domain.Parameter.Entity;
@@ -13,15 +12,14 @@ using System.Linq;
 namespace Acme.Seps.Domain.Parameter.CommandHandler
 {
     public sealed class CorrectActiveCpiCommandHandler
-        : BaseCommandHandler, ICommandHandler<CorrectActiveCpiCommand>
+        : BaseCommandHandler, ISepsCommandHandler<CorrectActiveCpiCommand>
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IIdentityFactory<Guid> _identityFactory;
 
         public CorrectActiveCpiCommandHandler(
             IUnitOfWork unitOfWork,
-            IIdentityFactory<Guid> identityFactory,
-            ISepsLogService sepsLogService) : base(sepsLogService)
+            IIdentityFactory<Guid> identityFactory)
         {
             _unitOfWork = unitOfWork ?? throw new ArgumentNullException(nameof(unitOfWork));
             _identityFactory = identityFactory ?? throw new ArgumentNullException(nameof(identityFactory));
@@ -51,7 +49,7 @@ namespace Acme.Seps.Domain.Parameter.CommandHandler
                 command.Amount, command.Remark, _identityFactory) as ConsumerPriceIndex;
 
         private void LogCpiUpdate(ConsumerPriceIndex cpi) =>
-            SepsLogService.Log(new EntityExecutionLoggingEventArgs
+            Log(new EntityExecutionLoggingEventArgs
             {
                 Message = string.Format(
                     Infrastructure.Parameter.UpdateParameterLog,
@@ -65,7 +63,7 @@ namespace Acme.Seps.Domain.Parameter.CommandHandler
             resTariff.CreateNewWith(cpi, _identityFactory);
 
         private void LogNewRenewableEnergySourceTariffCreation(RenewableEnergySourceTariff resTariff) =>
-            SepsLogService.Log(new EntityExecutionLoggingEventArgs
+            Log(new EntityExecutionLoggingEventArgs
             {
                 Message = string.Format(
                     Infrastructure.Parameter.InsertTariffLog,

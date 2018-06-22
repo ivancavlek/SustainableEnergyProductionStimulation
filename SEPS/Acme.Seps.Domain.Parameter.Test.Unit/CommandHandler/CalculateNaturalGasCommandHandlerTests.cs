@@ -1,13 +1,12 @@
-﻿using Acme.Domain.Base.CommandHandler;
-using Acme.Domain.Base.Entity;
-using Acme.Domain.Base.Factory;
+﻿using Acme.Domain.Base.Factory;
 using Acme.Domain.Base.Repository;
-using Acme.Seps.Domain.Base.ApplicationService;
+using Acme.Seps.Domain.Base.CommandHandler;
 using Acme.Seps.Domain.Base.ValueType;
 using Acme.Seps.Domain.Parameter.Command;
 using Acme.Seps.Domain.Parameter.CommandHandler;
 using Acme.Seps.Domain.Parameter.DomainService;
 using Acme.Seps.Domain.Parameter.Entity;
+using FluentAssertions;
 using NSubstitute;
 using System;
 using System.Collections.Generic;
@@ -17,7 +16,7 @@ namespace Acme.Seps.Domain.Parameter.Test.Unit.CommandHandler
 {
     public class CalculateNaturalGasCommandHandlerTests
     {
-        private readonly ICommandHandler<CalculateNaturalGasCommand> _calculateNaturalGas;
+        private readonly ISepsCommandHandler<CalculateNaturalGasCommand> _calculateNaturalGas;
         private readonly ICogenerationParameterService _cogenerationParameterService;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IRepository _repository;
@@ -78,7 +77,7 @@ namespace Acme.Seps.Domain.Parameter.Test.Unit.CommandHandler
             _unitOfWork = Substitute.For<IUnitOfWork>();
 
             _calculateNaturalGas = new CalculateNaturalGasCommandHandler(
-                _cogenerationParameterService, _unitOfWork, _repository, _identityFactory, _sepsLogService);
+                _cogenerationParameterService, _unitOfWork, _repository, _identityFactory);
         }
 
         public void ExecutesProperly()
@@ -91,12 +90,15 @@ namespace Acme.Seps.Domain.Parameter.Test.Unit.CommandHandler
                 Year = _lastPeriod.Year,
             };
 
-            _calculateNaturalGas.Handle(calculateNaturalGasCommand);
+            using (var monitoredEvent = _calculateNaturalGas.Monitor<ISepsLogService>())
+            {
+                _calculateNaturalGas.Handle(calculateNaturalGasCommand);
 
-            _unitOfWork.Received().Insert(Arg.Any<NaturalGasSellingPrice>());
-            _unitOfWork.Received().Insert(Arg.Any<CogenerationTariff>());
-            _unitOfWork.Received().Commit();
-            _sepsLogService.Received(3).Log(Arg.Any<EntityExecutionLoggingEventArgs>());
+                _unitOfWork.Received().Insert(Arg.Any<NaturalGasSellingPrice>());
+                _unitOfWork.Received().Insert(Arg.Any<CogenerationTariff>());
+                _unitOfWork.Received().Commit();
+                monitoredEvent.Should().Raise("UseCaseExecutionProcessing");
+            }
         }
     }
 }

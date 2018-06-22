@@ -1,12 +1,11 @@
-﻿using Acme.Domain.Base.CommandHandler;
-using Acme.Domain.Base.Entity;
-using Acme.Domain.Base.Factory;
+﻿using Acme.Domain.Base.Factory;
 using Acme.Domain.Base.Repository;
-using Acme.Seps.Domain.Base.ApplicationService;
+using Acme.Seps.Domain.Base.CommandHandler;
 using Acme.Seps.Domain.Base.ValueType;
 using Acme.Seps.Domain.Parameter.Command;
 using Acme.Seps.Domain.Parameter.CommandHandler;
 using Acme.Seps.Domain.Parameter.Entity;
+using FluentAssertions;
 using NSubstitute;
 using System;
 using System.Collections.Generic;
@@ -16,7 +15,7 @@ namespace Acme.Seps.Domain.Parameter.Test.Unit.CommandHandler
 {
     public class CorrectActiveCpiCommandHandlerTests
     {
-        private readonly ICommandHandler<CorrectActiveCpiCommand> _correctActiveCpi;
+        private readonly ISepsCommandHandler<CorrectActiveCpiCommand> _correctActiveCpi;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IIdentityFactory<Guid> _identityFactory;
         private readonly ISepsLogService _sepsLogService;
@@ -50,7 +49,7 @@ namespace Acme.Seps.Domain.Parameter.Test.Unit.CommandHandler
 
             _unitOfWork = Substitute.For<IUnitOfWork>();
 
-            _correctActiveCpi = new CorrectActiveCpiCommandHandler(_unitOfWork, _identityFactory, _sepsLogService);
+            _correctActiveCpi = new CorrectActiveCpiCommandHandler(_unitOfWork, _identityFactory);
         }
 
         public void ExecutesProperly()
@@ -63,14 +62,17 @@ namespace Acme.Seps.Domain.Parameter.Test.Unit.CommandHandler
                 Remark = nameof(CalculateCpiCommand)
             };
 
-            _correctActiveCpi.Handle(correctActiveCpi);
+            using (var monitoredEvent = _correctActiveCpi.Monitor<ISepsLogService>())
+            {
+                _correctActiveCpi.Handle(correctActiveCpi);
 
-            _unitOfWork.Received().Delete(Arg.Any<ConsumerPriceIndex>());
-            _unitOfWork.Received().Insert(Arg.Any<ConsumerPriceIndex>());
-            _unitOfWork.Received().Delete(Arg.Any<RenewableEnergySourceTariff>());
-            _unitOfWork.Received().Insert(Arg.Any<RenewableEnergySourceTariff>());
-            _unitOfWork.Received().Commit();
-            _sepsLogService.Received(3).Log(Arg.Any<EntityExecutionLoggingEventArgs>());
+                _unitOfWork.Received().Delete(Arg.Any<ConsumerPriceIndex>());
+                _unitOfWork.Received().Insert(Arg.Any<ConsumerPriceIndex>());
+                _unitOfWork.Received().Delete(Arg.Any<RenewableEnergySourceTariff>());
+                _unitOfWork.Received().Insert(Arg.Any<RenewableEnergySourceTariff>());
+                _unitOfWork.Received().Commit();
+                monitoredEvent.Should().Raise("UseCaseExecutionProcessing");
+            }
         }
     }
 }

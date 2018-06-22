@@ -1,17 +1,16 @@
 ﻿using Acme.Domain.Base.Entity;
-using Acme.Seps.Domain.Base.ApplicationService;
 using System;
 
 namespace Acme.Seps.Domain.Base.CommandHandler
 {
-    public abstract class BaseCommandHandler
+    public abstract class BaseCommandHandler : ISepsLogService
     {
-        protected readonly ISepsLogService SepsLogService;
+        public event EventHandler<EntityExecutionLoggingEventArgs> UseCaseExecutionProcessing = delegate { };
 
-        protected BaseCommandHandler(ISepsLogService sepsLogService) =>
-            SepsLogService = sepsLogService ?? throw new ArgumentNullException(nameof(sepsLogService));
+        protected void Log(EntityExecutionLoggingEventArgs useCaseExecutionProcessingLog) =>
+            UseCaseExecutionProcessing(this, useCaseExecutionProcessingLog);
 
         protected void LogSuccessfulCommit() =>
-            SepsLogService.Log(new EntityExecutionLoggingEventArgs { Message = Infrastructure.Base.SuccessfulSave });
+            Log(new EntityExecutionLoggingEventArgs { Message = Infrastructure.Base.SuccessfulSave });
     }
 }

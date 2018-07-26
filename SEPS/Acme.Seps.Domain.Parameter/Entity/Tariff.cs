@@ -25,9 +25,9 @@ namespace Acme.Seps.Domain.Parameter.Entity
             Period period,
             IIdentityFactory<Guid> identityFactory) : base(period, identityFactory)
         {
-            lowerRate.MustBeGreaterThanOrEqualTo(0m, exception: () => new DomainException(Message.BelowZeroLowerRateException));
-            higherRate.MustBeGreaterThanOrEqualTo(0m, exception: () => new DomainException(Message.BelowZeroUpperRateException));
-            lowerRate.MustBeLessThanOrEqualTo(higherRate, exception: () => new DomainException(Message.LowerRateAboveUpperException));
+            lowerRate.MustBeGreaterThanOrEqualTo(0m, (x, y) => new DomainException(Message.BelowZeroLowerRateException));
+            higherRate.MustBeGreaterThanOrEqualTo(0m, (x, y) => new DomainException(Message.BelowZeroUpperRateException));
+            lowerRate.MustBeLessThanOrEqualTo(higherRate, (x, y) => new DomainException(Message.LowerRateAboveUpperException));
 
             LowerRate = lowerRate;
             HigherRate = higherRate;

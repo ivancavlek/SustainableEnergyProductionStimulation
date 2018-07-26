@@ -27,9 +27,9 @@ namespace Acme.Seps.Domain.Parameter.Entity
                   new MonthlyPeriod(lastMonthlyPeriod.ValidTill.Value),
                   identityFactory)
         {
-            Period.ValidTill.MustNotHaveValue(exception: () => new DomainException(Message.MonthlyParameterException));
-            Period.ValidFrom.MustBeGreaterThanOrEqualTo(InitialPeriod, exception: () => new DomainException(Message.MonthlyParameterException));
-            Period.ValidFrom.MustBeLessThan(SystemTime.CurrentMonth(), exception: () => new DomainException(Message.MonthlyParameterException));
+            Period.ValidTill.MustBe(null, (x, y) => new DomainException(Message.MonthlyParameterException));
+            Period.ValidFrom.MustBeGreaterThanOrEqualTo(InitialPeriod, (x, y) => new DomainException(Message.MonthlyParameterException));
+            Period.ValidFrom.MustBeLessThan(SystemTime.CurrentMonth(), (x, y) => new DomainException(Message.MonthlyParameterException));
         }
 
         public abstract MonthlyEconometricIndex CreateNew(

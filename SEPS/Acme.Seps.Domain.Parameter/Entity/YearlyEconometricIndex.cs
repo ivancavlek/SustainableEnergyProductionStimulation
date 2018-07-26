@@ -28,9 +28,9 @@ namespace Acme.Seps.Domain.Parameter.Entity
                   new YearlyPeriod(lastYearlyPeriod.ValidTill.Value, lastYearlyPeriod.ValidTill.Value.AddYears(1)),
                   identityFactory)
         {
-            Period.ValidFrom.Year.MustBeGreaterThanOrEqualTo(InitialPeriod.Year, exception: () => new DomainException(Message.YearlyParameterException));
-            Period.ValidTill.MustHaveValue(exception: () => new DomainException(Message.YearlyParameterException));
-            Period.ValidTill.Value.Year.MustBeLessThan(SystemTime.CurrentYear().Year, exception: () => new DomainException(Message.YearlyParameterException));
+            Period.ValidFrom.Year.MustBeGreaterThanOrEqualTo(InitialPeriod.Year, (x, y) => new DomainException(Message.YearlyParameterException));
+            Period.ValidTill.MustHaveValue(() => new DomainException(Message.YearlyParameterException));
+            Period.ValidTill.Value.Year.MustBeLessThan(SystemTime.CurrentYear().Year, (x, y) => new DomainException(Message.YearlyParameterException));
         }
 
         public abstract YearlyEconometricIndex CreateNew(

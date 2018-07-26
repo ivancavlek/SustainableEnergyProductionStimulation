@@ -28,7 +28,7 @@ namespace Acme.Seps.Domain.Parameter.Entity
             ConsumerPriceIndex consumerPriceIndex, IIdentityFactory<Guid> identityFactory)
         {
             consumerPriceIndex.MustNotBeNull(message: Message.ConsumerPriceIndexNotSetException);
-            Period.ValidTill.Value.Year.MustBe(consumerPriceIndex.Period.ValidFrom.Year, exception: () => new DomainException(Message.RenewableEnergySourceTariffPeriodException));
+            Period.ValidTill.Value.Year.MustBe(consumerPriceIndex.Period.ValidFrom.Year, (x, y) => new DomainException(Message.RenewableEnergySourceTariffPeriodException));
 
             var calculatedHigherRate = HigherRate * CalculatedCpiRate(consumerPriceIndex.Amount);
 

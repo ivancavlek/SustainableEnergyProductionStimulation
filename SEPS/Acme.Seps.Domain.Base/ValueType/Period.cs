@@ -21,7 +21,7 @@ namespace Acme.Seps.Domain.Base.ValueType
         public Period(DateTimeOffset dateFrom, DateTimeOffset? dateTill)
         {
             if (dateTill.HasValue)
-                dateTill.Value.MustBeGreaterThanOrEqualTo(dateFrom, exception: () => new DomainException(Message.ValidTillGreaterThanValidFromException));
+                dateTill.Value.MustBeGreaterThanOrEqualTo(dateFrom, (x, y) => new DomainException(Message.ValidTillGreaterThanValidFromException));
 
             ValidFrom = dateFrom;
             ValidTill = dateTill;

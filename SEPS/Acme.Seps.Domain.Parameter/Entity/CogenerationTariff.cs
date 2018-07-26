@@ -1,5 +1,4 @@
-﻿using Acme.Domain.Base.Entity;
-using Acme.Domain.Base.Factory;
+﻿using Acme.Domain.Base.Factory;
 using Acme.Seps.Domain.Base.ValueType;
 using Acme.Seps.Domain.Parameter.DomainService;
 using Light.GuardClauses;
@@ -9,7 +8,7 @@ using Message = Acme.Seps.Domain.Parameter.Infrastructure.Parameter;
 
 namespace Acme.Seps.Domain.Parameter.Entity
 {
-    public class CogenerationTariff : Tariff, IAggregateRoot
+    public class CogenerationTariff : Tariff
     {
         public NaturalGasSellingPrice NaturalGasSellingPrice { get; }
 

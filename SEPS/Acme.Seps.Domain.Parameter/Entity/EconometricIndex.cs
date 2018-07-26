@@ -26,9 +26,9 @@ namespace Acme.Seps.Domain.Parameter.Entity
             IIdentityFactory<Guid> identityFactory)
             : base(period, identityFactory)
         {
-            amount.MustBeGreaterThan(0m, exception: () => new DomainException(Message.ParameterAmountBelowOrZeroException));
-            decimalPlaces.MustBeGreaterThanOrEqualTo(0, exception: () => new DomainException(Message.ParameterDecimalPlacesBelowZeroException));
-            remark.MustNotBeNullOrWhiteSpace(exception: () => new DomainException(Message.RemarkNotSetException));
+            amount.MustBeGreaterThan(0m, (x, y) => new DomainException(Message.ParameterAmountBelowOrZeroException));
+            decimalPlaces.MustBeGreaterThanOrEqualTo(0, (x, y) => new DomainException(Message.ParameterDecimalPlacesBelowZeroException));
+            remark.MustNotBeNullOrWhiteSpace((x) => new DomainException(Message.RemarkNotSetException));
 
             Amount = Math.Round(amount, decimalPlaces, MidpointRounding.AwayFromZero);
             Remark = remark;

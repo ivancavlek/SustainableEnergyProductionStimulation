@@ -19,12 +19,12 @@ namespace Acme.Seps.Domain.Base.Entity
         protected SepsBaseAggregate(Period period, IIdentityFactory<Guid> identityFactory)
             : base(identityFactory)
         {
-            period.ValidFrom.Day.MustBe(1, exception: () => new DomainException(Message.DailyEconometricIndexNotAllowedException));
-            period.ValidFrom.TimeOfDay.MustBe(TimeSpan.Zero, exception: () => new DomainException(Message.TimeOfDayPeriodNotAllowedException));
+            period.ValidFrom.Day.MustBe(1, (x, y) => new DomainException(Message.DailyEconometricIndexNotAllowedException));
+            period.ValidFrom.TimeOfDay.MustBe(TimeSpan.Zero, (x, y) => new DomainException(Message.TimeOfDayPeriodNotAllowedException));
             if (period.ValidTill.HasValue)
             {
-                period.ValidTill.Value.Day.MustBe(1, exception: () => new DomainException(Message.DailyEconometricIndexNotAllowedException));
-                period.ValidTill.Value.TimeOfDay.MustBe(TimeSpan.Zero, exception: () => new DomainException(Message.TimeOfDayPeriodNotAllowedException));
+                period.ValidTill.Value.Day.MustBe(1, (x, y) => new DomainException(Message.DailyEconometricIndexNotAllowedException));
+                period.ValidTill.Value.TimeOfDay.MustBe(TimeSpan.Zero, (x, y) => new DomainException(Message.TimeOfDayPeriodNotAllowedException));
             }
 
             Period = period;

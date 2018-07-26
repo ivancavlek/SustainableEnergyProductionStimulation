@@ -8,22 +8,22 @@ By no means am I advocating that this solution is the best one for the presented
 Technologies and architectures I used are the following
 - Domain Driven Design
 - CQRS
-- CQS
 - Repository pattern
+- Specification pattern
 - Unit of Work
 - Unit testing
-- C# 6
-- Entity Framework 6
+- C# 7.2
+- Entity Framework Core 2
 - Fluent Validation
 - Humanizer
+- Light.GuardClauses
 
 Planned
 - Dependency Injection (Unity, SimpleInjector, Autofac)
 - Dapper
 - NoSql (DocumentDb or MongoDb)
 - RabbitMQ
-- ASP.NET MVC
-- ASP.NET Web API
+- ASP.NET Core
 - JavaScript
 - jQuery
 - Bootstrap

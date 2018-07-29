@@ -24,7 +24,6 @@ namespace Acme.Seps.Domain.Parameter.Test.Unit.CommandHandler
         private readonly ISepsLogService _sepsLogService;
 
         private readonly NaturalGasSellingPrice _naturalGasSellingPrice;
-        private readonly IEnumerable<CogenerationTariff> _cogenerationTariff;
         private readonly DateTime _lastPeriod;
 
         public CalculateNaturalGasCommandHandlerTests()

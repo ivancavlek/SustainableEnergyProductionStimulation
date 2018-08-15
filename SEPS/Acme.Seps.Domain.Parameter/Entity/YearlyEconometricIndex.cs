@@ -9,7 +9,8 @@ using Message = Acme.Seps.Domain.Parameter.Infrastructure.Parameter;
 
 namespace Acme.Seps.Domain.Parameter.Entity
 {
-    public abstract class YearlyEconometricIndex : EconometricIndex
+    public abstract class YearlyEconometricIndex<TYearlyEconometricIndex> : EconometricIndex
+        where TYearlyEconometricIndex : YearlyEconometricIndex<TYearlyEconometricIndex>
     {
         protected YearlyEconometricIndex()
         {
@@ -33,7 +34,7 @@ namespace Acme.Seps.Domain.Parameter.Entity
             Period.ValidTill.Value.Year.MustBeLessThan(SystemTime.CurrentYear().Year, (x, y) => new DomainException(Message.YearlyParameterException));
         }
 
-        public abstract YearlyEconometricIndex CreateNew(
+        public abstract TYearlyEconometricIndex CreateNew(
             decimal amount, string remark, IIdentityFactory<Guid> identityFactory);
     }
 }

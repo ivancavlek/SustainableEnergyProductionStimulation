@@ -47,7 +47,7 @@ namespace Acme.Seps.Domain.Parameter.CommandHandler
         }
 
         private ConsumerPriceIndex CreateNewCpi(CalculateCpiCommand command) =>
-            GetActiveCpi().CreateNew(command.Amount, command.Remark, _identityFactory) as ConsumerPriceIndex;
+            GetActiveCpi().CreateNew(command.Amount, command.Remark, _identityFactory);
 
         private ConsumerPriceIndex GetActiveCpi() =>
             _repository.GetSingle(new ActiveAtDateSpecification<ConsumerPriceIndex>());

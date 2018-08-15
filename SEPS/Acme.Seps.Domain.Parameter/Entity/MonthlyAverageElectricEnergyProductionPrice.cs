@@ -4,7 +4,7 @@ using System;
 
 namespace Acme.Seps.Domain.Parameter.Entity
 {
-    public class MonthlyAverageElectricEnergyProductionPrice : MonthlyEconometricIndex
+    public class MonthlyAverageElectricEnergyProductionPrice : MonthlyEconometricIndex<MonthlyAverageElectricEnergyProductionPrice>
     {
         protected MonthlyAverageElectricEnergyProductionPrice()
         {
@@ -17,7 +17,7 @@ namespace Acme.Seps.Domain.Parameter.Entity
             IIdentityFactory<Guid> guidIdentityFactory)
             : base(amount, 4, remark, lastMonthlyPeriod, guidIdentityFactory) { }
 
-        public override MonthlyEconometricIndex CreateNew(
+        public override MonthlyAverageElectricEnergyProductionPrice CreateNew(
             decimal amount, string remark, int month, int year, IIdentityFactory<Guid> identityFactory)
         {
             SetExpirationDateTo(new DateTime(year, month, 1));

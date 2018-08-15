@@ -4,7 +4,7 @@ using System;
 
 namespace Acme.Seps.Domain.Parameter.Entity
 {
-    public class ConsumerPriceIndex : YearlyEconometricIndex
+    public class ConsumerPriceIndex : YearlyEconometricIndex<ConsumerPriceIndex>
     {
         protected ConsumerPriceIndex()
         {
@@ -17,7 +17,7 @@ namespace Acme.Seps.Domain.Parameter.Entity
             IIdentityFactory<Guid> identityFactory)
             : base(amount, 4, remark, lastYearlyPeriod, identityFactory) { }
 
-        public override YearlyEconometricIndex CreateNew(
+        public override ConsumerPriceIndex CreateNew(
             decimal amount, string remark, IIdentityFactory<Guid> identityFactory) =>
             new ConsumerPriceIndex(amount, remark, (YearlyPeriod)Period, identityFactory);
     }

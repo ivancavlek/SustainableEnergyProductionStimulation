@@ -45,8 +45,7 @@ namespace Acme.Seps.Domain.Parameter.CommandHandler
         }
 
         private ConsumerPriceIndex CreateNewCpi(CorrectActiveCpiCommand command) =>
-            command.ActiveCpi.CreateNew(
-                command.Amount, command.Remark, _identityFactory) as ConsumerPriceIndex;
+            command.ActiveCpi.CreateNew(command.Amount, command.Remark, _identityFactory);
 
         private void LogCpiUpdate(ConsumerPriceIndex cpi) =>
             Log(new EntityExecutionLoggingEventArgs

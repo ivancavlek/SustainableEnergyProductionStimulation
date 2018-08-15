@@ -65,7 +65,7 @@ namespace Acme.Seps.Domain.Parameter.Test.Unit.Entity
         }
     }
 
-    internal class DummyYearlyEconometricIndex : YearlyEconometricIndex
+    internal class DummyYearlyEconometricIndex : YearlyEconometricIndex<DummyYearlyEconometricIndex>
     {
         public DummyYearlyEconometricIndex(
             decimal amount,
@@ -75,7 +75,7 @@ namespace Acme.Seps.Domain.Parameter.Test.Unit.Entity
             IIdentityFactory<Guid> identityFactory)
             : base(amount, decimalPlaces, remark, period, identityFactory) { }
 
-        public override YearlyEconometricIndex CreateNew(
+        public override DummyYearlyEconometricIndex CreateNew(
             decimal amount, string remark, IIdentityFactory<Guid> identityFactory) =>
             this;
     }

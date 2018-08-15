@@ -8,7 +8,8 @@ using Message = Acme.Seps.Domain.Parameter.Infrastructure.Parameter;
 
 namespace Acme.Seps.Domain.Parameter.Entity
 {
-    public abstract class MonthlyEconometricIndex : EconometricIndex
+    public abstract class MonthlyEconometricIndex<TMonthlyEconometricIndex> : EconometricIndex
+        where TMonthlyEconometricIndex : MonthlyEconometricIndex<TMonthlyEconometricIndex>
     {
         protected MonthlyEconometricIndex()
         {
@@ -32,7 +33,7 @@ namespace Acme.Seps.Domain.Parameter.Entity
             Period.ValidFrom.MustBeLessThan(SystemTime.CurrentMonth(), (x, y) => new DomainException(Message.MonthlyParameterException));
         }
 
-        public abstract MonthlyEconometricIndex CreateNew(
+        public abstract TMonthlyEconometricIndex CreateNew(
             decimal amount, string remark, int month, int year, IIdentityFactory<Guid> identityFactory);
     }
 }

@@ -27,7 +27,16 @@ namespace Acme.Repository.Base
             return queryableResultWithIncludes.SingleOrDefault(specification.ToExpression());
         }
 
-        void IUnitOfWork.Commit() => SaveChanges();
+        void IUnitOfWork.Commit()
+        {
+            SaveChanges();
+
+            // vidjeti ima li smisla i upariti sa pravim Lifetimeom te paziti na razne vrste app (web, desk)
+            foreach (var entry in ChangeTracker.Entries())
+            {
+                Entry(entry.Entity).State = EntityState.Detached;
+            }
+        }
 
         void IUnitOfWork.Delete<TAggregateRoot>(TAggregateRoot aggregateRoot) =>
             Entry(aggregateRoot).State = EntityState.Deleted;

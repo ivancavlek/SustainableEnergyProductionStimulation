@@ -4,7 +4,7 @@ using System;
 
 namespace Acme.Seps.Domain.Parameter.Entity
 {
-    public class NaturalGasSellingPrice : MonthlyEconometricIndex
+    public class NaturalGasSellingPrice : MonthlyEconometricIndex<NaturalGasSellingPrice>
     {
         protected NaturalGasSellingPrice()
         {
@@ -17,13 +17,12 @@ namespace Acme.Seps.Domain.Parameter.Entity
             IIdentityFactory<Guid> identityFactory)
             : base(amount, 2, remark, lastMonthlyPeriod, identityFactory) { }
 
-        public override MonthlyEconometricIndex CreateNew(
+        public override NaturalGasSellingPrice CreateNew(
             decimal amount, string remark, int month, int year, IIdentityFactory<Guid> identityFactory)
         {
             SetExpirationDateTo(new DateTime(year, month, 1));
 
-            return new NaturalGasSellingPrice(
-                amount, remark, (MonthlyPeriod)Period, identityFactory);
+            return new NaturalGasSellingPrice(amount, remark, (MonthlyPeriod)Period, identityFactory);
         }
     }
 }

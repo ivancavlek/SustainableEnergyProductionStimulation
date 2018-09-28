@@ -5,14 +5,10 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Acme.Seps.Repository.Parameter
 {
-    public abstract class ParameterContext : BaseContext
+    public class ParameterContext : BaseContext
     {
         public DbSet<EconometricIndex> EconometricIndices { get { return Set<EconometricIndex>(); } }
         public DbSet<Tariff> Tariffs { get { return Set<Tariff>(); } }
-
-        protected ParameterContext()
-        {
-        }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

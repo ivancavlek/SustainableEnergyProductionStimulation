@@ -1,17 +1,13 @@
-﻿using Acme.Domain.Base.Repository;
-using Microsoft.EntityFrameworkCore;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
+using Acme.Domain.Base.Repository;
+using Microsoft.EntityFrameworkCore;
 
 namespace Acme.Repository.Base
 {
     public abstract class BaseContext : DbContext, IRepository, IUnitOfWork
     {
-        protected BaseContext()
-        {
-        }
-
-        IReadOnlyList<TAggregateRoot> IRepository.GetAll<TAggregateRoot>(ISpecification<TAggregateRoot> specification)
+        IReadOnlyList<TAggregateRoot> IRepository.GetAll<TAggregateRoot>(BaseSpecification<TAggregateRoot> specification)
         {
             var queryableResultWithIncludes = specification.Includes
                 .Aggregate(Set<TAggregateRoot>().AsNoTracking(), (current, include) => current.Include(include));
@@ -19,7 +15,7 @@ namespace Acme.Repository.Base
             return queryableResultWithIncludes.Where(specification.ToExpression()).ToList();
         }
 
-        TAggregateRoot IRepository.GetSingle<TAggregateRoot>(ISpecification<TAggregateRoot> specification)
+        TAggregateRoot IRepository.GetSingle<TAggregateRoot>(BaseSpecification<TAggregateRoot> specification)
         {
             var queryableResultWithIncludes = specification.Includes
                 .Aggregate(Set<TAggregateRoot>().AsNoTracking(), (current, include) => current.Include(include));

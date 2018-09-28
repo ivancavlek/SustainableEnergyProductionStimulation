@@ -1,4 +1,7 @@
-﻿using Acme.Domain.Base.Factory;
+﻿using System;
+using System.Collections.Generic;
+using System.Reflection;
+using Acme.Domain.Base.Factory;
 using Acme.Domain.Base.Repository;
 using Acme.Seps.Domain.Base.CommandHandler;
 using Acme.Seps.Domain.Base.ValueType;
@@ -8,9 +11,6 @@ using Acme.Seps.Domain.Parameter.DomainService;
 using Acme.Seps.Domain.Parameter.Entity;
 using FluentAssertions;
 using NSubstitute;
-using System;
-using System.Collections.Generic;
-using System.Reflection;
 
 namespace Acme.Seps.Domain.Parameter.Test.Unit.CommandHandler
 {
@@ -21,14 +21,12 @@ namespace Acme.Seps.Domain.Parameter.Test.Unit.CommandHandler
         private readonly IUnitOfWork _unitOfWork;
         private readonly IRepository _repository;
         private readonly IIdentityFactory<Guid> _identityFactory;
-        private readonly ISepsLogService _sepsLogService;
 
         private readonly NaturalGasSellingPrice _naturalGasSellingPrice;
         private readonly DateTime _lastPeriod;
 
         public CalculateNaturalGasCommandHandlerTests()
         {
-            _sepsLogService = Substitute.For<ISepsLogService>();
             _identityFactory = Substitute.For<IIdentityFactory<Guid>>();
             _identityFactory.CreateIdentity().Returns(Guid.NewGuid());
 
@@ -52,10 +50,10 @@ namespace Acme.Seps.Domain.Parameter.Test.Unit.CommandHandler
 
             _repository = Substitute.For<IRepository>();
             _repository
-                .GetAll(Arg.Any<ISpecification<NaturalGasSellingPrice>>())
+                .GetAll(Arg.Any<BaseSpecification<NaturalGasSellingPrice>>())
                 .Returns(new List<NaturalGasSellingPrice> { _naturalGasSellingPrice });
             _repository
-                .GetSingle(Arg.Any<ISpecification<NaturalGasSellingPrice>>())
+                .GetSingle(Arg.Any<BaseSpecification<NaturalGasSellingPrice>>())
                 .Returns(_naturalGasSellingPrice);
 
             var cogenerationTariff = Activator.CreateInstance(
@@ -70,7 +68,7 @@ namespace Acme.Seps.Domain.Parameter.Test.Unit.CommandHandler
                         _identityFactory },
                     null) as CogenerationTariff;
             _repository
-                .GetAll(Arg.Any<ISpecification<CogenerationTariff>>())
+                .GetAll(Arg.Any<BaseSpecification<CogenerationTariff>>())
                 .Returns(new List<CogenerationTariff> { cogenerationTariff });
 
             _unitOfWork = Substitute.For<IUnitOfWork>();
@@ -89,7 +87,7 @@ namespace Acme.Seps.Domain.Parameter.Test.Unit.CommandHandler
                 Year = _lastPeriod.Year,
             };
 
-            using (var monitoredEvent = _calculateNaturalGas.Monitor<ISepsLogService>())
+            using (var monitoredEvent = _calculateNaturalGas.Monitor())
             {
                 _calculateNaturalGas.Handle(calculateNaturalGasCommand);
 

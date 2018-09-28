@@ -1,8 +1,7 @@
-﻿using Acme.Domain.Base.Repository;
-using Acme.Seps.Domain.Base.Entity;
-using Acme.Seps.Domain.Base.Factory;
-using System;
+﻿using System;
 using System.Linq.Expressions;
+using Acme.Domain.Base.Repository;
+using Acme.Seps.Domain.Base.Entity;
 
 namespace Acme.Seps.Domain.Base.Repository
 {
@@ -10,11 +9,6 @@ namespace Acme.Seps.Domain.Base.Repository
         : BaseSpecification<TAggregateRoot> where TAggregateRoot : SepsBaseAggregate
     {
         private readonly DateTimeOffset _dateTime;
-
-        public ActiveAtDateSpecification()
-        {
-            _dateTime = SystemTime.CurrentDateTime();
-        }
 
         public ActiveAtDateSpecification(DateTimeOffset dateTime)
         {

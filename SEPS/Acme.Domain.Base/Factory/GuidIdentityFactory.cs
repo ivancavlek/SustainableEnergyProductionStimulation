@@ -1,6 +1,6 @@
-﻿using Acme.Domain.Base.Entity;
-using System;
+﻿using System;
 using System.Security.Cryptography;
+using Acme.Domain.Base.Entity;
 
 namespace Acme.Domain.Base.Factory
 {
@@ -33,8 +33,8 @@ namespace Acme.Domain.Base.Factory
 
             switch (_sequentialGuidType)
             {
-                case SequentialGuidType.SequentialAsString:
-                case SequentialGuidType.SequentialAsBinary:
+                case SequentialGuidType.SequentialAsString: // MySQL, PostgreSQL
+                case SequentialGuidType.SequentialAsBinary: // Oracle
                     Buffer.BlockCopy(timestampBytes, 2, guidBytes, 0, 6);
                     Buffer.BlockCopy(randomBytes, 0, guidBytes, 6, 10);
 
@@ -47,7 +47,7 @@ namespace Acme.Domain.Base.Factory
                     }
                     break;
 
-                case SequentialGuidType.SequentialAtEnd:
+                case SequentialGuidType.SequentialAtEnd: // Microsoft SQL Server
                     Buffer.BlockCopy(randomBytes, 0, guidBytes, 0, 10);
                     Buffer.BlockCopy(timestampBytes, 2, guidBytes, 10, 6);
                     break;

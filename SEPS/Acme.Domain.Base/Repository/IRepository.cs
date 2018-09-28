@@ -1,14 +1,14 @@
-﻿using Acme.Domain.Base.Entity;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using Acme.Domain.Base.Entity;
 
 namespace Acme.Domain.Base.Repository
 {
     public interface IRepository
     {
-        IReadOnlyList<TAggregateRoot> GetAll<TAggregateRoot>(ISpecification<TAggregateRoot> specification)
+        IReadOnlyList<TAggregateRoot> GetAll<TAggregateRoot>(BaseSpecification<TAggregateRoot> specification)
             where TAggregateRoot : BaseEntity, IAggregateRoot;
 
-        TAggregateRoot GetSingle<TAggregateRoot>(ISpecification<TAggregateRoot> specification)
+        TAggregateRoot GetSingle<TAggregateRoot>(BaseSpecification<TAggregateRoot> specification)
             where TAggregateRoot : BaseEntity, IAggregateRoot;
     }
 }

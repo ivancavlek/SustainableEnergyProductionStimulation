@@ -1,12 +1,11 @@
-﻿using Acme.Domain.Base.Entity;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
+using Acme.Domain.Base.Entity;
 
 namespace Acme.Domain.Base.Repository
 {
-    public abstract class BaseSpecification<TAggregateRoot>
-        : ISpecification<TAggregateRoot> where TAggregateRoot : BaseEntity, IAggregateRoot
+    public abstract class BaseSpecification<TAggregateRoot> where TAggregateRoot : BaseEntity, IAggregateRoot
     {
         public List<Expression<Func<TAggregateRoot, BaseEntity>>> Includes { get; } =
             new List<Expression<Func<TAggregateRoot, BaseEntity>>>();

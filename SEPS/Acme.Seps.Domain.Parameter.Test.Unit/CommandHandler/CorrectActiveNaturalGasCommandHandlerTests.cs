@@ -1,4 +1,7 @@
-﻿using Acme.Domain.Base.Factory;
+﻿using System;
+using System.Collections.Generic;
+using System.Reflection;
+using Acme.Domain.Base.Factory;
 using Acme.Domain.Base.Repository;
 using Acme.Seps.Domain.Base.CommandHandler;
 using Acme.Seps.Domain.Base.ValueType;
@@ -8,9 +11,6 @@ using Acme.Seps.Domain.Parameter.DomainService;
 using Acme.Seps.Domain.Parameter.Entity;
 using FluentAssertions;
 using NSubstitute;
-using System;
-using System.Collections.Generic;
-using System.Reflection;
 
 namespace Acme.Seps.Domain.Parameter.Test.Unit.CommandHandler
 {
@@ -20,7 +20,6 @@ namespace Acme.Seps.Domain.Parameter.Test.Unit.CommandHandler
         private readonly ICogenerationParameterService _cogenerationParameterService;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IIdentityFactory<Guid> _identityFactory;
-        private readonly ISepsLogService _sepsLogService;
 
         private readonly NaturalGasSellingPrice _naturalGasSellingPrice;
         private readonly IEnumerable<CogenerationTariff> _cogenerationTariff;
@@ -28,7 +27,6 @@ namespace Acme.Seps.Domain.Parameter.Test.Unit.CommandHandler
 
         public CorrectActiveNaturalGasCommandHandlerTests()
         {
-            _sepsLogService = Substitute.For<ISepsLogService>();
             _identityFactory = Substitute.For<IIdentityFactory<Guid>>();
             _identityFactory.CreateIdentity().Returns(Guid.NewGuid());
 
@@ -81,7 +79,7 @@ namespace Acme.Seps.Domain.Parameter.Test.Unit.CommandHandler
                 YearsNaturalGasSellingPrices = new List<NaturalGasSellingPrice> { _naturalGasSellingPrice }
             };
 
-            using (var monitoredEvent = _calculateNaturalGas.Monitor<ISepsLogService>())
+            using (var monitoredEvent = _calculateNaturalGas.Monitor())
             {
                 _calculateNaturalGas.Handle(correctActiveNaturalGasCommand);
 

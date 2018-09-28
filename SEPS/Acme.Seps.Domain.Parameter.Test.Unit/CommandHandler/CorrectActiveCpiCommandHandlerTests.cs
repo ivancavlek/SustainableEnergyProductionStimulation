@@ -1,4 +1,7 @@
-﻿using Acme.Domain.Base.Factory;
+﻿using System;
+using System.Collections.Generic;
+using System.Reflection;
+using Acme.Domain.Base.Factory;
 using Acme.Domain.Base.Repository;
 using Acme.Seps.Domain.Base.CommandHandler;
 using Acme.Seps.Domain.Base.ValueType;
@@ -7,9 +10,6 @@ using Acme.Seps.Domain.Parameter.CommandHandler;
 using Acme.Seps.Domain.Parameter.Entity;
 using FluentAssertions;
 using NSubstitute;
-using System;
-using System.Collections.Generic;
-using System.Reflection;
 
 namespace Acme.Seps.Domain.Parameter.Test.Unit.CommandHandler
 {
@@ -18,14 +18,12 @@ namespace Acme.Seps.Domain.Parameter.Test.Unit.CommandHandler
         private readonly ISepsCommandHandler<CorrectActiveCpiCommand> _correctActiveCpi;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IIdentityFactory<Guid> _identityFactory;
-        private readonly ISepsLogService _sepsLogService;
 
         private readonly ConsumerPriceIndex _cpi;
         private readonly IEnumerable<RenewableEnergySourceTariff> _resTariff;
 
         public CorrectActiveCpiCommandHandlerTests()
         {
-            _sepsLogService = Substitute.For<ISepsLogService>();
             _identityFactory = Substitute.For<IIdentityFactory<Guid>>();
             _identityFactory.CreateIdentity().Returns(Guid.NewGuid());
 
@@ -62,7 +60,7 @@ namespace Acme.Seps.Domain.Parameter.Test.Unit.CommandHandler
                 Remark = nameof(CalculateCpiCommand)
             };
 
-            using (var monitoredEvent = _correctActiveCpi.Monitor<ISepsLogService>())
+            using (var monitoredEvent = _correctActiveCpi.Monitor())
             {
                 _correctActiveCpi.Handle(correctActiveCpi);
 

@@ -1,9 +1,9 @@
-﻿using Acme.Domain.Base.Entity;
-using System;
+﻿using System;
+using Acme.Domain.Base.Entity;
 
 namespace Acme.Seps.Domain.Base.CommandHandler
 {
-    public abstract class BaseCommandHandler : ISepsLogService
+    public abstract class BaseCommandHandler
     {
         public event EventHandler<EntityExecutionLoggingEventArgs> UseCaseExecutionProcessing = delegate { };
 

@@ -14,7 +14,7 @@ using SimpleInjector;
 using SimpleInjector.Integration.AspNetCore.Mvc;
 using SimpleInjector.Lifestyles;
 
-namespace Acme.Seps.Presentation.Parameter.Web
+namespace Acme.Seps.Presentation.Web
 {
     public class Startup
     {

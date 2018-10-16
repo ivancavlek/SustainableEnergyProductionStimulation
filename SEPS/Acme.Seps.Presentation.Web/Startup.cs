@@ -1,18 +1,23 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using Acme.Domain.Base.Entity;
+﻿using Acme.Domain.Base.Entity;
 using Acme.Domain.Base.Factory;
+using Acme.Repository.Base;
+using Acme.Seps.Repository.Parameter;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.AspNetCore.Mvc.ViewComponents;
+using Microsoft.Data.Sqlite;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyModel;
 using SimpleInjector;
 using SimpleInjector.Integration.AspNetCore.Mvc;
 using SimpleInjector.Lifestyles;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
 
 namespace Acme.Seps.Presentation.Web
 {
@@ -45,9 +50,9 @@ namespace Acme.Seps.Presentation.Web
             services.UseSimpleInjectorAspNetRequestScoping(container);
         }
 
-        public void Configure(IApplicationBuilder app)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
-            InitializeContainer(app);
+            InitializeContainer(app, env);
 
             container.Verify();
 
@@ -60,19 +65,19 @@ namespace Acme.Seps.Presentation.Web
 
         }
 
-        private void InitializeContainer(IApplicationBuilder app)
+        private void InitializeContainer(IApplicationBuilder app, IHostingEnvironment env)
         {
             // Add application presentation components:
             container.RegisterMvcControllers(app);
             container.RegisterMvcViewComponents(app);
 
-            SetContainerApplicationRegistrations();
+            SetContainerApplicationRegistrations(env);
 
             // Allow Simple Injector to resolve services from ASP.NET Core.
             container.AutoCrossWireAspNetComponents(app);
         }
 
-        private void SetContainerApplicationRegistrations()
+        private void SetContainerApplicationRegistrations(IHostingEnvironment env)
         {
             var onDot = ".".ToCharArray();
             var currentAssemblyPartedFullName = Assembly.GetExecutingAssembly().FullName.Split(onDot);
@@ -82,6 +87,14 @@ namespace Acme.Seps.Presentation.Web
 
             container.Register<IIdentityFactory<Guid>>(() =>
                 new GuidIdentityFactory(SequentialGuidType.SequentialAtEnd));
+
+            DbContextOptionsBuilder<BaseContext> options = new DbContextOptionsBuilder<BaseContext>();
+
+            if (env.IsEnvironment("IntegrationTesting"))
+            {
+                options.UseSqlite(new SqliteConnection("DataSource=:memory:"));
+                //container.Register<IUnitOfWork>(() => new ParameterContext(options.Options));
+            }
 
             DependencyContext.Default.RuntimeLibraries
                 .Where(RuntimeLibraryIsFromProject)
@@ -114,7 +127,13 @@ namespace Acme.Seps.Presentation.Web
                 type);
 
             void RegisterAbstractionsWithImplementation((List<Type> Abstractions, Type Implementation) registration) =>
-                registration.Abstractions.ForEach(asn => container.Register(asn, registration.Implementation));
+                registration.Abstractions.ForEach(asn =>
+                {
+                    if (registration.Implementation == typeof(ParameterContext))
+                        container.Register(asn, () => new ParameterContext(options.Options));
+                    else
+                        container.Register(asn, registration.Implementation);
+                });
         }
     }
 }

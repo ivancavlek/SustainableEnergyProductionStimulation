@@ -9,6 +9,11 @@ namespace Acme.Seps.Repository.Parameter.Configuration
         public void Configure(EntityTypeBuilder<ConsumerPriceIndex> builder)
         {
             builder.HasBaseType<EconometricIndex>();
+            builder.OwnsOne(vte => vte.Period, vte =>
+            {
+                vte.Property(ppy => ppy.ValidFrom).HasColumnName("ValidFrom");
+                vte.Property(ppy => ppy.ValidTill).HasColumnName("ValidTill");
+            });
         }
     }
 }

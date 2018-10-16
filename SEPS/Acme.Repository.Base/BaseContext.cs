@@ -7,6 +7,8 @@ namespace Acme.Repository.Base
 {
     public abstract class BaseContext : DbContext, IRepository, IUnitOfWork
     {
+        public BaseContext(DbContextOptions<BaseContext> options) : base(options) { }
+
         IReadOnlyList<TAggregateRoot> IRepository.GetAll<TAggregateRoot>(BaseSpecification<TAggregateRoot> specification)
         {
             var queryableResultWithIncludes = specification.Includes

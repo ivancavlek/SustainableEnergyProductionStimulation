@@ -10,6 +10,8 @@ namespace Acme.Seps.Repository.Parameter
         public DbSet<EconometricIndex> EconometricIndices { get { return Set<EconometricIndex>(); } }
         public DbSet<Tariff> Tariffs { get { return Set<Tariff>(); } }
 
+        public ParameterContext(DbContextOptions<BaseContext> options) : base(options) { }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.HasDefaultSchema("parameter");

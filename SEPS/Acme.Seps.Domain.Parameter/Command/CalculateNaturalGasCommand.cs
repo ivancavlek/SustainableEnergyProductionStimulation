@@ -2,7 +2,7 @@
 
 namespace Acme.Seps.Domain.Parameter.Command
 {
-    public class CalculateNaturalGasCommand : BaseCommand
+    public sealed class CalculateNaturalGasCommand : BaseCommand
     {
         public decimal Amount { get; set; }
         public string Remark { get; set; }

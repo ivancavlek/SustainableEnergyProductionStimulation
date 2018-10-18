@@ -10,8 +10,8 @@ namespace Acme.Seps.Domain.Parameter.Entity
 {
     public abstract class EconometricIndex : SepsBaseAggregate
     {
-        public decimal Amount { get; }
-        public string Remark { get; }
+        public decimal Amount { get; private set; }
+        public string Remark { get; private set; }
         public DateTime InitialPeriod { get { return new DateTime(2007, 07, 01); } }
 
         protected EconometricIndex()

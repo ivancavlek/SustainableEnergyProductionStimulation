@@ -10,7 +10,7 @@ namespace Acme.Seps.Domain.Parameter.Entity
 {
     public class CogenerationTariff : Tariff
     {
-        public NaturalGasSellingPrice NaturalGasSellingPrice { get; }
+        public NaturalGasSellingPrice NaturalGasSellingPrice { get; private set; }
 
         protected CogenerationTariff()
         {

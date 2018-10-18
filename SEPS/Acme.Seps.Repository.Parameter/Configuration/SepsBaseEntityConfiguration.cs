@@ -8,7 +8,7 @@ namespace Acme.Seps.Repository.Parameter.Configuration
     {
         public void Configure(EntityTypeBuilder<SepsBaseEntity> builder)
         {
-            builder.Property(ppy => ppy.RowVersion).IsRowVersion();
+            builder.Property<byte[]>("RowVersion").IsRowVersion();
         }
     }
 }

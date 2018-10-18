@@ -10,10 +10,10 @@ namespace Acme.Seps.Domain.Parameter.Entity
 {
     public abstract class Tariff : SepsBaseAggregate
     {
-        public int LowerProductionLimit { get; }
-        public int UpperProductionLimit { get; }
-        public decimal LowerRate { get; }
-        public decimal HigherRate { get; }
+        public int LowerProductionLimit { get; private set; }
+        public int UpperProductionLimit { get; private set; }
+        public decimal LowerRate { get; private set; }
+        public decimal HigherRate { get; private set; }
 
         protected Tariff()
         {

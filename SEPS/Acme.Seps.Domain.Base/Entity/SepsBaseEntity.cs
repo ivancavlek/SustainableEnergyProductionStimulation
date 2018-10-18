@@ -6,8 +6,6 @@ namespace Acme.Seps.Domain.Base.Entity
 {
     public abstract class SepsBaseEntity : Entity<Guid>
     {
-        public byte[] RowVersion { get; set; }
-
         protected SepsBaseEntity()
         {
         }

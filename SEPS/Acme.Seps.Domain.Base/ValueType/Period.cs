@@ -8,8 +8,8 @@ namespace Acme.Seps.Domain.Base.ValueType
 {
     public class Period : ValueObject
     {
-        public DateTimeOffset ValidFrom { get; }
-        public DateTimeOffset? ValidTill { get; }
+        public DateTimeOffset ValidFrom { get; private set; }
+        public DateTimeOffset? ValidTill { get; private set; }
 
         protected Period()
         {

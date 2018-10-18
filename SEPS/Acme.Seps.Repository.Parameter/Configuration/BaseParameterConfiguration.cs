@@ -1,14 +1,15 @@
-﻿using Acme.Seps.Domain.Parameter.Entity;
+﻿using Acme.Seps.Domain.Base.Entity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Acme.Seps.Repository.Parameter.Configuration
 {
-    public class MonthlyAverageElectricEnergyProductionPriceConfiguration : IEntityTypeConfiguration<MonthlyAverageElectricEnergyProductionPrice>
+    public class BaseParameterConfiguration<TParameterEntity> where TParameterEntity : SepsBaseAggregate
     {
-        public void Configure(EntityTypeBuilder<MonthlyAverageElectricEnergyProductionPrice> builder)
+        public virtual void Configure(EntityTypeBuilder<TParameterEntity> builder)
         {
-            builder.HasBaseType<EconometricIndex>();
+            builder.Property<byte[]>("RowVersion").IsRowVersion();
+
             builder.OwnsOne(vte => vte.Period, vte =>
             {
                 vte.Property(ppy => ppy.ValidFrom).HasColumnName("ValidFrom");

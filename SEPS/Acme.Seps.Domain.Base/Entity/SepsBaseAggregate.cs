@@ -10,7 +10,7 @@ namespace Acme.Seps.Domain.Base.Entity
 {
     public abstract class SepsBaseAggregate : SepsBaseEntity, IAggregateRoot
     {
-        public Period Period { get; protected set; }
+        public Period Period { get; private set; }
 
         protected SepsBaseAggregate()
         {

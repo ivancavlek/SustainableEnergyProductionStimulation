@@ -16,15 +16,8 @@ namespace Acme.Seps.Repository.Parameter.Configuration
 
         public override void Configure(EntityTypeBuilder<EconometricIndex> builder)
         {
-            builder.Property<byte[]>("RowVersion").IsRowVersion();
             builder.Property<string>(_discriminator).HasMaxLength(50);
-            builder.Property(ppy => ppy.Remark).HasMaxLength(250);
-
-            builder.OwnsOne(vte => vte.Period, vte =>
-            {
-                vte.Property(ppy => ppy.ValidFrom).HasColumnName("ValidFrom");
-                vte.Property(ppy => ppy.ValidTill).HasColumnName("ValidTill");
-            });
+            builder.Property(ppy => ppy.Remark).HasMaxLength(250).IsRequired();
 
             builder
                 .ToTable("EconometricIndeces")

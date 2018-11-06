@@ -1,18 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using Acme.Domain.Base.CommandHandler;
+﻿using Acme.Domain.Base.CommandHandler;
 using Acme.Domain.Base.Entity;
 using Acme.Domain.Base.Factory;
 using Acme.Domain.Base.Repository;
 using Acme.Seps.Domain.Base.CommandHandler;
-using Acme.Seps.Domain.Base.Factory;
-using Acme.Seps.Domain.Base.Repository;
 using Acme.Seps.Domain.Parameter.Command;
 using Acme.Seps.Domain.Parameter.DomainService;
 using Acme.Seps.Domain.Parameter.Entity;
 using Acme.Seps.Domain.Parameter.Repository;
 using Humanizer;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Acme.Seps.Domain.Parameter.CommandHandler
 {
@@ -24,8 +22,6 @@ namespace Acme.Seps.Domain.Parameter.CommandHandler
         private readonly IIdentityFactory<Guid> _identityFactory;
         private readonly ICogenerationParameterService _cogenerationParameterService;
 
-        private DateTimeOffset _currentTime;
-
         public CalculateNaturalGasCommandHandler(
             ICogenerationParameterService cogenerationParameterService,
             IUnitOfWork unitOfWork,
@@ -36,8 +32,6 @@ namespace Acme.Seps.Domain.Parameter.CommandHandler
             _unitOfWork = unitOfWork ?? throw new ArgumentNullException(nameof(unitOfWork));
             _repository = repository ?? throw new ArgumentNullException(nameof(repository));
             _identityFactory = identityFactory ?? throw new ArgumentNullException(nameof(identityFactory));
-
-            _currentTime = SystemTime.CurrentDateTime();
         }
 
         void ICommandHandler<CalculateNaturalGasCommand>.Handle(CalculateNaturalGasCommand command)
@@ -46,7 +40,7 @@ namespace Acme.Seps.Domain.Parameter.CommandHandler
             _unitOfWork.Insert(newNaturalGasSellingPrice);
             LogNewNaturalSellingPriceCreation(newNaturalGasSellingPrice);
 
-            var yearsNaturalGasSellingPrices = GetNaturalGasPricesWithinYear(command.Year);
+            var yearsNaturalGasSellingPrices = GetNaturalGasPricesWithinYear();
 
             GetActiveCogenerations().ToList()
                 .ForEach(ctf =>
@@ -66,13 +60,13 @@ namespace Acme.Seps.Domain.Parameter.CommandHandler
                 command.Amount, command.Remark, command.Month, command.Year, _identityFactory);
 
         private NaturalGasSellingPrice GetActiveNaturalGasSellingPrice() =>
-            _repository.GetSingle(new ActiveAtDateSpecification<NaturalGasSellingPrice>(_currentTime));
+            _repository.GetSingle(new CurrentActiveMonthlyEconometricIndexSpecification<NaturalGasSellingPrice>());
 
         private IReadOnlyList<CogenerationTariff> GetActiveCogenerations() =>
-            _repository.GetAll(new ActiveAtDateSpecification<CogenerationTariff>(_currentTime));
+            _repository.GetAll(new CurrentActiveCogenerationTariffSpecification());
 
-        private IReadOnlyList<NaturalGasSellingPrice> GetNaturalGasPricesWithinYear(int year) =>
-           _repository.GetAll(new YearsNaturalGasSellingPricesSpecification(year));
+        private IReadOnlyList<NaturalGasSellingPrice> GetNaturalGasPricesWithinYear() =>
+           _repository.GetAll(new NaturalGasSellingPricesInAYearSpecification());
 
         private void LogNewNaturalSellingPriceCreation(NaturalGasSellingPrice naturalGasSellingPrice) =>
             Log(new EntityExecutionLoggingEventArgs

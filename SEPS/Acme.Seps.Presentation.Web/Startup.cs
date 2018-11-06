@@ -7,7 +7,6 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.AspNetCore.Mvc.ViewComponents;
-using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyModel;
@@ -92,8 +91,10 @@ namespace Acme.Seps.Presentation.Web
 
             if (env.IsEnvironment("IntegrationTesting"))
             {
-                options.UseSqlite(new SqliteConnection("DataSource=:memory:"));
-                //container.Register<IUnitOfWork>(() => new ParameterContext(options.Options));
+                //options.UseSqlite(new SqliteConnection("DataSource=:memory:"));
+                options.UseSqlServer(@"Server=DL006132\IVAN;Database=IntegrationTesting;Trusted_Connection=True;");
+                var bla = new ParameterContext(options.Options);
+                bla.Database.EnsureCreated();
             }
 
             DependencyContext.Default.RuntimeLibraries

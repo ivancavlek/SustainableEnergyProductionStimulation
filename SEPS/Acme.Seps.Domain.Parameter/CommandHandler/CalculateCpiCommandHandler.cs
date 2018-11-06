@@ -1,16 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using Acme.Domain.Base.CommandHandler;
+﻿using Acme.Domain.Base.CommandHandler;
 using Acme.Domain.Base.Entity;
 using Acme.Domain.Base.Factory;
 using Acme.Domain.Base.Repository;
 using Acme.Seps.Domain.Base.CommandHandler;
-using Acme.Seps.Domain.Base.Factory;
-using Acme.Seps.Domain.Base.Repository;
 using Acme.Seps.Domain.Parameter.Command;
 using Acme.Seps.Domain.Parameter.Entity;
+using Acme.Seps.Domain.Parameter.Repository;
 using Humanizer;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Acme.Seps.Domain.Parameter.CommandHandler
 {
@@ -20,8 +19,6 @@ namespace Acme.Seps.Domain.Parameter.CommandHandler
         private readonly IIdentityFactory<Guid> _identityFactory;
         private readonly IRepository _repository;
 
-        private DateTimeOffset _currentTime;
-
         public CalculateCpiCommandHandler(
             IRepository repository,
             IUnitOfWork unitOfWork,
@@ -30,8 +27,6 @@ namespace Acme.Seps.Domain.Parameter.CommandHandler
             _repository = repository ?? throw new ArgumentNullException(nameof(repository));
             _unitOfWork = unitOfWork ?? throw new ArgumentNullException(nameof(unitOfWork));
             _identityFactory = identityFactory ?? throw new ArgumentNullException(nameof(identityFactory));
-
-            _currentTime = SystemTime.CurrentDateTime();
         }
 
         void ICommandHandler<CalculateCpiCommand>.Handle(CalculateCpiCommand command)
@@ -55,10 +50,10 @@ namespace Acme.Seps.Domain.Parameter.CommandHandler
             GetActiveCpi().CreateNew(command.Amount, command.Remark, _identityFactory);
 
         private ConsumerPriceIndex GetActiveCpi() =>
-            _repository.GetSingle(new ActiveAtDateSpecification<ConsumerPriceIndex>(_currentTime));
+            _repository.GetSingle(new CurrentActiveYearlyEconometricIndexSpecification<ConsumerPriceIndex>());
 
         private IReadOnlyList<RenewableEnergySourceTariff> GetActiveRes() =>
-            _repository.GetAll(new ActiveAtDateSpecification<RenewableEnergySourceTariff>(_currentTime));
+            _repository.GetAll(new CurrentActiveRenewableEnergySourceTariffSpecification());
 
         private void LogNewNaturalSellingPriceCreation(ConsumerPriceIndex cpi) =>
             Log(new EntityExecutionLoggingEventArgs

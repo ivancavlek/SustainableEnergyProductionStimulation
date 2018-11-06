@@ -1,6 +1,5 @@
 ﻿using Acme.Domain.Base.Entity;
 using Acme.Domain.Base.Factory;
-using Acme.Seps.Domain.Base.Repository;
 using Acme.Seps.Domain.Base.ValueType;
 using Light.GuardClauses;
 using System;
@@ -29,15 +28,6 @@ namespace Acme.Seps.Domain.Base.Entity
 
             Period = period;
         }
-
-        public bool IsActiveAt(DateTimeOffset dateTime) =>
-            new ActiveAtDateSpecification<SepsBaseAggregate>(dateTime).IsSatisfiedBy(this);
-
-        public bool IsWithin(Period period) =>
-            IsWithin(period.ValidFrom, period.ValidTill);
-
-        public bool IsWithin(DateTimeOffset dateFrom, DateTimeOffset? dateTill) =>
-            new ActiveWithinDatesSpecification<SepsBaseAggregate>(dateFrom, dateTill).IsSatisfiedBy(this);
 
         public void SetExpirationDateTo(DateTimeOffset expirationDate) =>
             Period = Period.SetValidTill(expirationDate);

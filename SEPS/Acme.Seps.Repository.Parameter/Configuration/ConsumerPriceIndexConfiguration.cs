@@ -19,13 +19,15 @@ namespace Acme.Seps.Repository.Parameter.Configuration
                     Remark = "Initial value",
                     EconometricIndexType = nameof(ConsumerPriceIndex)
                 });
-            builder.OwnsOne(vte => vte.Period, vte =>
+            builder.OwnsOne(vte => vte.YearlyPeriod, vte =>
             {
+                vte.Property(ppy => ppy.ValidFrom).HasColumnName("ValidFrom").IsRequired();
+                vte.Property(ppy => ppy.ValidTill).HasColumnName("ValidTill");
                 vte.HasData(new
                 {
-                    EconometricIndexId = guid,
-                    ValidFrom = new DateTimeOffset(new DateTime(2007, 07, 01)),
-                    ValidTill = new DateTimeOffset(new DateTime(2008, 07, 01))
+                    ConsumerPriceIndexId = guid,
+                    ValidFrom = new DateTimeOffset(new DateTime(2016, 01, 01)),
+                    ValidTill = new DateTimeOffset(new DateTime(2017, 01, 01))
                 });
             });
         }

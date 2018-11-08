@@ -97,16 +97,19 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.3500.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="DailyEconometricIndexNotAllowedException" xml:space="preserve">
-    <value>Econometric index cannot be set to daily value</value>
+  <data name="DailyPeriodNotAllowedException" xml:space="preserve">
+    <value>Period cannot be set to daily value</value>
   </data>
   <data name="TimeOfDayPeriodNotAllowedException" xml:space="preserve">
-    <value>Econometric index cannot be set to time value</value>
+    <value>Period cannot be set to time value</value>
   </data>
   <data name="SuccessfulSave" xml:space="preserve">
-    <value>Successful save of entities to database.</value>
+    <value>Successful save of entities to database</value>
   </data>
   <data name="ValidTillGreaterThanValidFromException" xml:space="preserve">
     <value>Valid till must be after valid from</value>
+  </data>
+  <data name="YearlyValueNotEqualYearException" xml:space="preserve">
+    <value>Yearly value not equal year</value>
   </data>
 </root>

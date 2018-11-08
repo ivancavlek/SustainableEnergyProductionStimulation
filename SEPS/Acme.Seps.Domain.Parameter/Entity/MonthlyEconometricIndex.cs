@@ -11,9 +11,9 @@ namespace Acme.Seps.Domain.Parameter.Entity
     public abstract class MonthlyEconometricIndex<TMonthlyEconometricIndex> : EconometricIndex
         where TMonthlyEconometricIndex : MonthlyEconometricIndex<TMonthlyEconometricIndex>
     {
-        protected MonthlyEconometricIndex()
-        {
-        }
+        public MonthlyPeriod MonthlyPeriod { get; protected set; }
+
+        protected MonthlyEconometricIndex() { }
 
         protected MonthlyEconometricIndex(
             decimal amount,
@@ -21,16 +21,16 @@ namespace Acme.Seps.Domain.Parameter.Entity
             string remark,
             MonthlyPeriod lastMonthlyPeriod,
             IIdentityFactory<Guid> identityFactory)
-            : base(
-                  amount,
-                  decimalPlaces,
-                  remark,
-                  new MonthlyPeriod(lastMonthlyPeriod.ValidTill.Value),
-                  identityFactory)
+            : base(amount, decimalPlaces, remark, identityFactory)
         {
-            Period.ValidTill.MustBe(null, (x, y) => new DomainException(Message.MonthlyParameterException));
-            Period.ValidFrom.MustBeGreaterThanOrEqualTo(InitialPeriod, (x, y) => new DomainException(Message.MonthlyParameterException));
-            Period.ValidFrom.MustBeLessThan(SystemTime.CurrentMonth(), (x, y) => new DomainException(Message.MonthlyParameterException));
+            MonthlyPeriod.ValidTill.MustBe(null, (_, __) =>
+                new DomainException(Message.MonthlyParameterException));
+            MonthlyPeriod.ValidFrom.MustBeGreaterThanOrEqualTo(InitialPeriod, (_, __) =>
+                new DomainException(Message.MonthlyParameterException));
+            MonthlyPeriod.ValidFrom.MustBeLessThan(SystemTime.CurrentMonth(), (_, __) =>
+                new DomainException(Message.MonthlyParameterException));
+
+            MonthlyPeriod = new MonthlyPeriod(lastMonthlyPeriod.ValidTill.Value);
         }
 
         public abstract TMonthlyEconometricIndex CreateNew(

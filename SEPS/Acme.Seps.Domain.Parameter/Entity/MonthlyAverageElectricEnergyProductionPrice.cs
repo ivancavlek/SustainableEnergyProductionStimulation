@@ -4,11 +4,10 @@ using System;
 
 namespace Acme.Seps.Domain.Parameter.Entity
 {
-    public class MonthlyAverageElectricEnergyProductionPrice : MonthlyEconometricIndex<MonthlyAverageElectricEnergyProductionPrice>
+    public class MonthlyAverageElectricEnergyProductionPrice
+        : MonthlyEconometricIndex<MonthlyAverageElectricEnergyProductionPrice>
     {
-        protected MonthlyAverageElectricEnergyProductionPrice()
-        {
-        }
+        protected MonthlyAverageElectricEnergyProductionPrice() { }
 
         protected MonthlyAverageElectricEnergyProductionPrice(
             decimal amount,
@@ -20,10 +19,10 @@ namespace Acme.Seps.Domain.Parameter.Entity
         public override MonthlyAverageElectricEnergyProductionPrice CreateNew(
             decimal amount, string remark, int month, int year, IIdentityFactory<Guid> identityFactory)
         {
-            SetExpirationDateTo(new DateTime(year, month, 1));
+            MonthlyPeriod = MonthlyPeriod.SetValidTill(new DateTime(year, month, 1));
 
             return new MonthlyAverageElectricEnergyProductionPrice(
-                amount, remark, (MonthlyPeriod)Period, identityFactory);
+                amount, remark, MonthlyPeriod, identityFactory);
         }
     }
 }

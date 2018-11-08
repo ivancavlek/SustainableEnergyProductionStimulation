@@ -61,16 +61,16 @@ namespace Acme.Seps.Domain.Base.Infrastructure {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Econometric index cannot be set to daily value.
+        ///   Looks up a localized string similar to Period cannot be set to daily value.
         /// </summary>
-        public static string DailyEconometricIndexNotAllowedException {
+        public static string DailyPeriodNotAllowedException {
             get {
-                return ResourceManager.GetString("DailyEconometricIndexNotAllowedException", resourceCulture);
+                return ResourceManager.GetString("DailyPeriodNotAllowedException", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Successful save of entities to database..
+        ///   Looks up a localized string similar to Successful save of entities to database.
         /// </summary>
         public static string SuccessfulSave {
             get {
@@ -79,7 +79,7 @@ namespace Acme.Seps.Domain.Base.Infrastructure {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Econometric index cannot be set to time value.
+        ///   Looks up a localized string similar to Period cannot be set to time value.
         /// </summary>
         public static string TimeOfDayPeriodNotAllowedException {
             get {
@@ -93,6 +93,15 @@ namespace Acme.Seps.Domain.Base.Infrastructure {
         public static string ValidTillGreaterThanValidFromException {
             get {
                 return ResourceManager.GetString("ValidTillGreaterThanValidFromException", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Yearly value not equal year.
+        /// </summary>
+        public static string YearlyValueNotEqualYearException {
+            get {
+                return ResourceManager.GetString("YearlyValueNotEqualYearException", resourceCulture);
             }
         }
     }

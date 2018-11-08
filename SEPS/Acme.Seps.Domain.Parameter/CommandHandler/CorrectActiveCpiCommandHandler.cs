@@ -53,7 +53,7 @@ namespace Acme.Seps.Domain.Parameter.CommandHandler
                 Message = string.Format(
                     Infrastructure.Parameter.UpdateParameterLog,
                     nameof(ConsumerPriceIndex).Humanize(LetterCasing.LowerCase),
-                    cpi.Period,
+                    cpi.YearlyPeriod,
                     cpi.Amount)
             });
 
@@ -67,7 +67,7 @@ namespace Acme.Seps.Domain.Parameter.CommandHandler
                 Message = string.Format(
                     Infrastructure.Parameter.InsertTariffLog,
                     nameof(RenewableEnergySourceTariff).Humanize(LetterCasing.LowerCase),
-                    resTariff.Period,
+                    resTariff.YearlyPeriod,
                     resTariff.LowerRate,
                     resTariff.HigherRate)
             });

@@ -19,11 +19,13 @@ namespace Acme.Seps.Repository.Parameter.Configuration
                     Remark = "Initial value",
                     EconometricIndexType = nameof(NaturalGasSellingPrice)
                 });
-            builder.OwnsOne(vte => vte.Period, vte =>
+            builder.OwnsOne(vte => vte.MonthlyPeriod, vte =>
             {
+                vte.Property(ppy => ppy.ValidFrom).HasColumnName("ValidFrom").IsRequired();
+                vte.Property(ppy => ppy.ValidTill).HasColumnName("ValidTill");
                 vte.HasData(new
                 {
-                    EconometricIndexId = guid,
+                    NaturalGasSellingPriceId = guid,
                     ValidFrom = new DateTimeOffset(new DateTime(2007, 07, 01)),
                 });
             });

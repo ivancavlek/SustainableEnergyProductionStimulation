@@ -20,44 +20,44 @@ namespace Acme.Seps.Domain.Base.Test.Unit.ValueType
             _dateTimeOffsetUtcNowPlusOneMonth = _dateTimeOffsetUtcNow.AddMonths(1);
         }
 
-        public void CreatesNewPeriodWithDateFrom()
-        {
-            var result = new Period(_dateTimeOffsetUtcNow);
+        //public void CreatesNewPeriodWithDateFrom()
+        //{
+        //    var result = new Period(_dateTimeOffsetUtcNow);
 
-            result.ValidFrom.Should().Be(_dateTimeOffsetUtcNow);
-        }
+        //    result.ValidFrom.Should().Be(_dateTimeOffsetUtcNow);
+        //}
 
-        public void CreatesNewPeriodWithDateFromAndDateTill()
-        {
-            var result = new Period(_dateTimeOffsetUtcNow, _dateTimeOffsetUtcNowPlusOneMonth);
+        //public void CreatesNewPeriodWithDateFromAndDateTill()
+        //{
+        //    var result = new Period(_dateTimeOffsetUtcNow, _dateTimeOffsetUtcNowPlusOneMonth);
 
-            result.ValidFrom.Should().Be(_dateTimeOffsetUtcNow);
-            result.ValidTill.Should().HaveValue().And.Be(_dateTimeOffsetUtcNowPlusOneMonth);
-        }
+        //    result.ValidFrom.Should().Be(_dateTimeOffsetUtcNow);
+        //    result.ValidTill.Should().HaveValue().And.Be(_dateTimeOffsetUtcNowPlusOneMonth);
+        //}
 
-        public void DoesNotCreateNewPeriodWithDateTillBeforeDateFrom()
-        {
-            Action action = () => new Period(_dateTimeOffsetUtcNowPlusOneMonth, _dateTimeOffsetUtcNow);
+        //public void DoesNotCreateNewPeriodWithDateTillBeforeDateFrom()
+        //{
+        //    Action action = () => new Period(_dateTimeOffsetUtcNowPlusOneMonth, _dateTimeOffsetUtcNow);
 
-            action.Should().Throw<DomainException>();
-        }
+        //    action.Should().Throw<DomainException>();
+        //}
 
-        public void CreatesNewPeriodWithValidTill()
-        {
-            var period = new Period(_dateTimeOffsetUtcNow);
+        //public void CreatesNewPeriodWithValidTill()
+        //{
+        //    var period = new Period(_dateTimeOffsetUtcNow);
 
-            var result = period.SetValidTill(_dateTimeOffsetUtcNowPlusOneMonth);
+        //    var result = period.SetValidTill(_dateTimeOffsetUtcNowPlusOneMonth);
 
-            result.ValidFrom.Should().Be(_dateTimeOffsetUtcNow);
-            result.ValidTill.Should().HaveValue().And.Be(_dateTimeOffsetUtcNowPlusOneMonth);
-        }
+        //    result.ValidFrom.Should().Be(_dateTimeOffsetUtcNow);
+        //    result.ValidTill.Should().HaveValue().And.Be(_dateTimeOffsetUtcNowPlusOneMonth);
+        //}
 
-        public void EnablesDateFromToBeEqualToDateTill()
-        {
-            var result = new Period(_dateTimeOffsetUtcNow, _dateTimeOffsetUtcNow);
+        //public void EnablesDateFromToBeEqualToDateTill()
+        //{
+        //    var result = new Period(_dateTimeOffsetUtcNow, _dateTimeOffsetUtcNow);
 
-            result.ValidFrom.Should().Be(_dateTimeOffsetUtcNow);
-            result.ValidTill.Should().HaveValue().And.Be(_dateTimeOffsetUtcNow);
-        }
+        //    result.ValidFrom.Should().Be(_dateTimeOffsetUtcNow);
+        //    result.ValidTill.Should().HaveValue().And.Be(_dateTimeOffsetUtcNow);
+        //}
     }
 }

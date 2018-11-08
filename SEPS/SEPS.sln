@@ -27,7 +27,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Acme.Seps.Repository.Parame
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Acme.Seps.Presentation.Web", "Acme.Seps.Presentation.Web\Acme.Seps.Presentation.Web.csproj", "{E230BD9D-1D64-421E-899F-A763C2326F03}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Acme.Seps.Presentation.Web.Test.Integration", "Acme.Seps.Presentation.Web.Test.Integration\Acme.Seps.Presentation.Web.Test.Integration.csproj", "{DCDCC977-EBA5-427D-9C81-DC1C149D6529}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Acme.Seps.Presentation.Web.Test.Integration", "Acme.Seps.Presentation.Web.Test.Integration\Acme.Seps.Presentation.Web.Test.Integration.csproj", "{DCDCC977-EBA5-427D-9C81-DC1C149D6529}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

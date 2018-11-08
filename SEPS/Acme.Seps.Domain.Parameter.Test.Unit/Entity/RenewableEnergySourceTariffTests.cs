@@ -93,9 +93,9 @@ namespace Acme.Seps.Domain.Parameter.Test.Unit.Entity
         {
             var result = _existingRes.CreateNewWith(_consumerPriceIndex, _identityFactory);
 
-            _existingRes.Period.ValidTill.Should().Be(_consumerPriceIndex.Period.ValidFrom);
+            _existingRes.YearlyPeriod.ValidTill.Should().Be(_consumerPriceIndex.YearlyPeriod.ValidFrom);
             result.ConsumerPriceIndex.Should().Be(_consumerPriceIndex);
-            result.Period.Should().Be(_consumerPriceIndex.Period);
+            result.YearlyPeriod.Should().Be(_consumerPriceIndex.YearlyPeriod);
             result.LowerRate.Should().Be(_existingRes.LowerRate);
             result.HigherRate.Should().Be((_consumerPriceIndex.Amount / 100M) * _existingRes.HigherRate);
         }

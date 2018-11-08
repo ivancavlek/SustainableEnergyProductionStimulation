@@ -12,9 +12,9 @@ namespace Acme.Seps.Domain.Parameter.Entity
     public abstract class YearlyEconometricIndex<TYearlyEconometricIndex> : EconometricIndex
         where TYearlyEconometricIndex : YearlyEconometricIndex<TYearlyEconometricIndex>
     {
-        protected YearlyEconometricIndex()
-        {
-        }
+        public YearlyPeriod YearlyPeriod { get; private set; }
+
+        protected YearlyEconometricIndex() { }
 
         protected YearlyEconometricIndex(
             decimal amount,
@@ -22,16 +22,14 @@ namespace Acme.Seps.Domain.Parameter.Entity
             string remark,
             YearlyPeriod lastYearlyPeriod,
             IIdentityFactory<Guid> identityFactory)
-            : base(
-                  amount,
-                  decimalPlaces,
-                  remark,
-                  new YearlyPeriod(lastYearlyPeriod.ValidTill.Value, lastYearlyPeriod.ValidTill.Value.AddYears(1)),
-                  identityFactory)
+            : base(amount, decimalPlaces, remark, identityFactory)
         {
-            Period.ValidFrom.Year.MustBeGreaterThanOrEqualTo(InitialPeriod.Year, (x, y) => new DomainException(Message.YearlyParameterException));
-            Period.ValidTill.MustHaveValue(() => new DomainException(Message.YearlyParameterException));
-            Period.ValidTill.Value.Year.MustBeLessThan(SystemTime.CurrentYear().Year, (x, y) => new DomainException(Message.YearlyParameterException));
+            lastYearlyPeriod.ValidFrom.Year.MustBeGreaterThanOrEqualTo(InitialPeriod.Year, (_, __) =>
+                new DomainException(Message.YearlyParameterException));
+            lastYearlyPeriod.ValidTill.Year.MustBeLessThan(SystemTime.CurrentYear().Year, (_, __) =>
+                new DomainException(Message.YearlyParameterException));
+
+            YearlyPeriod = new YearlyPeriod(lastYearlyPeriod.ValidTill, lastYearlyPeriod.ValidTill.AddYears(1));
         }
 
         public abstract TYearlyEconometricIndex CreateNew(

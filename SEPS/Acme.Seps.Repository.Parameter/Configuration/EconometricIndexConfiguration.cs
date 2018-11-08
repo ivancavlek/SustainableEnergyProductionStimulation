@@ -20,7 +20,7 @@ namespace Acme.Seps.Repository.Parameter.Configuration
             builder.Property(ppy => ppy.Remark).HasMaxLength(250).IsRequired();
 
             builder
-                .ToTable("EconometricIndeces")
+                .ToTable("EconometricIndexes")
                 .HasDiscriminator<string>(_discriminator)
                 .HasValue<ConsumerPriceIndex>(nameof(ConsumerPriceIndex))
                 .HasValue<NaturalGasSellingPrice>(nameof(NaturalGasSellingPrice))

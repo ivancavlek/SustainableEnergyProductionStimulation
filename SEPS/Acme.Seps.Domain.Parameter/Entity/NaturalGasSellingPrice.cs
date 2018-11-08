@@ -6,9 +6,7 @@ namespace Acme.Seps.Domain.Parameter.Entity
 {
     public class NaturalGasSellingPrice : MonthlyEconometricIndex<NaturalGasSellingPrice>
     {
-        protected NaturalGasSellingPrice()
-        {
-        }
+        protected NaturalGasSellingPrice() { }
 
         protected NaturalGasSellingPrice(
             decimal amount,
@@ -20,9 +18,9 @@ namespace Acme.Seps.Domain.Parameter.Entity
         public override NaturalGasSellingPrice CreateNew(
             decimal amount, string remark, int month, int year, IIdentityFactory<Guid> identityFactory)
         {
-            SetExpirationDateTo(new DateTime(year, month, 1));
+            MonthlyPeriod = MonthlyPeriod.SetValidTill(new DateTime(year, month, 1));
 
-            return new NaturalGasSellingPrice(amount, remark, (MonthlyPeriod)Period, identityFactory);
+            return new NaturalGasSellingPrice(amount, remark, MonthlyPeriod, identityFactory);
         }
     }
 }

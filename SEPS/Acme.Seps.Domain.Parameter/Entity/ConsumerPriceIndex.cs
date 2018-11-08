@@ -6,9 +6,7 @@ namespace Acme.Seps.Domain.Parameter.Entity
 {
     public class ConsumerPriceIndex : YearlyEconometricIndex<ConsumerPriceIndex>
     {
-        protected ConsumerPriceIndex()
-        {
-        }
+        protected ConsumerPriceIndex() { }
 
         protected ConsumerPriceIndex(
             decimal amount,
@@ -19,6 +17,6 @@ namespace Acme.Seps.Domain.Parameter.Entity
 
         public override ConsumerPriceIndex CreateNew(
             decimal amount, string remark, IIdentityFactory<Guid> identityFactory) =>
-            new ConsumerPriceIndex(amount, remark, (YearlyPeriod)Period, identityFactory);
+            new ConsumerPriceIndex(amount, remark, YearlyPeriod, identityFactory);
     }
 }

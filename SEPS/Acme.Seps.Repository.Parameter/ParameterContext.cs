@@ -19,9 +19,12 @@ namespace Acme.Seps.Repository.Parameter
         {
             modelBuilder.HasDefaultSchema("parameter");
             modelBuilder.ApplyConfiguration(new EconometricIndexConfiguration());
-            modelBuilder.ApplyConfiguration(new TariffConfiguration());
             modelBuilder.ApplyConfiguration(new ConsumerPriceIndexConfiguration());
+            modelBuilder.ApplyConfiguration(new MonthlyAverageElectricEnergyProductionPriceConfiguration());
             modelBuilder.ApplyConfiguration(new NaturalGasSellingPriceConfiguration());
+            modelBuilder.ApplyConfiguration(new TariffConfiguration());
+            modelBuilder.ApplyConfiguration(new CogenerationTariffConfiguration());
+            modelBuilder.ApplyConfiguration(new RenewableEnergySourceTariffConfiguration());
         }
     }
 }

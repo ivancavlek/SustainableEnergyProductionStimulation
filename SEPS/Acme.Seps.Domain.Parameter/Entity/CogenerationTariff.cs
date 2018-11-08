@@ -10,20 +10,22 @@ namespace Acme.Seps.Domain.Parameter.Entity
 {
     public class CogenerationTariff : Tariff
     {
+        public MonthlyPeriod MonthlyPeriod { get; private set; }
         public NaturalGasSellingPrice NaturalGasSellingPrice { get; private set; }
 
-        protected CogenerationTariff()
-        {
-        }
+        protected CogenerationTariff() { }
 
         protected CogenerationTariff(
             NaturalGasSellingPrice naturalGasSellingPrice,
             decimal lowerRate,
             decimal higherRate,
-            Period period,
+            MonthlyPeriod monthlyPeriod,
             IIdentityFactory<Guid> identityFactory)
-            : base(lowerRate, higherRate, period, identityFactory) =>
+            : base(lowerRate, higherRate, identityFactory)
+        {
+            MonthlyPeriod = monthlyPeriod;
             NaturalGasSellingPrice = naturalGasSellingPrice;
+        }
 
         public CogenerationTariff CreateNewWith(
             IEnumerable<NaturalGasSellingPrice> yearsNaturalGasSellingPrices,
@@ -35,7 +37,7 @@ namespace Acme.Seps.Domain.Parameter.Entity
             cogenerationParameterService.MustNotBeNull(message: Message.CogenerationParameterServiceException);
             naturalGasSellingPrice.MustNotBeNull(message: Message.NaturalGasSellingPriceNotSetException);
 
-            SetExpirationDateTo(naturalGasSellingPrice.Period.ValidFrom);
+            MonthlyPeriod = MonthlyPeriod.SetValidTill(naturalGasSellingPrice.MonthlyPeriod.ValidFrom);
 
             var cogenerationParameter = cogenerationParameterService
                 .GetFrom(yearsNaturalGasSellingPrices, naturalGasSellingPrice);
@@ -45,7 +47,7 @@ namespace Acme.Seps.Domain.Parameter.Entity
                 naturalGasSellingPrice,
                 cogenerationParameter * LowerRate,
                 cogenerationParameter * HigherRate,
-                naturalGasSellingPrice.Period,
+                naturalGasSellingPrice.MonthlyPeriod,
                 identityFactory
             );
         }

@@ -101,11 +101,11 @@ namespace Acme.Seps.Domain.Parameter.Test.Unit.Entity
                 _naturalGasSellingPrice,
                 _identityFactory);
 
-            _existingChp.Period.ValidTill.Should().Be(_naturalGasSellingPrice.Period.ValidFrom);
+            _existingChp.MonthlyPeriod.ValidTill.Should().Be(_naturalGasSellingPrice.MonthlyPeriod.ValidFrom);
             result.LowerRate.Should().Be(_existingChp.LowerRate * cogenerationParameter);
             result.HigherRate.Should().Be(_existingChp.LowerRate * cogenerationParameter);
             result.NaturalGasSellingPrice.Should().Be(_naturalGasSellingPrice);
-            result.Period.Should().Be(_naturalGasSellingPrice.Period);
+            result.MonthlyPeriod.Should().Be(_naturalGasSellingPrice.MonthlyPeriod);
         }
     }
 }

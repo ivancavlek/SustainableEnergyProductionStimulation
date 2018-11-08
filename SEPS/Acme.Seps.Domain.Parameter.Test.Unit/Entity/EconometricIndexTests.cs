@@ -1,6 +1,5 @@
 ﻿using Acme.Domain.Base.Entity;
 using Acme.Domain.Base.Factory;
-using Acme.Domain.Base.ValueType;
 using Acme.Seps.Domain.Base.ValueType;
 using Acme.Seps.Domain.Parameter.Entity;
 using FluentAssertions;
@@ -14,7 +13,7 @@ namespace Acme.Seps.Domain.Parameter.Test.Unit.Entity
         private readonly decimal _amount;
         private readonly int _decimalPlaces;
         private readonly string _remark;
-        private readonly Period _period;
+        private readonly MonthlyPeriod _monthlyPeriod;
         private readonly IIdentityFactory<Guid> _identityFactory;
 
         public EconometricIndexTests()
@@ -22,14 +21,14 @@ namespace Acme.Seps.Domain.Parameter.Test.Unit.Entity
             _amount = 1M;
             _decimalPlaces = 2;
             _remark = nameof(_remark);
-            _period = new MonthlyPeriod(DateTime.UtcNow);
+            _monthlyPeriod = new MonthlyPeriod(DateTime.UtcNow);
             _identityFactory = Substitute.For<IIdentityFactory<Guid>>();
         }
 
         public void AmountCannotBeANegativeValue()
         {
             Action action = () =>
-                new DummyEconometricIndex(-1M, _decimalPlaces, _remark, _period, _identityFactory);
+                new DummyEconometricIndex(-1M, _decimalPlaces, _remark, _monthlyPeriod, _identityFactory);
 
             action
                 .Should()
@@ -40,7 +39,7 @@ namespace Acme.Seps.Domain.Parameter.Test.Unit.Entity
         public void AmountCannotBeZeroBased()
         {
             Action action = () =>
-                new DummyEconometricIndex(0M, _decimalPlaces, _remark, _period, _identityFactory);
+                new DummyEconometricIndex(0M, _decimalPlaces, _remark, _monthlyPeriod, _identityFactory);
 
             action
                 .Should()
@@ -52,7 +51,7 @@ namespace Acme.Seps.Domain.Parameter.Test.Unit.Entity
         {
             var amount = 1.2578M;
 
-            var result = new DummyEconometricIndex(amount, _decimalPlaces, _remark, _period, _identityFactory);
+            var result = new DummyEconometricIndex(amount, _decimalPlaces, _remark, _monthlyPeriod, _identityFactory);
 
             result.Amount.Should().Be(Math.Round(amount, _decimalPlaces, MidpointRounding.AwayFromZero));
         }
@@ -60,7 +59,7 @@ namespace Acme.Seps.Domain.Parameter.Test.Unit.Entity
         public void DecimalPlacesCannotBeANegativeNumber()
         {
             Action action = () =>
-                new DummyEconometricIndex(_amount, -1, _remark, _period, _identityFactory);
+                new DummyEconometricIndex(_amount, -1, _remark, _monthlyPeriod, _identityFactory);
 
             action
                 .Should()
@@ -71,7 +70,7 @@ namespace Acme.Seps.Domain.Parameter.Test.Unit.Entity
         public void RemarkMustExist()
         {
             Action action = () =>
-                new DummyEconometricIndex(_amount, _decimalPlaces, string.Empty, _period, _identityFactory);
+                new DummyEconometricIndex(_amount, _decimalPlaces, string.Empty, _monthlyPeriod, _identityFactory);
 
             action
                 .Should()
@@ -82,8 +81,13 @@ namespace Acme.Seps.Domain.Parameter.Test.Unit.Entity
 
     internal class DummyEconometricIndex : EconometricIndex
     {
+        public MonthlyPeriod MonthlyPeriod { get; private set; }
+
         public DummyEconometricIndex(
-            decimal amount, int decimalPlaces, string remark, Period period, IIdentityFactory<Guid> identityFactory)
-            : base(amount, decimalPlaces, remark, period, identityFactory) { }
+            decimal amount, int decimalPlaces, string remark, MonthlyPeriod period, IIdentityFactory<Guid> identityFactory)
+            : base(amount, decimalPlaces, remark, identityFactory)
+        {
+            MonthlyPeriod = period;
+        }
     }
 }

@@ -1,7 +1,7 @@
-﻿using System;
+﻿using Acme.Domain.Base.Entity;
+using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
-using Acme.Domain.Base.Entity;
 
 namespace Acme.Domain.Base.Repository
 {
@@ -18,6 +18,7 @@ namespace Acme.Domain.Base.Repository
         public bool IsSatisfiedBy(TAggregateRoot entity)
         {
             Func<TAggregateRoot, bool> predicate = ToExpression().Compile();
+
             return predicate(entity);
         }
 

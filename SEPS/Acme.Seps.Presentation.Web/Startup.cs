@@ -1,6 +1,7 @@
 ﻿using Acme.Domain.Base.Entity;
 using Acme.Domain.Base.Factory;
 using Acme.Repository.Base;
+using Acme.Seps.Domain.Base.Factory;
 using Acme.Seps.Repository.Parameter;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -121,6 +122,7 @@ namespace Acme.Seps.Presentation.Web
                 type.GetInterfaces().Any(ite => ite.Namespace.Split(onDot).First().Equals(projectName)) &&
                 !type.IsAbstract &&
                 !type.GetInterfaces().Any(ite => ite == typeof(IIdentityFactory<Guid>)) &&
+                !type.GetInterfaces().Any(ite => ite == typeof(IPeriodFactory)) &&
                 !type.GetInterfaces().Any(ite => ite == typeof(IAggregateRoot));
 
             (List<Type> Abstractions, Type Implementation) InterfaceAbstractionsWithImplementation(Type type) =>

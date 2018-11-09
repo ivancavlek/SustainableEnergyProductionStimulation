@@ -1,20 +1,17 @@
 ﻿using Acme.Domain.Base.Entity;
-using Acme.Domain.Base.ValueType;
 using Acme.Seps.Domain.Base.Utility;
 using Light.GuardClauses;
 using System;
 using Message = Acme.Seps.Domain.Base.Infrastructure.Base;
 
-namespace Acme.Seps.Domain.Base.ValueType
+namespace Acme.Seps.Domain.Base.Factory
 {
-    public class MonthlyPeriod : ValueObject
+    public sealed class MonthlyPeriodFactory : IPeriodFactory
     {
-        public DateTimeOffset ValidFrom { get; private set; }
-        public DateTimeOffset? ValidTill { get; private set; }
+        public DateTimeOffset ValidFrom { get; }
+        public DateTimeOffset? ValidTill { get; }
 
-        protected MonthlyPeriod() { }
-
-        public MonthlyPeriod(DateTimeOffset dateFrom)
+        public MonthlyPeriodFactory(DateTimeOffset dateFrom)
         {
             dateFrom.Day.MustBe(1, (_, __) =>
                 new DomainException(Message.DailyPeriodNotAllowedException));
@@ -24,7 +21,7 @@ namespace Acme.Seps.Domain.Base.ValueType
             ValidFrom = dateFrom.ToFirstDayOfTheMonth();
         }
 
-        public MonthlyPeriod(DateTimeOffset dateFrom, DateTimeOffset dateTill)
+        public MonthlyPeriodFactory(DateTimeOffset dateFrom, DateTimeOffset dateTill)
         {
             dateFrom.Day.MustBe(1, (_, __) =>
                 new DomainException(Message.DailyPeriodNotAllowedException));
@@ -40,11 +37,5 @@ namespace Acme.Seps.Domain.Base.ValueType
             ValidFrom = dateFrom.ToFirstDayOfTheMonth();
             ValidTill = dateTill.ToFirstDayOfTheMonth();
         }
-
-        public MonthlyPeriod SetValidTill(DateTimeOffset validTill) =>
-            new MonthlyPeriod(ValidFrom, validTill);
-
-        public override string ToString() =>
-            ValidTill.HasValue ? $"{ValidFrom:MM.yyyy.} - {ValidTill.Value:MM.yyyy.}" : $"{ValidFrom:MM.yyyy.} - ";
     }
 }

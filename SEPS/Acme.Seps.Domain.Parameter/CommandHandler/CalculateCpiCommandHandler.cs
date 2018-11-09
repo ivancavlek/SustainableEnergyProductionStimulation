@@ -3,9 +3,9 @@ using Acme.Domain.Base.Entity;
 using Acme.Domain.Base.Factory;
 using Acme.Domain.Base.Repository;
 using Acme.Seps.Domain.Base.CommandHandler;
+using Acme.Seps.Domain.Base.Repository;
 using Acme.Seps.Domain.Parameter.Command;
 using Acme.Seps.Domain.Parameter.Entity;
-using Acme.Seps.Domain.Parameter.Repository;
 using Humanizer;
 using System;
 using System.Collections.Generic;
@@ -50,10 +50,10 @@ namespace Acme.Seps.Domain.Parameter.CommandHandler
             GetActiveCpi().CreateNew(command.Amount, command.Remark, _identityFactory);
 
         private ConsumerPriceIndex GetActiveCpi() =>
-            _repository.GetSingle(new CurrentActiveYearlyEconometricIndexSpecification<ConsumerPriceIndex>());
+            _repository.GetSingle(new CurrentActiveYearlySpecification<ConsumerPriceIndex>());
 
         private IReadOnlyList<RenewableEnergySourceTariff> GetActiveRes() =>
-            _repository.GetAll(new CurrentActiveRenewableEnergySourceTariffSpecification());
+            _repository.GetAll(new CurrentActiveYearlySpecification<RenewableEnergySourceTariff>());
 
         private void LogNewNaturalSellingPriceCreation(ConsumerPriceIndex cpi) =>
             Log(new EntityExecutionLoggingEventArgs
@@ -61,7 +61,7 @@ namespace Acme.Seps.Domain.Parameter.CommandHandler
                 Message = string.Format(
                     Infrastructure.Parameter.InsertParameterLog,
                     nameof(ConsumerPriceIndex).Humanize(LetterCasing.LowerCase),
-                    cpi.YearlyPeriod,
+                    cpi.Period,
                     cpi.Amount)
             });
 
@@ -75,7 +75,7 @@ namespace Acme.Seps.Domain.Parameter.CommandHandler
                 Message = string.Format(
                     Infrastructure.Parameter.InsertTariffLog,
                     nameof(RenewableEnergySourceTariff).Humanize(LetterCasing.LowerCase),
-                    resTariff.YearlyPeriod,
+                    resTariff.Period,
                     resTariff.LowerRate,
                     resTariff.HigherRate)
             });

@@ -6,9 +6,7 @@ namespace Acme.Seps.Domain.Base.Entity
 {
     public abstract class SepsBaseEntity : Entity<Guid>
     {
-        protected SepsBaseEntity()
-        {
-        }
+        protected SepsBaseEntity() { }
 
         protected SepsBaseEntity(IIdentityFactory<Guid> identityFactory)
             : base(identityFactory) { }

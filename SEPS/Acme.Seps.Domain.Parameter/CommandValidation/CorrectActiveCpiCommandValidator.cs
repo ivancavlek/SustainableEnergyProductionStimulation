@@ -3,7 +3,7 @@ using FluentValidation;
 
 namespace Acme.Seps.Domain.Parameter.CommandValidation
 {
-    public class CorrectActiveCpiCommandValidator : AbstractValidator<CorrectActiveCpiCommand>
+    public sealed class CorrectActiveCpiCommandValidator : AbstractValidator<CorrectActiveCpiCommand>
     {
         public CorrectActiveCpiCommandValidator()
         {

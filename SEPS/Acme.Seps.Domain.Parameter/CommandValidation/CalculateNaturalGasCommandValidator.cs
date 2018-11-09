@@ -3,7 +3,7 @@ using FluentValidation;
 
 namespace Acme.Seps.Domain.Parameter.CommandValidation
 {
-    public class CalculateNaturalGasCommandValidator : AbstractValidator<CalculateNaturalGasCommand>
+    public sealed class CalculateNaturalGasCommandValidator : AbstractValidator<CalculateNaturalGasCommand>
     {
         public CalculateNaturalGasCommandValidator()
         {

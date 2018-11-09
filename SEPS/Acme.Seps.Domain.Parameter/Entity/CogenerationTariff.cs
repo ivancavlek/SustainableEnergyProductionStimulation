@@ -1,5 +1,5 @@
 ﻿using Acme.Domain.Base.Factory;
-using Acme.Seps.Domain.Base.ValueType;
+using Acme.Seps.Domain.Base.Factory;
 using Acme.Seps.Domain.Parameter.DomainService;
 using Light.GuardClauses;
 using System;
@@ -10,7 +10,6 @@ namespace Acme.Seps.Domain.Parameter.Entity
 {
     public class CogenerationTariff : Tariff
     {
-        public MonthlyPeriod MonthlyPeriod { get; private set; }
         public NaturalGasSellingPrice NaturalGasSellingPrice { get; private set; }
 
         protected CogenerationTariff() { }
@@ -19,11 +18,10 @@ namespace Acme.Seps.Domain.Parameter.Entity
             NaturalGasSellingPrice naturalGasSellingPrice,
             decimal lowerRate,
             decimal higherRate,
-            MonthlyPeriod monthlyPeriod,
+            MonthlyPeriodFactory monthlyPeriodFactory,
             IIdentityFactory<Guid> identityFactory)
-            : base(lowerRate, higherRate, identityFactory)
+            : base(lowerRate, higherRate, monthlyPeriodFactory, identityFactory)
         {
-            MonthlyPeriod = monthlyPeriod;
             NaturalGasSellingPrice = naturalGasSellingPrice;
         }
 
@@ -37,8 +35,6 @@ namespace Acme.Seps.Domain.Parameter.Entity
             cogenerationParameterService.MustNotBeNull(message: Message.CogenerationParameterServiceException);
             naturalGasSellingPrice.MustNotBeNull(message: Message.NaturalGasSellingPriceNotSetException);
 
-            MonthlyPeriod = MonthlyPeriod.SetValidTill(naturalGasSellingPrice.MonthlyPeriod.ValidFrom);
-
             var cogenerationParameter = cogenerationParameterService
                 .GetFrom(yearsNaturalGasSellingPrices, naturalGasSellingPrice);
 
@@ -47,7 +43,7 @@ namespace Acme.Seps.Domain.Parameter.Entity
                 naturalGasSellingPrice,
                 cogenerationParameter * LowerRate,
                 cogenerationParameter * HigherRate,
-                naturalGasSellingPrice.MonthlyPeriod,
+                new MonthlyPeriodFactory(Period.ValidTill.Value, naturalGasSellingPrice.Period.ValidFrom),
                 identityFactory
             );
         }

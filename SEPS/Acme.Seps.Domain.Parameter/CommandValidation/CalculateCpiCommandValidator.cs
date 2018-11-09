@@ -3,7 +3,7 @@ using FluentValidation;
 
 namespace Acme.Seps.Domain.Parameter.CommandValidation
 {
-    public class CalculateCpiCommandValidator : AbstractValidator<CalculateCpiCommand>
+    public sealed class CalculateCpiCommandValidator : AbstractValidator<CalculateCpiCommand>
     {
         public CalculateCpiCommandValidator()
         {

@@ -5,10 +5,13 @@ using System;
 
 namespace Acme.Seps.Repository.Parameter.Configuration
 {
-    public class ConsumerPriceIndexConfiguration : IEntityTypeConfiguration<ConsumerPriceIndex>
+    public class ConsumerPriceIndexConfiguration
+        : BaseParameterConfiguration<ConsumerPriceIndex>, IEntityTypeConfiguration<ConsumerPriceIndex>
     {
-        public void Configure(EntityTypeBuilder<ConsumerPriceIndex> builder)
+        public override void Configure(EntityTypeBuilder<ConsumerPriceIndex> builder)
         {
+            base.Configure(builder);
+
             var guid = Guid.NewGuid();
 
             builder.HasData(
@@ -19,13 +22,11 @@ namespace Acme.Seps.Repository.Parameter.Configuration
                     Remark = "Initial value",
                     EconometricIndexType = nameof(ConsumerPriceIndex)
                 });
-            builder.OwnsOne(vte => vte.YearlyPeriod, vte =>
+            builder.OwnsOne(vte => vte.Period, vte =>
             {
-                vte.Property(ppy => ppy.ValidFrom).HasColumnName("ValidFrom").IsRequired();
-                vte.Property(ppy => ppy.ValidTill).HasColumnName("ValidTill");
                 vte.HasData(new
                 {
-                    ConsumerPriceIndexId = guid,
+                    EconometricIndexId = guid,
                     ValidFrom = new DateTimeOffset(new DateTime(2016, 01, 01)),
                     ValidTill = new DateTimeOffset(new DateTime(2017, 01, 01))
                 });

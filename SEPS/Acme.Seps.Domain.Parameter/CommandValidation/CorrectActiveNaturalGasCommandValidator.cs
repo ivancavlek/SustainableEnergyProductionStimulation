@@ -3,7 +3,7 @@ using FluentValidation;
 
 namespace Acme.Seps.Domain.Parameter.CommandValidation
 {
-    public class CorrectActiveNaturalGasCommandValidator : AbstractValidator<CorrectActiveNaturalGasCommand>
+    public sealed class CorrectActiveNaturalGasCommandValidator : AbstractValidator<CorrectActiveNaturalGasCommand>
     {
         public CorrectActiveNaturalGasCommandValidator()
         {

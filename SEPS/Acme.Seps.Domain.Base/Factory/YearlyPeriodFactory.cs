@@ -1,20 +1,19 @@
 ﻿using Acme.Domain.Base.Entity;
-using Acme.Domain.Base.ValueType;
 using Acme.Seps.Domain.Base.Utility;
 using Light.GuardClauses;
 using System;
 using Message = Acme.Seps.Domain.Base.Infrastructure.Base;
 
-namespace Acme.Seps.Domain.Base.ValueType
+namespace Acme.Seps.Domain.Base.Factory
 {
-    public class YearlyPeriod : ValueObject
+    public sealed class YearlyPeriodFactory : IPeriodFactory
     {
-        public DateTimeOffset ValidFrom { get; private set; }
-        public DateTimeOffset ValidTill { get; private set; }
+        public DateTimeOffset ValidFrom { get; }
+        public DateTimeOffset? ValidTill { get; }
 
-        protected YearlyPeriod() { }
+        private YearlyPeriodFactory() { }
 
-        public YearlyPeriod(DateTimeOffset dateFrom, DateTimeOffset dateTill)
+        public YearlyPeriodFactory(DateTimeOffset dateFrom, DateTimeOffset dateTill)
         {
             dateFrom.Day.MustBe(1, (_, __) =>
                 new DomainException(Message.DailyPeriodNotAllowedException));
@@ -30,11 +29,8 @@ namespace Acme.Seps.Domain.Base.ValueType
             ValidFrom = dateFrom.ToFirstMonthOfTheYear().ToFirstDayOfTheMonth();
             ValidTill = dateTill.ToFirstMonthOfTheYear().ToFirstDayOfTheMonth();
 
-            (ValidTill.Year - ValidFrom.Year).MustBe(1, (_, __) =>
+            (ValidTill.Value.Year - ValidFrom.Year).MustBe(1, (_, __) =>
                 new DomainException(Message.YearlyValueNotEqualYearException));
         }
-
-        public override string ToString() =>
-            $"{ValidFrom:yyyy}";
     }
 }

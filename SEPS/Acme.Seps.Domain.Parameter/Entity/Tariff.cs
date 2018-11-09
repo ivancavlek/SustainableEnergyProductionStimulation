@@ -1,6 +1,7 @@
 ﻿using Acme.Domain.Base.Entity;
 using Acme.Domain.Base.Factory;
 using Acme.Seps.Domain.Base.Entity;
+using Acme.Seps.Domain.Base.Factory;
 using Light.GuardClauses;
 using System;
 using Message = Acme.Seps.Domain.Parameter.Infrastructure.Parameter;
@@ -19,7 +20,8 @@ namespace Acme.Seps.Domain.Parameter.Entity
         protected Tariff(
             decimal lowerRate,
             decimal higherRate,
-            IIdentityFactory<Guid> identityFactory) : base(identityFactory)
+            IPeriodFactory periodFactory,
+            IIdentityFactory<Guid> identityFactory) : base(periodFactory, identityFactory)
         {
             lowerRate.MustBeGreaterThanOrEqualTo(0m, (_, __) =>
                 new DomainException(Message.BelowZeroLowerRateException));

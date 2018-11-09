@@ -11,12 +11,12 @@ namespace Acme.Seps.Domain.Parameter.Entity
         protected ConsumerPriceIndex(
             decimal amount,
             string remark,
-            YearlyPeriod lastYearlyPeriod,
+            Period lastYearlyPeriod,
             IIdentityFactory<Guid> identityFactory)
             : base(amount, 4, remark, lastYearlyPeriod, identityFactory) { }
 
         public override ConsumerPriceIndex CreateNew(
             decimal amount, string remark, IIdentityFactory<Guid> identityFactory) =>
-            new ConsumerPriceIndex(amount, remark, YearlyPeriod, identityFactory);
+            new ConsumerPriceIndex(amount, remark, Period, identityFactory);
     }
 }

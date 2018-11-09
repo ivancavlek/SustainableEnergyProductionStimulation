@@ -61,7 +61,7 @@ namespace Acme.Seps.Domain.Parameter.CommandHandler
                 Message = string.Format(
                     Infrastructure.Parameter.InsertParameterLog,
                     nameof(NaturalGasSellingPrice).Humanize(LetterCasing.LowerCase),
-                    naturalGasSellingPrice.MonthlyPeriod,
+                    naturalGasSellingPrice.Period,
                     naturalGasSellingPrice.Amount)
             });
 
@@ -81,7 +81,7 @@ namespace Acme.Seps.Domain.Parameter.CommandHandler
                 Message = string.Format(
                     Infrastructure.Parameter.InsertTariffLog,
                     nameof(CogenerationTariff).Humanize(LetterCasing.LowerCase),
-                    cogenerationTariff.MonthlyPeriod,
+                    cogenerationTariff.Period,
                     cogenerationTariff.LowerRate,
                     cogenerationTariff.HigherRate)
             });

@@ -4,7 +4,7 @@ using System.Runtime.Serialization;
 namespace Acme.Domain.Base.Entity
 {
     [Serializable]
-    public class DomainException : Exception
+    public sealed class DomainException : Exception
     {
         public DomainException() { }
         public DomainException(string message) : base(message) { }

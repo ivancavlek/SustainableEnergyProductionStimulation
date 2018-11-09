@@ -9,9 +9,7 @@ namespace Acme.Domain.Base.ValueType
     /// </summary>
     public abstract class ValueObject : IEquatable<ValueObject>
     {
-        protected ValueObject()
-        {
-        }
+        protected ValueObject() { }
 
         public override bool Equals(object obj)
         {
@@ -27,8 +25,8 @@ namespace Acme.Domain.Base.ValueType
         {
             var fields = GetFields();
 
-            var startValue = 17;
-            var multiplier = 59;
+            const int startValue = 17;
+            const int multiplier = 59;
 
             var hashCode = startValue;
 

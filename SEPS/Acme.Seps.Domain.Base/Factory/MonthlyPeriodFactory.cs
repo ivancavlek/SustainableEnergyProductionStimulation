@@ -13,24 +13,11 @@ namespace Acme.Seps.Domain.Base.Factory
 
         public MonthlyPeriodFactory(DateTimeOffset dateFrom)
         {
-            dateFrom.Day.MustBe(1, (_, __) =>
-                new DomainException(Message.DailyPeriodNotAllowedException));
-            dateFrom.TimeOfDay.MustBe(TimeSpan.Zero, (_, __) =>
-                new DomainException(Message.TimeOfDayPeriodNotAllowedException));
-
             ValidFrom = dateFrom.ToFirstDayOfTheMonth();
         }
 
         public MonthlyPeriodFactory(DateTimeOffset dateFrom, DateTimeOffset dateTill)
         {
-            dateFrom.Day.MustBe(1, (_, __) =>
-                new DomainException(Message.DailyPeriodNotAllowedException));
-            dateFrom.TimeOfDay.MustBe(TimeSpan.Zero, (_, __) =>
-                new DomainException(Message.TimeOfDayPeriodNotAllowedException));
-            dateTill.Day.MustBe(1, (_, __) =>
-                new DomainException(Message.DailyPeriodNotAllowedException));
-            dateTill.TimeOfDay.MustBe(TimeSpan.Zero, (_, __) =>
-                new DomainException(Message.TimeOfDayPeriodNotAllowedException));
             dateTill.MustBeGreaterThanOrEqualTo(dateFrom, (_, __) =>
                 new DomainException(Message.ValidTillGreaterThanValidFromException));
 

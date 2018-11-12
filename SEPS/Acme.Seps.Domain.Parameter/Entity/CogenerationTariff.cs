@@ -43,7 +43,7 @@ namespace Acme.Seps.Domain.Parameter.Entity
                 naturalGasSellingPrice,
                 cogenerationParameter * LowerRate,
                 cogenerationParameter * HigherRate,
-                new MonthlyPeriodFactory(Period.ValidTill.Value, naturalGasSellingPrice.Period.ValidFrom),
+                new MonthlyPeriodFactory(naturalGasSellingPrice.Period.ValidFrom),
                 identityFactory
             );
         }

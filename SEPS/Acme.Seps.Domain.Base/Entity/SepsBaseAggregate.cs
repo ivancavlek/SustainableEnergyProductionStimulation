@@ -2,6 +2,7 @@
 using Acme.Domain.Base.Factory;
 using Acme.Seps.Domain.Base.Factory;
 using Acme.Seps.Domain.Base.ValueType;
+using Light.GuardClauses;
 using System;
 
 namespace Acme.Seps.Domain.Base.Entity
@@ -15,6 +16,8 @@ namespace Acme.Seps.Domain.Base.Entity
         protected SepsBaseAggregate(IPeriodFactory periodFactory, IIdentityFactory<Guid> identityFactory)
             : base(identityFactory)
         {
+            periodFactory.MustNotBeNull(nameof(periodFactory));
+
             Period = new Period(periodFactory);
         }
     }

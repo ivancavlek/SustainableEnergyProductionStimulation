@@ -1,15 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Reflection;
-using Acme.Domain.Base.Factory;
+﻿using Acme.Domain.Base.Factory;
 using Acme.Domain.Base.Repository;
 using Acme.Seps.Domain.Base.CommandHandler;
+using Acme.Seps.Domain.Base.Factory;
 using Acme.Seps.Domain.Base.ValueType;
 using Acme.Seps.Domain.Parameter.Command;
 using Acme.Seps.Domain.Parameter.CommandHandler;
 using Acme.Seps.Domain.Parameter.Entity;
 using FluentAssertions;
 using NSubstitute;
+using System;
+using System.Collections.Generic;
+using System.Reflection;
 
 namespace Acme.Seps.Domain.Parameter.Test.Unit.CommandHandler
 {
@@ -18,29 +19,40 @@ namespace Acme.Seps.Domain.Parameter.Test.Unit.CommandHandler
         private readonly ISepsCommandHandler<CalculateCpiCommand> _calculateCpi;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IRepository _repository;
+        private readonly IPeriodFactory _periodFactory;
         private readonly IIdentityFactory<Guid> _identityFactory;
 
         public CalculateCpiCommandHandlerTests()
         {
+            _periodFactory = new YearlyPeriodFactory(DateTime.Now.AddYears(-4), DateTime.Now.AddYears(-3));
             _identityFactory = Substitute.For<IIdentityFactory<Guid>>();
             _identityFactory.CreateIdentity().Returns(Guid.NewGuid());
 
-            var _cpi = Activator.CreateInstance(
+            var cpi = Activator.CreateInstance(
                 typeof(ConsumerPriceIndex),
                 BindingFlags.Instance | BindingFlags.NonPublic,
                 null,
-                new object[] {
+                new object[]
+                {
                     10M,
                     nameof(ConsumerPriceIndex),
-                    new YearlyPeriod(DateTime.Now.AddYears(-4), DateTime.Now.AddYears(-3)),
-                    _identityFactory },
+                    new Period(new YearlyPeriodFactory(DateTime.Now.AddYears(-4), DateTime.Now.AddYears(-3))),
+                    _identityFactory
+                },
                 null) as ConsumerPriceIndex;
 
             var renewableEnergySourceTariff = Activator.CreateInstance(
                     typeof(RenewableEnergySourceTariff),
                     BindingFlags.Instance | BindingFlags.NonPublic,
                     null,
-                    new object[] { _cpi, 5M, 10M, _identityFactory },
+                    new object[]
+                    {
+                        cpi,
+                        5M,
+                        10M,
+                        new YearlyPeriodFactory(DateTime.Now.AddYears(-3), DateTime.Now.AddYears(-2)),
+                        _identityFactory
+                    },
                     null) as RenewableEnergySourceTariff;
             _repository = Substitute.For<IRepository>();
             _repository
@@ -48,7 +60,7 @@ namespace Acme.Seps.Domain.Parameter.Test.Unit.CommandHandler
                 .Returns(new List<RenewableEnergySourceTariff> { renewableEnergySourceTariff });
             _repository
                 .GetSingle(Arg.Any<BaseSpecification<ConsumerPriceIndex>>())
-                .Returns(_cpi);
+                .Returns(cpi);
 
             _unitOfWork = Substitute.For<IUnitOfWork>();
 

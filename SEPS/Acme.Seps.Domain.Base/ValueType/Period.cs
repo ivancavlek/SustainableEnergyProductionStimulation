@@ -19,10 +19,5 @@ namespace Acme.Seps.Domain.Base.ValueType
             ValidFrom = periodFactory.ValidFrom;
             ValidTill = periodFactory.ValidTill;
         }
-
-        public override string ToString() =>
-            ValidTill.HasValue ?
-            $"{ValidFrom:dd.MM.yyyy.} - {ValidTill.Value:dd.MM.yyyy.}" :
-            $"{ValidFrom:dd.MM.yyyy.} - ";
     }
 }

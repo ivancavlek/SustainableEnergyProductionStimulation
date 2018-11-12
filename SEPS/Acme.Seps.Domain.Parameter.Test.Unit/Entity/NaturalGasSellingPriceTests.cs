@@ -1,4 +1,5 @@
 ﻿using Acme.Domain.Base.Factory;
+using Acme.Seps.Domain.Base.Factory;
 using Acme.Seps.Domain.Base.ValueType;
 using Acme.Seps.Domain.Parameter.Entity;
 using FluentAssertions;
@@ -28,7 +29,7 @@ namespace Acme.Seps.Domain.Parameter.Test.Unit.Entity
                 new object[] {
                     10M,
                     nameof(NaturalGasSellingPrice),
-                    new MonthlyPeriod(DateTime.Now.AddYears(-3), DateTime.Now.AddYears(-2)),
+                    new Period(new MonthlyPeriodFactory(DateTime.Now.AddYears(-3), DateTime.Now.AddYears(-2))),
                     _identityFactory },
                 null) as NaturalGasSellingPrice;
         }

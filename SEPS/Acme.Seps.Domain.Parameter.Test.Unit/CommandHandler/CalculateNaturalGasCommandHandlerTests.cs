@@ -1,9 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Reflection;
-using Acme.Domain.Base.Factory;
+﻿using Acme.Domain.Base.Factory;
 using Acme.Domain.Base.Repository;
 using Acme.Seps.Domain.Base.CommandHandler;
+using Acme.Seps.Domain.Base.Factory;
 using Acme.Seps.Domain.Base.ValueType;
 using Acme.Seps.Domain.Parameter.Command;
 using Acme.Seps.Domain.Parameter.CommandHandler;
@@ -11,6 +9,9 @@ using Acme.Seps.Domain.Parameter.DomainService;
 using Acme.Seps.Domain.Parameter.Entity;
 using FluentAssertions;
 using NSubstitute;
+using System;
+using System.Collections.Generic;
+using System.Reflection;
 
 namespace Acme.Seps.Domain.Parameter.Test.Unit.CommandHandler
 {
@@ -41,11 +42,13 @@ namespace Acme.Seps.Domain.Parameter.Test.Unit.CommandHandler
                 typeof(NaturalGasSellingPrice),
                 BindingFlags.Instance | BindingFlags.NonPublic,
                 null,
-                new object[] {
+                new object[]
+                {
                     10M,
                     nameof(NaturalGasSellingPrice),
-                    new MonthlyPeriod(DateTime.Now.AddYears(-3), DateTime.Now.AddYears(-2)),
-                    _identityFactory },
+                    new Period(new MonthlyPeriodFactory(DateTime.Now.AddYears(-3), DateTime.Now.AddYears(-2))),
+                    _identityFactory
+                },
                 null) as NaturalGasSellingPrice;
 
             _repository = Substitute.For<IRepository>();
@@ -60,12 +63,14 @@ namespace Acme.Seps.Domain.Parameter.Test.Unit.CommandHandler
                     typeof(CogenerationTariff),
                     BindingFlags.Instance | BindingFlags.NonPublic,
                     null,
-                    new object[] {
+                    new object[]
+                    {
                         _naturalGasSellingPrice,
                         10M,
                         10M,
-                        new MonthlyPeriod(DateTime.Now.AddMonths(-4), _lastPeriod),
-                        _identityFactory },
+                        new MonthlyPeriodFactory(DateTime.Now.AddMonths(-4), _lastPeriod),
+                        _identityFactory
+                    },
                     null) as CogenerationTariff;
             _repository
                 .GetAll(Arg.Any<BaseSpecification<CogenerationTariff>>())

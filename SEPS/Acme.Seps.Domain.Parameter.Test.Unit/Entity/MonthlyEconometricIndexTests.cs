@@ -1,5 +1,6 @@
 ﻿using Acme.Domain.Base.Entity;
 using Acme.Domain.Base.Factory;
+using Acme.Seps.Domain.Base.Factory;
 using Acme.Seps.Domain.Base.ValueType;
 using Acme.Seps.Domain.Parameter.Entity;
 using FluentAssertions;
@@ -26,7 +27,7 @@ namespace Acme.Seps.Domain.Parameter.Test.Unit.Entity
         public void PeriodCannotStartBeforeInitialPeriod()
         {
             var initialPeriodMinusMonth = new DateTime(2007, 07, 01).AddMonths(-1);
-            var period = new MonthlyPeriod(initialPeriodMinusMonth.AddYears(-1), initialPeriodMinusMonth);
+            var period = new Period(new MonthlyPeriodFactory(initialPeriodMinusMonth.AddYears(-1), initialPeriodMinusMonth));
 
             Action action = () => new DummyMonthlyEconometricIndex(
                 _amount, _decimalPlaces, _remark, period, _identityFactory);
@@ -40,7 +41,7 @@ namespace Acme.Seps.Domain.Parameter.Test.Unit.Entity
         public void PeriodMustStartBeforeCurrentMonth()
         {
             var currentDate = DateTime.Now;
-            var period = new MonthlyPeriod(currentDate.AddMonths(-1), DateTime.Now);
+            var period = new Period(new MonthlyPeriodFactory(currentDate.AddMonths(-1), DateTime.Now));
 
             Action action = () => new DummyMonthlyEconometricIndex(
                 _amount, _decimalPlaces, _remark, period, _identityFactory);
@@ -54,7 +55,7 @@ namespace Acme.Seps.Domain.Parameter.Test.Unit.Entity
         public void PeriodIsCorrectlySet()
         {
             var correctDate = DateTime.UtcNow.AddMonths(-1);
-            var period = new MonthlyPeriod(correctDate.AddMonths(-2), correctDate);
+            var period = new Period(new MonthlyPeriodFactory(correctDate.AddMonths(-2), correctDate));
 
             Action action = () => new DummyMonthlyEconometricIndex(
                 _amount, _decimalPlaces, _remark, period, _identityFactory);
@@ -71,7 +72,7 @@ namespace Acme.Seps.Domain.Parameter.Test.Unit.Entity
             decimal amount,
             int decimalPlaces,
             string remark,
-            MonthlyPeriod period,
+            Period period,
             IIdentityFactory<Guid> identityFactory)
             : base(amount, decimalPlaces, remark, period, identityFactory) { }
 

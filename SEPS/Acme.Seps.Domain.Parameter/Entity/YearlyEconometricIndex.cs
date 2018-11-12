@@ -1,6 +1,7 @@
 ﻿using Acme.Domain.Base.Entity;
 using Acme.Domain.Base.Factory;
 using Acme.Seps.Domain.Base.Factory;
+using Acme.Seps.Domain.Base.Utility;
 using Acme.Seps.Domain.Base.ValueType;
 using Light.GuardClauses;
 

@@ -1,6 +1,6 @@
 ﻿using Acme.Domain.Base.Entity;
 using Acme.Domain.Base.Factory;
-using Acme.Seps.Domain.Base.ValueType;
+using Acme.Seps.Domain.Base.Factory;
 using Acme.Seps.Domain.Parameter.Entity;
 using FluentAssertions;
 using NSubstitute;
@@ -12,14 +12,14 @@ namespace Acme.Seps.Domain.Parameter.Test.Unit.Entity
     {
         private readonly decimal _lowerRate;
         private readonly decimal _higherRate;
-        private readonly MonthlyPeriod _monthlyPeriod;
+        private readonly IPeriodFactory _monthlyPeriod;
         private readonly IIdentityFactory<Guid> _identityFactory;
 
         public TariffTests()
         {
             _lowerRate = 1M;
             _higherRate = 2M;
-            _monthlyPeriod = new MonthlyPeriod(DateTime.UtcNow);
+            _monthlyPeriod = new MonthlyPeriodFactory(DateTime.UtcNow);
             _identityFactory = Substitute.For<IIdentityFactory<Guid>>();
         }
 
@@ -62,19 +62,15 @@ namespace Acme.Seps.Domain.Parameter.Test.Unit.Entity
 
             result.LowerRate.Should().Be(_lowerRate);
             result.HigherRate.Should().Be(_higherRate);
-            result.MonthlyPeriod.Should().Be(_monthlyPeriod);
         }
     }
 
     internal class DummyTariff : Tariff
     {
-        public MonthlyPeriod MonthlyPeriod { get; private set; }
-
         public DummyTariff(
-            decimal lowerRate, decimal higherRate, MonthlyPeriod period, IIdentityFactory<Guid> identityFactory)
-            : base(lowerRate, higherRate, identityFactory)
+            decimal lowerRate, decimal higherRate, IPeriodFactory period, IIdentityFactory<Guid> identityFactory)
+            : base(lowerRate, higherRate, period, identityFactory)
         {
-            MonthlyPeriod = period;
         }
     }
 }

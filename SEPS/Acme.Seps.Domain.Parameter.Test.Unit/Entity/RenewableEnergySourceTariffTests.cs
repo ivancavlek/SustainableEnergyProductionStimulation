@@ -1,5 +1,6 @@
 ﻿using Acme.Domain.Base.Entity;
 using Acme.Domain.Base.Factory;
+using Acme.Seps.Domain.Base.Factory;
 using Acme.Seps.Domain.Base.ValueType;
 using Acme.Seps.Domain.Parameter.Entity;
 using FluentAssertions;
@@ -16,39 +17,50 @@ namespace Acme.Seps.Domain.Parameter.Test.Unit.Entity
         private readonly IIdentityFactory<Guid> _identityFactory;
 
         private readonly decimal _higherRate;
-        private readonly YearlyPeriod _resPeriod;
+        private readonly Period _resPeriod;
 
         public RenewableEnergySourceTariffTests()
         {
             _higherRate = 10M;
-            _resPeriod = new YearlyPeriod(DateTime.Now.AddYears(-4), DateTime.Now.AddYears(-3));
+            _resPeriod = new Period(new YearlyPeriodFactory(DateTime.Now.AddYears(-3), DateTime.Now.AddYears(-2)));
             _identityFactory = Substitute.For<IIdentityFactory<Guid>>();
 
             var resConsumerPriceIndex = Activator.CreateInstance(
                 typeof(ConsumerPriceIndex),
                 BindingFlags.Instance | BindingFlags.NonPublic,
                 null,
-                new object[] {
+                new object[]
+                {
                     100M,
                     nameof(ConsumerPriceIndex),
                     _resPeriod,
-                    _identityFactory },
+                    _identityFactory
+                },
                 null) as ConsumerPriceIndex;
             _consumerPriceIndex = Activator.CreateInstance(
                 typeof(ConsumerPriceIndex),
                 BindingFlags.Instance | BindingFlags.NonPublic,
                 null,
-                new object[] {
+                new object[]
+                {
                     105M,
                     nameof(ConsumerPriceIndex),
-                    new YearlyPeriod(DateTime.Now.AddYears(-3), DateTime.Now.AddYears(-2)),
-                    _identityFactory },
+                    new Period(new YearlyPeriodFactory(DateTime.Now.AddYears(-4), DateTime.Now.AddYears(-3))),
+                    _identityFactory
+                },
                 null) as ConsumerPriceIndex;
             _existingRes = Activator.CreateInstance(
                 typeof(RenewableEnergySourceTariff),
                 BindingFlags.Instance | BindingFlags.NonPublic,
                 null,
-                new object[] { resConsumerPriceIndex, 5M, _higherRate, _identityFactory },
+                new object[]
+                {
+                    resConsumerPriceIndex,
+                    5M,
+                    _higherRate,
+                    new YearlyPeriodFactory(DateTime.Now.AddYears(-4), DateTime.Now.AddYears(-3)),
+                    _identityFactory
+                },
                 null) as RenewableEnergySourceTariff;
         }
 
@@ -71,14 +83,14 @@ namespace Acme.Seps.Domain.Parameter.Test.Unit.Entity
                 new object[] {
                     100M,
                 nameof(ConsumerPriceIndex),
-                new YearlyPeriod(DateTime.Now.AddYears(-3), DateTime.Now.AddYears(-2)),
+                new Period(new YearlyPeriodFactory(DateTime.Now.AddYears(-3), DateTime.Now.AddYears(-2))),
                     _identityFactory },
                 null);
             var falseRes = Activator.CreateInstance(
                 typeof(RenewableEnergySourceTariff),
                 BindingFlags.Instance | BindingFlags.NonPublic,
                 null,
-                new object[] { resConsumerPriceIndex, 5M, _higherRate, _identityFactory },
+                new object[] { resConsumerPriceIndex, 5M, _higherRate, new YearlyPeriodFactory(DateTime.Now.AddYears(-2), DateTime.Now.AddYears(-1)), _identityFactory },
                 null) as RenewableEnergySourceTariff;
 
             Action action = () => falseRes.CreateNewWith(_consumerPriceIndex, _identityFactory);
@@ -93,9 +105,9 @@ namespace Acme.Seps.Domain.Parameter.Test.Unit.Entity
         {
             var result = _existingRes.CreateNewWith(_consumerPriceIndex, _identityFactory);
 
-            _existingRes.YearlyPeriod.ValidTill.Should().Be(_consumerPriceIndex.YearlyPeriod.ValidFrom);
+            _existingRes.Period.ValidTill.Should().Be(_consumerPriceIndex.Period.ValidFrom);
             result.ConsumerPriceIndex.Should().Be(_consumerPriceIndex);
-            result.YearlyPeriod.Should().Be(_consumerPriceIndex.YearlyPeriod);
+            result.Period.Should().Be(_consumerPriceIndex.Period);
             result.LowerRate.Should().Be(_existingRes.LowerRate);
             result.HigherRate.Should().Be((_consumerPriceIndex.Amount / 100M) * _existingRes.HigherRate);
         }

@@ -1,4 +1,5 @@
 ﻿using Acme.Domain.Base.Factory;
+using Acme.Seps.Domain.Base.Factory;
 using Acme.Seps.Domain.Base.ValueType;
 using Acme.Seps.Domain.Parameter.DomainService;
 using Acme.Seps.Domain.Parameter.Entity;
@@ -17,11 +18,11 @@ namespace Acme.Seps.Domain.Parameter.Test.Unit.Entity
         private readonly IEnumerable<NaturalGasSellingPrice> _yearsNaturalGasSellingPrices;
         private readonly ICogenerationParameterService _cogenerationParameterService;
         private readonly IIdentityFactory<Guid> _identityFactory;
-        private readonly MonthlyPeriod _chpPeriod;
+        private readonly Period _chpPeriod;
 
         public CogenerationTariffTests()
         {
-            _chpPeriod = new MonthlyPeriod(DateTime.Now.AddMonths(-4), DateTime.Now.AddMonths(-3));
+            _chpPeriod = new Period(new MonthlyPeriodFactory(DateTime.Now.AddMonths(-4), DateTime.Now.AddMonths(-3)));
             _identityFactory = Substitute.For<IIdentityFactory<Guid>>();
             _cogenerationParameterService = Substitute.For<ICogenerationParameterService>();
             _yearsNaturalGasSellingPrices = new List<NaturalGasSellingPrice> { _naturalGasSellingPrice };
@@ -33,7 +34,7 @@ namespace Acme.Seps.Domain.Parameter.Test.Unit.Entity
                 new object[] {
                     10M,
                     nameof(NaturalGasSellingPrice),
-                    new MonthlyPeriod(DateTime.Now.AddMonths(-3), DateTime.Now.AddMonths(-2)),
+                    new Period(new MonthlyPeriodFactory(DateTime.Now.AddMonths(-4), DateTime.Now.AddMonths(-3))),
                     _identityFactory },
                 null) as NaturalGasSellingPrice;
             var chpNaturalGasSellingPrice = Activator.CreateInstance(
@@ -50,7 +51,13 @@ namespace Acme.Seps.Domain.Parameter.Test.Unit.Entity
                 typeof(CogenerationTariff),
                 BindingFlags.Instance | BindingFlags.NonPublic,
                 null,
-                new object[] { chpNaturalGasSellingPrice, 10M, 10M, _chpPeriod, _identityFactory },
+                new object[]
+                {
+                    chpNaturalGasSellingPrice,
+                    10M,
+                    10M,
+                    new MonthlyPeriodFactory(DateTime.Now.AddMonths(-4), DateTime.Now.AddMonths(-3)),
+                    _identityFactory },
                 null) as CogenerationTariff;
         }
 
@@ -89,7 +96,7 @@ namespace Acme.Seps.Domain.Parameter.Test.Unit.Entity
 
         public void ChpTariffIsCorrectlyConstructed()
         {
-            var cogenerationParameter = 1M;
+            const decimal cogenerationParameter = 1M;
 
             _cogenerationParameterService
                 .GetFrom(Arg.Any<IEnumerable<NaturalGasSellingPrice>>(), Arg.Any<NaturalGasSellingPrice>())
@@ -101,11 +108,11 @@ namespace Acme.Seps.Domain.Parameter.Test.Unit.Entity
                 _naturalGasSellingPrice,
                 _identityFactory);
 
-            _existingChp.MonthlyPeriod.ValidTill.Should().Be(_naturalGasSellingPrice.MonthlyPeriod.ValidFrom);
+            _existingChp.Period.ValidTill.Should().Be(_naturalGasSellingPrice.Period.ValidFrom);
             result.LowerRate.Should().Be(_existingChp.LowerRate * cogenerationParameter);
             result.HigherRate.Should().Be(_existingChp.LowerRate * cogenerationParameter);
             result.NaturalGasSellingPrice.Should().Be(_naturalGasSellingPrice);
-            result.MonthlyPeriod.Should().Be(_naturalGasSellingPrice.MonthlyPeriod);
+            result.Period.Should().Be(_naturalGasSellingPrice.Period);
         }
     }
 }

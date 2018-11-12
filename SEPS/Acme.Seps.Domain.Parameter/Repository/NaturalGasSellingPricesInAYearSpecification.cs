@@ -1,5 +1,5 @@
 ﻿using Acme.Domain.Base.Repository;
-using Acme.Seps.Domain.Base.Factory;
+using Acme.Seps.Domain.Base.Utility;
 using Acme.Seps.Domain.Parameter.Entity;
 using System;
 using System.Linq.Expressions;

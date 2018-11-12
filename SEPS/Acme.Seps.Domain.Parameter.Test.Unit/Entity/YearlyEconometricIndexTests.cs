@@ -1,5 +1,6 @@
 ﻿using Acme.Domain.Base.Entity;
 using Acme.Domain.Base.Factory;
+using Acme.Seps.Domain.Base.Factory;
 using Acme.Seps.Domain.Base.ValueType;
 using Acme.Seps.Domain.Parameter.Entity;
 using FluentAssertions;
@@ -26,7 +27,7 @@ namespace Acme.Seps.Domain.Parameter.Test.Unit.Entity
         public void PeriodCannotStartBeforeInitialPeriod()
         {
             var initialPeriodMinusYear = new DateTime(2007, 07, 01).AddYears(-1);
-            var period = new YearlyPeriod(initialPeriodMinusYear.AddYears(-2), initialPeriodMinusYear);
+            var period = new Period(new YearlyPeriodFactory(initialPeriodMinusYear.AddYears(-1), initialPeriodMinusYear));
 
             Action action = () => new DummyYearlyEconometricIndex(
                 _amount, _decimalPlaces, _remark, period, _identityFactory);
@@ -40,7 +41,7 @@ namespace Acme.Seps.Domain.Parameter.Test.Unit.Entity
         public void PeriodMustStartBeforeCurrentYear()
         {
             var currentDate = DateTime.UtcNow;
-            var period = new YearlyPeriod(currentDate.AddYears(-1), DateTime.UtcNow);
+            var period = new Period(new YearlyPeriodFactory(currentDate.AddYears(-1), DateTime.UtcNow));
 
             Action action = () => new DummyYearlyEconometricIndex(
                 _amount, _decimalPlaces, _remark, period, _identityFactory);
@@ -54,7 +55,7 @@ namespace Acme.Seps.Domain.Parameter.Test.Unit.Entity
         public void PeriodIsCorrectlySet()
         {
             var correctDate = DateTime.UtcNow.AddYears(-2);
-            var period = new YearlyPeriod(correctDate.AddYears(-1), correctDate);
+            var period = new Period(new YearlyPeriodFactory(correctDate.AddYears(-1), correctDate));
 
             Action action = () => new DummyYearlyEconometricIndex(
                 _amount, _decimalPlaces, _remark, period, _identityFactory);
@@ -71,7 +72,7 @@ namespace Acme.Seps.Domain.Parameter.Test.Unit.Entity
             decimal amount,
             int decimalPlaces,
             string remark,
-            YearlyPeriod period,
+            Period period,
             IIdentityFactory<Guid> identityFactory)
             : base(amount, decimalPlaces, remark, period, identityFactory) { }
 

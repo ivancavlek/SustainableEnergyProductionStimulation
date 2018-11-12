@@ -11,7 +11,7 @@ namespace Acme.Seps.Domain.Base.Utility
 
         public static DateTimeOffset ToFirstMonthOfTheYear(this DateTimeOffset dateTime)
         {
-            return dateTime.AddMonths(1 - dateTime.Month).Date;
+            return dateTime.AddMonths(1 - dateTime.Month).AddDays(1 - dateTime.Day).Date;
         }
     }
 }

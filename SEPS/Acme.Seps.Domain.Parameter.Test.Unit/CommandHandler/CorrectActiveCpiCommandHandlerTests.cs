@@ -1,15 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Reflection;
-using Acme.Domain.Base.Factory;
+﻿using Acme.Domain.Base.Factory;
 using Acme.Domain.Base.Repository;
 using Acme.Seps.Domain.Base.CommandHandler;
+using Acme.Seps.Domain.Base.Factory;
 using Acme.Seps.Domain.Base.ValueType;
 using Acme.Seps.Domain.Parameter.Command;
 using Acme.Seps.Domain.Parameter.CommandHandler;
 using Acme.Seps.Domain.Parameter.Entity;
 using FluentAssertions;
 using NSubstitute;
+using System;
+using System.Collections.Generic;
+using System.Reflection;
 
 namespace Acme.Seps.Domain.Parameter.Test.Unit.CommandHandler
 {
@@ -31,18 +32,27 @@ namespace Acme.Seps.Domain.Parameter.Test.Unit.CommandHandler
                 typeof(ConsumerPriceIndex),
                 BindingFlags.Instance | BindingFlags.NonPublic,
                 null,
-                new object[] {
+                new object[]
+                {
                     10M,
                     nameof(ConsumerPriceIndex),
-                    new YearlyPeriod(DateTime.Now.AddYears(-4), DateTime.Now.AddYears(-3)),
-                    _identityFactory },
+                    new Period(new YearlyPeriodFactory(DateTime.Now.AddYears(-4), DateTime.Now.AddYears(-3))),
+                    _identityFactory
+                },
                 null) as ConsumerPriceIndex;
 
             _resTariff = new List<RenewableEnergySourceTariff> { Activator.CreateInstance(
                 typeof(RenewableEnergySourceTariff),
                 BindingFlags.Instance | BindingFlags.NonPublic,
                 null,
-                new object[] { _cpi, 5M, 10M, _identityFactory },
+                new object[]
+                {
+                    _cpi,
+                    5M,
+                    10M,
+                    new YearlyPeriodFactory(DateTime.Now.AddYears(-3), DateTime.Now.AddYears(-2)),
+                    _identityFactory
+                },
                 null) as RenewableEnergySourceTariff };
 
             _unitOfWork = Substitute.For<IUnitOfWork>();

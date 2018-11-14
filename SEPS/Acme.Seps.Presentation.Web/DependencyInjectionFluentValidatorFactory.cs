@@ -3,11 +3,11 @@ using System;
 
 namespace Acme.Seps.Presentation.Web
 {
-    public class SimpleInjectorFluentValidatorFactory : ValidatorFactoryBase
+    public class DependencyInjectionFluentValidatorFactory : ValidatorFactoryBase
     {
         private readonly IServiceProvider _serviceProvider;
 
-        public SimpleInjectorFluentValidatorFactory(IServiceProvider serviceProvider)
+        public DependencyInjectionFluentValidatorFactory(IServiceProvider serviceProvider)
         {
             _serviceProvider = serviceProvider;
         }

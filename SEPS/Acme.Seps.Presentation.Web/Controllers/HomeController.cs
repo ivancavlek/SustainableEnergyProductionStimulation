@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 
-namespace Acme.Seps.Presentation.Web
+namespace Acme.Seps.Presentation.Web.Controllers
 {
     public class HomeController : Controller
     {

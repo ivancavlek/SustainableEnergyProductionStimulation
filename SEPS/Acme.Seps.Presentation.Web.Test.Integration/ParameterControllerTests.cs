@@ -22,6 +22,14 @@ namespace Acme.Seps.Presentation.Web.Test.Integration
         }
 
         [Fact]
+        public void SepsSimpleInjectorContainerIsVerified()
+        {
+            var sepsContainer = SepsSimpleInjectorContainer.Container;
+
+            sepsContainer.Verify(); // ToDo: FluentValidation not complying
+        }
+
+        [Fact]
         public async Task ModelValidationSendsBadRequestOnErroneousModel()
         {
             var command = new CalculateCpiCommand { Amount = -2, Remark = null };

@@ -4,10 +4,9 @@ using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 
-namespace Acme.Seps.Presentation.Web
+namespace Acme.Seps.Presentation.Web.Controllers
 {
     [Route("api/[controller]")]
-    //[ApiController]
     public class ParameterController : Controller
     {
         private readonly ISepsCommandHandler<CalculateCpiCommand> _calculateCpi;
@@ -53,7 +52,7 @@ namespace Acme.Seps.Presentation.Web
         public IActionResult CalculateCpi([FromBody]CalculateCpiCommand calculateCpiCommand)
         {
             _calculateCpi.Handle(calculateCpiCommand);
-            return Ok(); // not in line with REST pattern, we could return latest value
+            return Ok(); // ToDo: not in line with REST pattern, we could return latest value
         }
 
         [HttpPost]
@@ -61,7 +60,7 @@ namespace Acme.Seps.Presentation.Web
         public IActionResult CalculateNaturalGas([FromBody]CalculateNaturalGasCommand calculateNaturalGas)
         {
             _calculateNaturalGas.Handle(calculateNaturalGas);
-            return Ok(); // not in line with REST pattern, we could return latest value
+            return Ok(); // ToDo: not in line with REST pattern, we could return latest value
         }
 
         [HttpPut("{id}")] // not good, needs correction

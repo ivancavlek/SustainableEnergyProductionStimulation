@@ -1,8 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using Acme.Seps.Domain.Base.CommandHandler;
+﻿using Acme.Seps.Domain.Base.CommandHandler;
 using Acme.Seps.Domain.Parameter.Command;
 using Microsoft.AspNetCore.Mvc;
+using System;
+using System.Collections.Generic;
 
 namespace Acme.Seps.Presentation.Web
 {

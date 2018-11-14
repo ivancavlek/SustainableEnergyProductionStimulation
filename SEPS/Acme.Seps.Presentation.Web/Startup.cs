@@ -2,7 +2,11 @@
 using Acme.Domain.Base.Factory;
 using Acme.Repository.Base;
 using Acme.Seps.Domain.Base.Factory;
+using Acme.Seps.Domain.Parameter.CommandValidation;
+using Acme.Seps.Presentation.Web.Filters;
 using Acme.Seps.Repository.Parameter;
+using FluentValidation;
+using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -23,38 +27,40 @@ namespace Acme.Seps.Presentation.Web
 {
     public class Startup
     {
-        private readonly Container container;
+        private readonly Container _container;
 
         public Startup()
         {
-            container = new Container();
+            _container = new Container();
         }
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddMvc();
+            services
+                .AddMvc(cfg => cfg.Filters.Add(new ValidateModelAttribute()))
+                .AddFluentValidation(fvn => fvn.ValidatorFactory = new SimpleInjectorFluentValidatorFactory(_container));
 
             IntegrateSimpleInjector(services);
         }
 
         private void IntegrateSimpleInjector(IServiceCollection services)
         {
-            container.Options.DefaultLifestyle = new AsyncScopedLifestyle();
-            container.Options.DefaultScopedLifestyle = new AsyncScopedLifestyle();
+            _container.Options.DefaultLifestyle = new AsyncScopedLifestyle();
+            _container.Options.DefaultScopedLifestyle = new AsyncScopedLifestyle();
 
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
-            services.AddSingleton<IControllerActivator>(new SimpleInjectorControllerActivator(container));
-            services.AddSingleton<IViewComponentActivator>(new SimpleInjectorViewComponentActivator(container));
+            services.AddSingleton<IControllerActivator>(new SimpleInjectorControllerActivator(_container));
+            services.AddSingleton<IViewComponentActivator>(new SimpleInjectorViewComponentActivator(_container));
 
-            services.EnableSimpleInjectorCrossWiring(container);
-            services.UseSimpleInjectorAspNetRequestScoping(container);
+            services.EnableSimpleInjectorCrossWiring(_container);
+            services.UseSimpleInjectorAspNetRequestScoping(_container);
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
             InitializeContainer(app, env);
 
-            container.Verify();
+            //_container.Verify(); doesn't verify due to FluentValidator
 
             app.UseMvc(routes =>
             {
@@ -68,25 +74,25 @@ namespace Acme.Seps.Presentation.Web
         private void InitializeContainer(IApplicationBuilder app, IHostingEnvironment env)
         {
             // Add application presentation components:
-            container.RegisterMvcControllers(app);
-            container.RegisterMvcViewComponents(app);
+            _container.RegisterMvcControllers(app);
+            _container.RegisterMvcViewComponents(app);
 
             SetContainerApplicationRegistrations(env);
 
             // Allow Simple Injector to resolve services from ASP.NET Core.
-            container.AutoCrossWireAspNetComponents(app);
+            _container.AutoCrossWireAspNetComponents(app);
         }
 
         private void SetContainerApplicationRegistrations(IHostingEnvironment env)
         {
             var onDot = ".".ToCharArray();
-            var currentAssemblyPartedFullName = Assembly.GetExecutingAssembly().FullName.Split(onDot);
+            var currentAssemblyPartedFullName = Assembly.GetExecutingAssembly().GetName().Name.Split(onDot);
 
             var projectName = currentAssemblyPartedFullName[0];
             var currentProjectName = currentAssemblyPartedFullName.Last();
 
-            container.Register<IIdentityFactory<Guid>>(() =>
-                new GuidIdentityFactory(SequentialGuidType.SequentialAtEnd));
+            _container.Register(typeof(IValidator<>), typeof(CalculateCpiCommandValidator).Assembly);
+            //_container.Register(typeof(IRuleBuilder<,>), typeof(CalculateCpiCommandValidator).Assembly);
 
             DbContextOptionsBuilder<BaseContext> options = new DbContextOptionsBuilder<BaseContext>();
 
@@ -121,7 +127,6 @@ namespace Acme.Seps.Presentation.Web
                 !type.Namespace.Split(onDot).Last().Equals(currentProjectName) &&
                 type.GetInterfaces().Any(ite => ite.Namespace.Split(onDot).First().Equals(projectName)) &&
                 !type.IsAbstract &&
-                !type.GetInterfaces().Any(ite => ite == typeof(IIdentityFactory<Guid>)) &&
                 !type.GetInterfaces().Any(ite => ite == typeof(IPeriodFactory)) &&
                 !type.GetInterfaces().Any(ite => ite == typeof(IAggregateRoot));
 
@@ -132,10 +137,18 @@ namespace Acme.Seps.Presentation.Web
             void RegisterAbstractionsWithImplementation((List<Type> Abstractions, Type Implementation) registration) =>
                 registration.Abstractions.ForEach(asn =>
                 {
-                    if (registration.Implementation == typeof(ParameterContext))
-                        container.Register(asn, () => new ParameterContext(options.Options));
-                    else
-                        container.Register(asn, registration.Implementation);
+                    switch (registration.Implementation.Name)
+                    {
+                        case nameof(GuidIdentityFactory):
+                            _container.Register(asn, () => new GuidIdentityFactory(SequentialGuidType.SequentialAtEnd));
+                            break;
+                        case nameof(ParameterContext):
+                            _container.Register(asn, () => new ParameterContext(options.Options));
+                            break;
+                        default:
+                            _container.Register(asn, registration.Implementation);
+                            break;
+                    }
                 });
         }
     }

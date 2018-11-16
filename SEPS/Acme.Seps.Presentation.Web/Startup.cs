@@ -1,4 +1,6 @@
-﻿using Acme.Seps.Presentation.Web.Filters;
+﻿using Acme.Seps.Presentation.Web.DependencyInjection;
+using Acme.Seps.Presentation.Web.Filters;
+using Acme.Seps.Presentation.Web.Utility;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -24,7 +26,8 @@ namespace Acme.Seps.Presentation.Web
         {
             services
                 .AddMvc(cfg => cfg.Filters.Add(new ValidateModelAttribute()))
-                .AddFluentValidation(fvn => fvn.ValidatorFactory = new DependencyInjectionFluentValidatorFactory(_container));
+                .AddFluentValidation(fvn =>
+                    fvn.ValidatorFactory = new DependencyInjectionFluentValidatorFactory(_container));
 
             IntegrateSimpleInjector(services);
         }
@@ -54,14 +57,12 @@ namespace Acme.Seps.Presentation.Web
 
         private void InitializeContainer(IApplicationBuilder app, IHostingEnvironment env)
         {
-            // Add application presentation components:
             _container.RegisterMvcControllers(app);
             _container.RegisterMvcViewComponents(app);
 
             if (env.IsEnvironment("IntegrationTesting"))
                 _container.RegisterForTest();
 
-            // Allow Simple Injector to resolve services from ASP.NET Core.
             _container.AutoCrossWireAspNetComponents(app);
         }
     }

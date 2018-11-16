@@ -1,7 +1,7 @@
 ﻿using FluentValidation;
 using System;
 
-namespace Acme.Seps.Presentation.Web
+namespace Acme.Seps.Presentation.Web.Utility
 {
     public class DependencyInjectionFluentValidatorFactory : ValidatorFactoryBase
     {

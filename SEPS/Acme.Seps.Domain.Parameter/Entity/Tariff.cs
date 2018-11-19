@@ -18,11 +18,19 @@ namespace Acme.Seps.Domain.Parameter.Entity
         protected Tariff() { }
 
         protected Tariff(
+            int lowerProductionLimit,
+            int upperProductionLimit,
             decimal lowerRate,
             decimal higherRate,
             IPeriodFactory periodFactory,
             IIdentityFactory<Guid> identityFactory) : base(periodFactory, identityFactory)
         {
+            lowerProductionLimit.MustBeGreaterThanOrEqualTo(0, (_, __) =>
+                new DomainException(Message.BelowZeroLowerProductionLimitException));
+            upperProductionLimit.MustBeGreaterThanOrEqualTo(0, (_, __) =>
+                new DomainException(Message.BelowZeroUpperProductionLimitException));
+            lowerProductionLimit.MustBeLessThanOrEqualTo(upperProductionLimit, (_, __) =>
+                new DomainException(Message.LowerProductionLimitAboveUpperProductionLimitException));
             lowerRate.MustBeGreaterThanOrEqualTo(0m, (_, __) =>
                 new DomainException(Message.BelowZeroLowerRateException));
             higherRate.MustBeGreaterThanOrEqualTo(0m, (_, __) =>
@@ -30,6 +38,8 @@ namespace Acme.Seps.Domain.Parameter.Entity
             lowerRate.MustBeLessThanOrEqualTo(higherRate, (_, __) =>
                 new DomainException(Message.LowerRateAboveUpperException));
 
+            LowerProductionLimit = lowerProductionLimit;
+            UpperProductionLimit = upperProductionLimit;
             LowerRate = lowerRate;
             HigherRate = higherRate;
         }

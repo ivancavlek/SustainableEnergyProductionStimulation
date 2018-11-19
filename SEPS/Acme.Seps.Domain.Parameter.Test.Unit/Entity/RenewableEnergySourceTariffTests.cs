@@ -56,6 +56,8 @@ namespace Acme.Seps.Domain.Parameter.Test.Unit.Entity
                 new object[]
                 {
                     resConsumerPriceIndex,
+                    100,
+                    500,
                     5M,
                     _higherRate,
                     new YearlyPeriodFactory(DateTime.Now.AddYears(-4), DateTime.Now.AddYears(-3)),
@@ -90,7 +92,16 @@ namespace Acme.Seps.Domain.Parameter.Test.Unit.Entity
                 typeof(RenewableEnergySourceTariff),
                 BindingFlags.Instance | BindingFlags.NonPublic,
                 null,
-                new object[] { resConsumerPriceIndex, 5M, _higherRate, new YearlyPeriodFactory(DateTime.Now.AddYears(-2), DateTime.Now.AddYears(-1)), _identityFactory },
+                new object[]
+                {
+                    resConsumerPriceIndex,
+                    100,
+                    500,
+                    5M,
+                    _higherRate,
+                    new YearlyPeriodFactory(DateTime.Now.AddYears(-2), DateTime.Now.AddYears(-1)),
+                    _identityFactory
+                },
                 null) as RenewableEnergySourceTariff;
 
             Action action = () => falseRes.CreateNewWith(_consumerPriceIndex, _identityFactory);

@@ -48,6 +48,8 @@ namespace Acme.Seps.Domain.Parameter.Test.Unit.CommandHandler
                     new object[]
                     {
                         cpi,
+                        100,
+                        500,
                         5M,
                         10M,
                         new YearlyPeriodFactory(DateTime.Now.AddYears(-3), DateTime.Now.AddYears(-2)),

@@ -23,7 +23,7 @@ namespace Acme.Seps.Repository.Parameter.Configuration
                 new
                 {
                     Id = _id,
-                    Amount = 1M,
+                    Amount = 101M,
                     Remark = "Initial value",
                     EconometricIndexType = nameof(ConsumerPriceIndex)
                 });

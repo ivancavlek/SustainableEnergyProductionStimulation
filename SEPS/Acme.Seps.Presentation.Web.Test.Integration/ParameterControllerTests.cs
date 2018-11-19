@@ -27,7 +27,7 @@ namespace Acme.Seps.Presentation.Web.Test.Integration
         {
             var sepsContainer = SepsSimpleInjectorContainer.Container;
 
-            sepsContainer.Verify(); // ToDo: FluentValidation not complying
+            sepsContainer.Verify();
         }
 
         [Fact]
@@ -45,7 +45,7 @@ namespace Acme.Seps.Presentation.Web.Test.Integration
         [Fact]
         public async Task CalculateCpi()
         {
-            var command = new CalculateCpiCommand { Amount = 2, Remark = "Some remark" };
+            var command = new CalculateCpiCommand { Amount = 102, Remark = "Integration test remark" };
 
             var response = await _client
                 .PostAsync(_baseUri + "CalculateCpi", new StringContent(JsonConvert.SerializeObject(command), Encoding.UTF8, "application/json"));
@@ -63,7 +63,7 @@ namespace Acme.Seps.Presentation.Web.Test.Integration
                 Amount = 2,
                 Month = lastMonth.Month,
                 Year = lastMonth.Year,
-                Remark = "Some remark"
+                Remark = "Integration test remark"
             };
 
             var response = await _client

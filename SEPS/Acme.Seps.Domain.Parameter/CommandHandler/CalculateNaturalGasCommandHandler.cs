@@ -43,13 +43,14 @@ namespace Acme.Seps.Domain.Parameter.CommandHandler
             _unitOfWork.Insert(newNaturalGasSellingPrice);
             LogNewNaturalSellingPriceCreation(newNaturalGasSellingPrice);
 
-            var yearsNaturalGasSellingPrices = GetNaturalGasPricesWithinYear();
+            var yearsNaturalGasSellingPrices = GetNaturalGasPricesWithinYear(command.Year);
 
             GetActiveCogenerations().ToList()
                 .ForEach(ctf =>
                 {
                     var newCogenerationTariff =
                         CreateNewCogenerationTariff(ctf, yearsNaturalGasSellingPrices, newNaturalGasSellingPrice);
+                    _unitOfWork.Update(ctf);
                     _unitOfWork.Insert(newCogenerationTariff);
                     LogNewCogenerationTariffCreation(newCogenerationTariff);
                 });
@@ -69,8 +70,8 @@ namespace Acme.Seps.Domain.Parameter.CommandHandler
         private IReadOnlyList<CogenerationTariff> GetActiveCogenerations() =>
             _repository.GetAll(new CurrentActiveMonthlySpecification<CogenerationTariff>());
 
-        private IReadOnlyList<NaturalGasSellingPrice> GetNaturalGasPricesWithinYear() =>
-           _repository.GetAll(new NaturalGasSellingPricesInAYearSpecification());
+        private IReadOnlyList<NaturalGasSellingPrice> GetNaturalGasPricesWithinYear(int year) =>
+           _repository.GetAll(new NaturalGasSellingPricesInAYearSpecification(year));
 
         private void LogNewNaturalSellingPriceCreation(NaturalGasSellingPrice naturalGasSellingPrice) =>
             Log(new EntityExecutionLoggingEventArgs

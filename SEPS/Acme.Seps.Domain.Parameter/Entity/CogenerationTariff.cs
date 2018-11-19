@@ -1,5 +1,6 @@
 ﻿using Acme.Domain.Base.Factory;
 using Acme.Seps.Domain.Base.Factory;
+using Acme.Seps.Domain.Base.ValueType;
 using Acme.Seps.Domain.Parameter.DomainService;
 using Light.GuardClauses;
 using System;
@@ -16,11 +17,18 @@ namespace Acme.Seps.Domain.Parameter.Entity
 
         protected CogenerationTariff(
             NaturalGasSellingPrice naturalGasSellingPrice,
+            int lowerProductionLimit,
+            int upperProductionLimit,
             decimal lowerRate,
             decimal higherRate,
             MonthlyPeriodFactory monthlyPeriodFactory,
             IIdentityFactory<Guid> identityFactory)
-            : base(lowerRate, higherRate, monthlyPeriodFactory, identityFactory)
+            : base(lowerProductionLimit,
+                  upperProductionLimit,
+                  lowerRate,
+                  higherRate,
+                  monthlyPeriodFactory,
+                  identityFactory)
         {
             NaturalGasSellingPrice = naturalGasSellingPrice;
         }
@@ -31,16 +39,19 @@ namespace Acme.Seps.Domain.Parameter.Entity
             NaturalGasSellingPrice naturalGasSellingPrice,
             IIdentityFactory<Guid> identityFactory)
         {
-            yearsNaturalGasSellingPrices.MustNotBeNullOrEmpty(message: Message.YearsNaturalGasSellingPricesException);
             cogenerationParameterService.MustNotBeNull(message: Message.CogenerationParameterServiceException);
             naturalGasSellingPrice.MustNotBeNull(message: Message.NaturalGasSellingPriceNotSetException);
 
             var cogenerationParameter = cogenerationParameterService
                 .GetFrom(yearsNaturalGasSellingPrices, naturalGasSellingPrice);
 
+            Period = new Period(new MonthlyPeriodFactory(Period.ValidFrom, naturalGasSellingPrice.Period.ValidFrom));
+
             return new CogenerationTariff
             (
                 naturalGasSellingPrice,
+                LowerProductionLimit,
+                UpperProductionLimit,
                 cogenerationParameter * LowerRate,
                 cogenerationParameter * HigherRate,
                 new MonthlyPeriodFactory(naturalGasSellingPrice.Period.ValidFrom),

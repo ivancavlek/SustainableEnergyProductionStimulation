@@ -66,6 +66,8 @@ namespace Acme.Seps.Domain.Parameter.Test.Unit.CommandHandler
                     new object[]
                     {
                         _naturalGasSellingPrice,
+                        100,
+                        500,
                         10M,
                         10M,
                         new MonthlyPeriodFactory(DateTime.Now.AddMonths(-4), _lastPeriod),

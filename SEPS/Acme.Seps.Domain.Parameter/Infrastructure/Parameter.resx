@@ -153,9 +153,6 @@
   <data name="RenewableEnergySourceTariffPeriodException" xml:space="preserve">
     <value>Renewable energy source tariff period must be in sequence.</value>
   </data>
-  <data name="YearsNaturalGasSellingPricesException" xml:space="preserve">
-    <value>Years' Natural Gas Selling Prices must be set.</value>
-  </data>
   <data name="CogenerationParameterServiceException" xml:space="preserve">
     <value>Cogeneration Parameter Service must be set.</value>
   </data>
@@ -170,5 +167,11 @@
   </data>
   <data name="InsertTariffLog" xml:space="preserve">
     <value>Created {0} for period {1} with amounts {2:C}/{2:C}.</value>
+  </data>
+  <data name="BelowZeroUpperProductionLimitException" xml:space="preserve">
+    <value>Upper production limit must be zero or above.</value>
+  </data>
+  <data name="LowerProductionLimitAboveUpperProductionLimitException" xml:space="preserve">
+    <value>Upper production limit must be higher than lower production limit.</value>
   </data>
 </root>

@@ -15,11 +15,13 @@ namespace Acme.Seps.Domain.Parameter.Entity
 
         protected RenewableEnergySourceTariff(
             ConsumerPriceIndex consumerPriceIndex,
+            int lowerProductionLimit,
+            int upperProductionLimit,
             decimal lowerRate,
             decimal higherRate,
             IPeriodFactory periodFactory,
             IIdentityFactory<Guid> identityFactory)
-            : base(lowerRate, higherRate, periodFactory, identityFactory)
+            : base(lowerProductionLimit, upperProductionLimit, lowerRate, higherRate, periodFactory, identityFactory)
         {
             ConsumerPriceIndex = consumerPriceIndex;
         }
@@ -36,6 +38,8 @@ namespace Acme.Seps.Domain.Parameter.Entity
             return new RenewableEnergySourceTariff
             (
                 consumerPriceIndex,
+                LowerProductionLimit,
+                UpperProductionLimit,
                 LowerRate,
                 calculatedHigherRate,
                 new YearlyPeriodFactory(consumerPriceIndex.Period.ValidFrom, consumerPriceIndex.Period.ValidTill.Value),

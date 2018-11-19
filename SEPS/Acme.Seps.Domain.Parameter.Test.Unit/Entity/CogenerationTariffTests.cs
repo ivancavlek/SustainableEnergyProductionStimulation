@@ -54,22 +54,13 @@ namespace Acme.Seps.Domain.Parameter.Test.Unit.Entity
                 new object[]
                 {
                     chpNaturalGasSellingPrice,
+                    100,
+                    500,
                     10M,
                     10M,
                     new MonthlyPeriodFactory(DateTime.Now.AddMonths(-4), DateTime.Now.AddMonths(-3)),
                     _identityFactory },
                 null) as CogenerationTariff;
-        }
-
-        public void YearsNaturalGasSellingPricesMustBeSet()
-        {
-            Action action = () => _existingChp.CreateNewWith(
-                null, _cogenerationParameterService, null, _identityFactory);
-
-            action
-                .Should()
-                .Throw<Exception>()
-                .WithMessage(Infrastructure.Parameter.YearsNaturalGasSellingPricesException);
         }
 
         public void CogenerationParameterServiceMustBeSet()

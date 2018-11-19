@@ -34,7 +34,7 @@ namespace Acme.Seps.Domain.Parameter.Test.Unit.Entity
                 null) as MonthlyAverageElectricEnergyProductionPrice;
         }
 
-        public void AmountIsProperlyRounded()
+        public void MonthlyAverageElectricEnergyProductionPriceIsProperlyConstructed()
         {
             var validTill = DateTime.Now.AddMonths(-5);
 
@@ -42,6 +42,11 @@ namespace Acme.Seps.Domain.Parameter.Test.Unit.Entity
                 _amount, _remark, validTill.Month, validTill.Year, _identityFactory);
 
             result.Amount.Should().Be(Math.Round(_amount, 4, MidpointRounding.AwayFromZero));
+            _existingMaep.Period.ValidTill.Should().NotBeNull();
+            _existingMaep.Period.ValidTill.Value
+                .Should().Be(new DateTimeOffset(new DateTime(validTill.Year, validTill.Month, 1)));
+            result.Period.ValidFrom.Should().Be(new DateTimeOffset(new DateTime(validTill.Year, validTill.Month, 1)));
+            result.Period.ValidTill.Should().BeNull();
         }
     }
 }

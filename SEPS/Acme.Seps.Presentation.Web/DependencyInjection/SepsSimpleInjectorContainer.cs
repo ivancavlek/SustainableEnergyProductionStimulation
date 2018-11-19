@@ -123,7 +123,7 @@ namespace Acme.Seps.Presentation.Web.DependencyInjection
 
             bool TypeIsForInjection(Type type) =>
                 type.BaseType?.IsGenericType is true &&
-                type.BaseType.GetGenericTypeDefinition() == typeof(AbstractValidator<>);
+                type.BaseType.GetGenericTypeDefinition() == typeof(IValidator<>);
 
             (Type Abstraction, Type Implementation) InterfaceAbstractionsWithImplementation(Type type) =>
                 (type.BaseType.GetInterfaces()

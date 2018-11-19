@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Acme.Seps.Repository.Parameter.Configuration
 {
-    public class MonthlyAverageElectricEnergyProductionPriceConfiguration
+    internal sealed class MonthlyAverageElectricEnergyProductionPriceConfiguration
         : BaseParameterConfiguration<MonthlyAverageElectricEnergyProductionPrice>,
         IEntityTypeConfiguration<MonthlyAverageElectricEnergyProductionPrice>
     {

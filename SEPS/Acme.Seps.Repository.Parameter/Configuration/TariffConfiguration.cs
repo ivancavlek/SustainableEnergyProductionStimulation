@@ -4,11 +4,11 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Acme.Seps.Repository.Parameter.Configuration
 {
-    public class TariffConfiguration : BaseParameterConfiguration<Tariff>, IEntityTypeConfiguration<Tariff>
+    internal sealed class TariffConfiguration : BaseParameterConfiguration<Tariff>, IEntityTypeConfiguration<Tariff>
     {
         private readonly string _discriminator;
 
-        public TariffConfiguration()
+        internal TariffConfiguration()
         {
             _discriminator = "TariffType";
         }

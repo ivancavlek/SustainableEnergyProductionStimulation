@@ -4,12 +4,12 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Acme.Seps.Repository.Parameter.Configuration
 {
-    public class EconometricIndexConfiguration
+    internal sealed class EconometricIndexConfiguration
         : BaseParameterConfiguration<EconometricIndex>, IEntityTypeConfiguration<EconometricIndex>
     {
         private readonly string _discriminator;
 
-        public EconometricIndexConfiguration()
+        internal EconometricIndexConfiguration()
         {
             _discriminator = "EconometricIndexType";
         }

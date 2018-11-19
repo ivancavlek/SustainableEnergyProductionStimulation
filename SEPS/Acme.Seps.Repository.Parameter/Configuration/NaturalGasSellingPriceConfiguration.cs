@@ -5,20 +5,25 @@ using System;
 
 namespace Acme.Seps.Repository.Parameter.Configuration
 {
-    public class NaturalGasSellingPriceConfiguration
+    internal sealed class NaturalGasSellingPriceConfiguration
         : BaseParameterConfiguration<NaturalGasSellingPrice>,
         IEntityTypeConfiguration<NaturalGasSellingPrice>
     {
+        private readonly Guid _id;
+
+        internal NaturalGasSellingPriceConfiguration(Guid id)
+        {
+            _id = id;
+        }
+
         public override void Configure(EntityTypeBuilder<NaturalGasSellingPrice> builder)
         {
             base.Configure(builder);
 
-            var guid = Guid.NewGuid();
-
             builder.HasData(
                 new
                 {
-                    Id = guid,
+                    Id = _id,
                     Amount = 4M,
                     Remark = "Initial value",
                     EconometricIndexType = nameof(NaturalGasSellingPrice)
@@ -27,7 +32,7 @@ namespace Acme.Seps.Repository.Parameter.Configuration
             {
                 vte.HasData(new
                 {
-                    EconometricIndexId = guid,
+                    EconometricIndexId = _id,
                     ValidFrom = new DateTimeOffset(new DateTime(2007, 07, 01)),
                 });
             });

@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace Acme.Seps.Presentation.Web.Filters
 {
-    public class ValidateModelAttribute : ActionFilterAttribute
+    public sealed class ValidateModelAttribute : ActionFilterAttribute
     {
         public override void OnActionExecuting(ActionExecutingContext context)
         {

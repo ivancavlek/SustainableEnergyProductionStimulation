@@ -1,4 +1,5 @@
-﻿using Acme.Seps.Domain.Base.CommandHandler;
+﻿using Acme.Domain.Base.Entity;
+using Acme.Seps.Domain.Base.CommandHandler;
 using Acme.Seps.Domain.Parameter.Command;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -7,7 +8,7 @@ using System.Collections.Generic;
 namespace Acme.Seps.Presentation.Web.Controllers
 {
     [Route("api/[controller]")]
-    public class ParameterController : Controller
+    public sealed class ParameterController : Controller
     {
         private readonly ISepsCommandHandler<CalculateCpiCommand> _calculateCpi;
         private readonly ISepsCommandHandler<CalculateNaturalGasCommand> _calculateNaturalGas;
@@ -51,6 +52,7 @@ namespace Acme.Seps.Presentation.Web.Controllers
         [HttpPost("CalculateCpi")]
         public IActionResult CalculateCpi([FromBody]CalculateCpiCommand calculateCpiCommand)
         {
+            _calculateCpi.UseCaseExecutionProcessing += CalculateCpi_UseCaseExecutionProcessing;
             _calculateCpi.Handle(calculateCpiCommand);
             return Ok(); // ToDo: not in line with REST pattern, we could return latest value
         }
@@ -59,6 +61,7 @@ namespace Acme.Seps.Presentation.Web.Controllers
         [Route("CalculateNaturalGas")]
         public IActionResult CalculateNaturalGas([FromBody]CalculateNaturalGasCommand calculateNaturalGas)
         {
+            _calculateNaturalGas.UseCaseExecutionProcessing += CalculateNaturalGas_UseCaseExecutionProcessing;
             _calculateNaturalGas.Handle(calculateNaturalGas);
             return Ok(); // ToDo: not in line with REST pattern, we could return latest value
         }
@@ -75,6 +78,14 @@ namespace Acme.Seps.Presentation.Web.Controllers
         public void Put(int id, [FromBody]CorrectActiveNaturalGasCommand correctActiveNaturalGas)
         {
             _correctActiveNaturalGas.Handle(correctActiveNaturalGas);
+        }
+
+        private void CalculateCpi_UseCaseExecutionProcessing(object sender, EntityExecutionLoggingEventArgs e)
+        {
+        }
+
+        private void CalculateNaturalGas_UseCaseExecutionProcessing(object sender, EntityExecutionLoggingEventArgs e)
+        {
         }
     }
 }

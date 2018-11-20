@@ -2,7 +2,7 @@
 
 namespace Acme.Seps.Presentation.Web.Controllers
 {
-    public class HomeController : Controller
+    public sealed class HomeController : Controller
     {
         // GET: /<controller>/
         public IActionResult Index()

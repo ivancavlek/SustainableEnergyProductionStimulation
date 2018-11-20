@@ -3,7 +3,7 @@ using System;
 
 namespace Acme.Seps.Presentation.Web.Utility
 {
-    public class DependencyInjectionFluentValidatorFactory : ValidatorFactoryBase
+    public sealed class DependencyInjectionFluentValidatorFactory : ValidatorFactoryBase
     {
         private readonly IServiceProvider _serviceProvider;
 

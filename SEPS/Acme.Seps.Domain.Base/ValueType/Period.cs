@@ -19,5 +19,11 @@ namespace Acme.Seps.Domain.Base.ValueType
             ValidFrom = periodFactory.ValidFrom;
             ValidTill = periodFactory.ValidTill;
         }
+
+        public override string ToString() =>
+            string.Concat(
+                ValidFrom.Date.ToShortDateString(),
+                " - ",
+                ValidTill.HasValue ? ValidTill.Value.Date.ToShortDateString() : "##.##.####");
     }
 }

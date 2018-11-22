@@ -60,7 +60,7 @@ namespace Acme.Seps.Domain.Parameter.CommandHandler
         }
 
         private NaturalGasSellingPrice GetActiveNaturalGasSellingPrice() =>
-            _repository.GetSingle(new CurrentActiveMonthlySpecification<NaturalGasSellingPrice>());
+            _repository.GetLatest<NaturalGasSellingPrice>();
 
         private NaturalGasSellingPrice CreateNewNaturalGasSellingPrice(
             NaturalGasSellingPrice naturalGasSellingPrice, CalculateNaturalGasCommand command) =>

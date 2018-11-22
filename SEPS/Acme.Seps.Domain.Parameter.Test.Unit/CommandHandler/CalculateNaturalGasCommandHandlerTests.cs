@@ -57,7 +57,7 @@ namespace Acme.Seps.Domain.Parameter.Test.Unit.CommandHandler
                 .GetAll(Arg.Any<BaseSpecification<NaturalGasSellingPrice>>())
                 .Returns(new List<NaturalGasSellingPrice> { _naturalGasSellingPrice });
             _repository
-                .GetSingle(Arg.Any<BaseSpecification<NaturalGasSellingPrice>>())
+                .GetLatest<NaturalGasSellingPrice>()
                 .Returns(_naturalGasSellingPrice);
 
             var cogenerationTariff = Activator.CreateInstance(

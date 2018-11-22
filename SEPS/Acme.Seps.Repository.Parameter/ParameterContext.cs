@@ -1,13 +1,20 @@
 ﻿using Acme.Repository.Base;
+using Acme.Seps.Domain.Base.Repository;
 using Acme.Seps.Repository.Parameter.Configuration;
 using Microsoft.EntityFrameworkCore;
 using System;
+using System.Linq;
 
 namespace Acme.Seps.Repository.Parameter
 {
-    public class ParameterContext : BaseContext
+    public class ParameterContext : BaseContext, ISepsRepository
     {
         public ParameterContext(DbContextOptions<BaseContext> options) : base(options) { }
+
+        TAggregateRoot ISepsRepository.GetLatest<TAggregateRoot>() =>
+            Set<TAggregateRoot>()
+                .OrderByDescending(art => art.Period.ValidFrom)
+                .FirstOrDefault();
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

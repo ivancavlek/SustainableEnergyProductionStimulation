@@ -66,11 +66,13 @@ namespace Acme.Seps.Presentation.Web.Controllers
             return Ok(); // ToDo: not in line with REST pattern, we could return latest value
         }
 
-        [HttpPut("{id}")] // not good, needs correction
+        [HttpPut()]
         [Route("CorrectActiveCpi")]
-        public void Put(int id, [FromBody]CorrectActiveCpiCommand correctActiveCpi)
+        public IActionResult Put([FromBody]CorrectActiveCpiCommand correctActiveCpi)
         {
+            _correctActiveCpi.UseCaseExecutionProcessing += CorrectActiveCpi_UseCaseExecutionProcessing;
             _correctActiveCpi.Handle(correctActiveCpi);
+            return Ok(); // ToDo: not in line with REST pattern, we could return latest value
         }
 
         [HttpPut("{id}")] // not good, needs correction
@@ -85,6 +87,10 @@ namespace Acme.Seps.Presentation.Web.Controllers
         }
 
         private void CalculateNaturalGas_UseCaseExecutionProcessing(object sender, EntityExecutionLoggingEventArgs e)
+        {
+        }
+
+        private void CorrectActiveCpi_UseCaseExecutionProcessing(object sender, EntityExecutionLoggingEventArgs e)
         {
         }
     }

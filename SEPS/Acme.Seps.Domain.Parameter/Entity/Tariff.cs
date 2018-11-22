@@ -12,8 +12,8 @@ namespace Acme.Seps.Domain.Parameter.Entity
     {
         public int LowerProductionLimit { get; private set; }
         public int UpperProductionLimit { get; private set; }
-        public decimal LowerRate { get; private set; }
-        public decimal HigherRate { get; private set; }
+        public decimal LowerRate { get; protected set; }
+        public decimal HigherRate { get; protected set; }
 
         protected Tariff() { }
 

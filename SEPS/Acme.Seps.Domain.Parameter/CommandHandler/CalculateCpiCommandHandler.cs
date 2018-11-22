@@ -6,6 +6,7 @@ using Acme.Seps.Domain.Base.CommandHandler;
 using Acme.Seps.Domain.Base.Repository;
 using Acme.Seps.Domain.Parameter.Command;
 using Acme.Seps.Domain.Parameter.Entity;
+using Acme.Seps.Domain.Parameter.Repository;
 using Humanizer;
 using System;
 using System.Collections.Generic;
@@ -15,12 +16,12 @@ namespace Acme.Seps.Domain.Parameter.CommandHandler
 {
     public sealed class CalculateCpiCommandHandler : BaseCommandHandler, ISepsCommandHandler<CalculateCpiCommand>
     {
+        private readonly ISepsRepository _repository;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IIdentityFactory<Guid> _identityFactory;
-        private readonly IRepository _repository;
 
         public CalculateCpiCommandHandler(
-            IRepository repository,
+            ISepsRepository repository,
             IUnitOfWork unitOfWork,
             IIdentityFactory<Guid> identityFactory)
         {
@@ -31,29 +32,39 @@ namespace Acme.Seps.Domain.Parameter.CommandHandler
 
         void ICommandHandler<CalculateCpiCommand>.Handle(CalculateCpiCommand command)
         {
-            var newCpi = CreateNewCpi(command);
-            _unitOfWork.Insert(newCpi);
-            LogNewNaturalSellingPriceCreation(newCpi);
-
-            GetActiveRes().ToList().ForEach(art =>
-            {
-                var newRenewableEnergyTariff = CreateNewRenewableEnergySourceTariff(art, newCpi);
-                _unitOfWork.Insert(newRenewableEnergyTariff);
-                LogNewRenewableEnergySourceTariffCreation(newRenewableEnergyTariff);
-            });
+            var activeCpi = GetActiveCpi();
+            var newCpi = CreateNewConsumerPriceIndex();
+            CreateNewRenewableEnergySourceTariffs();
 
             _unitOfWork.Commit();
             LogSuccessfulCommit();
+
+            ConsumerPriceIndex CreateNewConsumerPriceIndex()
+            {
+                var cpi = CreateNewCpi(command, activeCpi);
+                _unitOfWork.Insert(cpi);
+                LogNewNaturalSellingPriceCreation(cpi);
+
+                return cpi;
+            }
+
+            void CreateNewRenewableEnergySourceTariffs() =>
+                GetActiveResFor(activeCpi).ToList().ForEach(art =>
+                {
+                    var newRenewableEnergyTariff = CreateNewRenewableEnergySourceTariff(art, newCpi);
+                    _unitOfWork.Insert(newRenewableEnergyTariff);
+                    LogNewRenewableEnergySourceTariffCreation(newRenewableEnergyTariff);
+                });
         }
 
-        private ConsumerPriceIndex CreateNewCpi(CalculateCpiCommand command) =>
-            GetActiveCpi().CreateNew(command.Amount, command.Remark, _identityFactory);
+        private ConsumerPriceIndex CreateNewCpi(CalculateCpiCommand command, ConsumerPriceIndex activeCpi) =>
+            activeCpi.CreateNew(command.Amount, command.Remark, _identityFactory);
 
         private ConsumerPriceIndex GetActiveCpi() =>
-            _repository.GetSingle(new CurrentActiveYearlySpecification<ConsumerPriceIndex>());
+            _repository.GetLatest<ConsumerPriceIndex>();
 
-        private IReadOnlyList<RenewableEnergySourceTariff> GetActiveRes() =>
-            _repository.GetAll(new CurrentActiveYearlySpecification<RenewableEnergySourceTariff>());
+        private IReadOnlyList<RenewableEnergySourceTariff> GetActiveResFor(ConsumerPriceIndex activeCpi) =>
+            _repository.GetAll(new CpiRenewableEnergySourceTariffSpecification(activeCpi.Id));
 
         private void LogNewNaturalSellingPriceCreation(ConsumerPriceIndex cpi) =>
             Log(new EntityExecutionLoggingEventArgs

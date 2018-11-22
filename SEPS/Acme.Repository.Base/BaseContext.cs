@@ -1,4 +1,5 @@
-﻿using Acme.Domain.Base.Repository;
+﻿using Acme.Domain.Base.Entity;
+using Acme.Domain.Base.Repository;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,23 +8,19 @@ namespace Acme.Repository.Base
 {
     public abstract class BaseContext : DbContext, IRepository, IUnitOfWork
     {
-        public BaseContext(DbContextOptions<BaseContext> options) : base(options) { }
+        protected BaseContext(DbContextOptions<BaseContext> options) : base(options) { }
 
-        IReadOnlyList<TAggregateRoot> IRepository.GetAll<TAggregateRoot>(BaseSpecification<TAggregateRoot> specification)
-        {
-            var queryableResultWithIncludes = specification.Includes
+        IReadOnlyList<TAggregateRoot> IRepository.GetAll<TAggregateRoot>(
+            BaseSpecification<TAggregateRoot> specification) =>
+            QueryableResultWithIncludes(specification).Where(specification.ToExpression()).ToList();
+
+        TAggregateRoot IRepository.GetSingle<TAggregateRoot>(BaseSpecification<TAggregateRoot> specification) =>
+            QueryableResultWithIncludes(specification).SingleOrDefault(specification.ToExpression());
+
+        protected IQueryable<TAggregateRoot> QueryableResultWithIncludes<TAggregateRoot>(
+            BaseSpecification<TAggregateRoot> specification) where TAggregateRoot : BaseEntity, IAggregateRoot =>
+            specification.Includes
                 .Aggregate(Set<TAggregateRoot>().AsQueryable(), (current, include) => current.Include(include));
-
-            return queryableResultWithIncludes.Where(specification.ToExpression()).ToList();
-        }
-
-        TAggregateRoot IRepository.GetSingle<TAggregateRoot>(BaseSpecification<TAggregateRoot> specification)
-        {
-            var queryableResultWithIncludes = specification.Includes
-                .Aggregate(Set<TAggregateRoot>().AsQueryable(), (current, include) => current.Include(include));
-
-            return queryableResultWithIncludes.SingleOrDefault(specification.ToExpression());
-        }
 
         void IUnitOfWork.Commit()
         {

@@ -37,5 +37,11 @@ namespace Acme.Seps.Domain.Parameter.Entity
 
         public abstract TMonthlyEconometricIndex CreateNew(
             decimal amount, string remark, int month, int year, IIdentityFactory<Guid> identityFactory);
+
+        public void AmountCorrection(decimal amount, string remark, int year, int month)
+        {
+            AmountCorrection(amount, remark);
+            Period = new Period(new MonthlyPeriodFactory(new DateTimeOffset(new DateTime(year, month, 1))));
+        }
     }
 }

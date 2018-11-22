@@ -2,6 +2,7 @@
 using Acme.Domain.Base.Repository;
 using Acme.Seps.Domain.Base.CommandHandler;
 using Acme.Seps.Domain.Base.Factory;
+using Acme.Seps.Domain.Base.Repository;
 using Acme.Seps.Domain.Base.ValueType;
 using Acme.Seps.Domain.Parameter.Command;
 using Acme.Seps.Domain.Parameter.CommandHandler;
@@ -18,7 +19,7 @@ namespace Acme.Seps.Domain.Parameter.Test.Unit.CommandHandler
     {
         private readonly ISepsCommandHandler<CalculateCpiCommand> _calculateCpi;
         private readonly IUnitOfWork _unitOfWork;
-        private readonly IRepository _repository;
+        private readonly ISepsRepository _repository;
         private readonly IPeriodFactory _periodFactory;
         private readonly IIdentityFactory<Guid> _identityFactory;
 
@@ -56,12 +57,12 @@ namespace Acme.Seps.Domain.Parameter.Test.Unit.CommandHandler
                         _identityFactory
                     },
                     null) as RenewableEnergySourceTariff;
-            _repository = Substitute.For<IRepository>();
+            _repository = Substitute.For<ISepsRepository>();
             _repository
                 .GetAll(Arg.Any<BaseSpecification<RenewableEnergySourceTariff>>())
                 .Returns(new List<RenewableEnergySourceTariff> { renewableEnergySourceTariff });
             _repository
-                .GetSingle(Arg.Any<BaseSpecification<ConsumerPriceIndex>>())
+                .GetLatest<ConsumerPriceIndex>()
                 .Returns(cpi);
 
             _unitOfWork = Substitute.For<IUnitOfWork>();

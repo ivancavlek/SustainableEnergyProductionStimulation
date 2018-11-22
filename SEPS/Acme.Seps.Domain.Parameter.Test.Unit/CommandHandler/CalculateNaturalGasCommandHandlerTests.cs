@@ -2,6 +2,7 @@
 using Acme.Domain.Base.Repository;
 using Acme.Seps.Domain.Base.CommandHandler;
 using Acme.Seps.Domain.Base.Factory;
+using Acme.Seps.Domain.Base.Repository;
 using Acme.Seps.Domain.Base.ValueType;
 using Acme.Seps.Domain.Parameter.Command;
 using Acme.Seps.Domain.Parameter.CommandHandler;
@@ -20,7 +21,7 @@ namespace Acme.Seps.Domain.Parameter.Test.Unit.CommandHandler
         private readonly ISepsCommandHandler<CalculateNaturalGasCommand> _calculateNaturalGas;
         private readonly ICogenerationParameterService _cogenerationParameterService;
         private readonly IUnitOfWork _unitOfWork;
-        private readonly IRepository _repository;
+        private readonly ISepsRepository _repository;
         private readonly IIdentityFactory<Guid> _identityFactory;
 
         private readonly NaturalGasSellingPrice _naturalGasSellingPrice;
@@ -51,7 +52,7 @@ namespace Acme.Seps.Domain.Parameter.Test.Unit.CommandHandler
                 },
                 null) as NaturalGasSellingPrice;
 
-            _repository = Substitute.For<IRepository>();
+            _repository = Substitute.For<ISepsRepository>();
             _repository
                 .GetAll(Arg.Any<BaseSpecification<NaturalGasSellingPrice>>())
                 .Returns(new List<NaturalGasSellingPrice> { _naturalGasSellingPrice });
@@ -81,7 +82,7 @@ namespace Acme.Seps.Domain.Parameter.Test.Unit.CommandHandler
             _unitOfWork = Substitute.For<IUnitOfWork>();
 
             _calculateNaturalGas = new CalculateNaturalGasCommandHandler(
-                _cogenerationParameterService, _unitOfWork, _repository, _identityFactory);
+                _cogenerationParameterService, _repository, _unitOfWork, _identityFactory);
         }
 
         public void ExecutesProperly()

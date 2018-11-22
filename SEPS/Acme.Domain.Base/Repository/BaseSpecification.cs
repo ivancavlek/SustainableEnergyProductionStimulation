@@ -10,17 +10,11 @@ namespace Acme.Domain.Base.Repository
         public List<Expression<Func<TAggregateRoot, BaseEntity>>> Includes { get; } =
             new List<Expression<Func<TAggregateRoot, BaseEntity>>>();
 
-        protected void AddInclude(Expression<Func<TAggregateRoot, BaseEntity>> includeExpression)
-        {
+        protected void AddInclude(Expression<Func<TAggregateRoot, BaseEntity>> includeExpression) =>
             Includes.Add(includeExpression);
-        }
 
-        public bool IsSatisfiedBy(TAggregateRoot entity)
-        {
-            Func<TAggregateRoot, bool> predicate = ToExpression().Compile();
-
-            return predicate(entity);
-        }
+        public bool IsSatisfiedBy(TAggregateRoot entity) =>
+            ToExpression().Compile()(entity);
 
         public abstract Expression<Func<TAggregateRoot, bool>> ToExpression();
     }

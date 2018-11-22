@@ -7,10 +7,10 @@ namespace Acme.Seps.Domain.Parameter.CommandValidation
     {
         public CalculateCpiCommandValidator()
         {
-            RuleFor(cfc => cfc.Amount)
+            RuleFor(ccc => ccc.Amount)
                 .GreaterThan(0M)
                 .WithMessage(Infrastructure.Parameter.ParameterAmountBelowOrZeroException);
-            RuleFor(customer => customer.Remark)
+            RuleFor(ccc => ccc.Remark)
                 .NotEmpty()
                 .WithMessage(Infrastructure.Parameter.RemarkNotSetException);
         }

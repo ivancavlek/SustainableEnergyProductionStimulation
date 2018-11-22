@@ -18,15 +18,15 @@ namespace Acme.Seps.Domain.Parameter.CommandHandler
     public sealed class CalculateNaturalGasCommandHandler
         : BaseCommandHandler, ISepsCommandHandler<CalculateNaturalGasCommand>
     {
-        private readonly IUnitOfWork _unitOfWork;
-        private readonly IRepository _repository;
-        private readonly IIdentityFactory<Guid> _identityFactory;
         private readonly ICogenerationParameterService _cogenerationParameterService;
+        private readonly ISepsRepository _repository;
+        private readonly IUnitOfWork _unitOfWork;
+        private readonly IIdentityFactory<Guid> _identityFactory;
 
         public CalculateNaturalGasCommandHandler(
             ICogenerationParameterService cogenerationParameterService,
+            ISepsRepository repository,
             IUnitOfWork unitOfWork,
-            IRepository repository,
             IIdentityFactory<Guid> identityFactory)
         {
             _cogenerationParameterService = cogenerationParameterService ?? throw new ArgumentNullException(nameof(cogenerationParameterService));

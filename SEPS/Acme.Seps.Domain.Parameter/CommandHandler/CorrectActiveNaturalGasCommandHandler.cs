@@ -3,9 +3,11 @@ using Acme.Domain.Base.Entity;
 using Acme.Domain.Base.Factory;
 using Acme.Domain.Base.Repository;
 using Acme.Seps.Domain.Base.CommandHandler;
+using Acme.Seps.Domain.Base.Repository;
 using Acme.Seps.Domain.Parameter.Command;
 using Acme.Seps.Domain.Parameter.DomainService;
 using Acme.Seps.Domain.Parameter.Entity;
+using Acme.Seps.Domain.Parameter.Repository;
 using Humanizer;
 using System;
 using System.Collections.Generic;
@@ -17,53 +19,59 @@ namespace Acme.Seps.Domain.Parameter.CommandHandler
         : BaseCommandHandler, ISepsCommandHandler<CorrectActiveNaturalGasCommand>
     {
         private readonly ICogenerationParameterService _cogenerationParameterService;
+        private readonly ISepsRepository _repository;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IIdentityFactory<Guid> _identityFactory;
 
         public CorrectActiveNaturalGasCommandHandler(
             ICogenerationParameterService cogenerationParameterService,
+            ISepsRepository repository,
             IUnitOfWork unitOfWork,
             IIdentityFactory<Guid> identityFactory)
         {
-            _cogenerationParameterService = cogenerationParameterService ?? throw new ArgumentNullException(nameof(cogenerationParameterService));
+            _repository = repository ?? throw new ArgumentNullException(nameof(repository));
+            _cogenerationParameterService =
+                cogenerationParameterService ?? throw new ArgumentNullException(nameof(cogenerationParameterService));
             _unitOfWork = unitOfWork ?? throw new ArgumentNullException(nameof(unitOfWork));
             _identityFactory = identityFactory ?? throw new ArgumentNullException(nameof(identityFactory));
+            _repository = repository;
         }
 
         void ICommandHandler<CorrectActiveNaturalGasCommand>.Handle(
             CorrectActiveNaturalGasCommand command)
         {
-            var newNaturalGasSellingPrice = CreateNewNaturalGasSellingPrice(command);
-            _unitOfWork.Insert(newNaturalGasSellingPrice);
-            _unitOfWork.Delete(newNaturalGasSellingPrice);
-            LogNaturalGasSellingPriceUpdate(newNaturalGasSellingPrice);
+            var activeNaturalGasSellingPrice = GetActiveNaturalGasSellingPrice();
+            //activeNaturalGasSellingPrice.GspCorrection(command.Amount, command.Remark, command.Year, command.Month);
+            _unitOfWork.Update(activeNaturalGasSellingPrice);
+            LogNaturalGasSellingPriceCorrection(activeNaturalGasSellingPrice);
 
-            command.ActiveCogenerationTariffs.ToList().ForEach(act =>
+            GetActiveCogenerationTariffsFor(activeNaturalGasSellingPrice).ToList().ForEach(act =>
             {
-                var newCogenerationTariff = CreateNewRenewableEnergySourceTariff(
-                    act, newNaturalGasSellingPrice, command.YearsNaturalGasSellingPrices);
-                _unitOfWork.Insert(newCogenerationTariff);
-                _unitOfWork.Delete(newCogenerationTariff);
-                LogNewCogenerationTariffCreation(newCogenerationTariff);
+                // get by type previous from active
+                // type.GspCorrection(
+                _unitOfWork.Update(act);
+                LogNewCogenerationTariffCorrection(act);
             });
 
             _unitOfWork.Commit();
             LogSuccessfulCommit();
         }
 
-        private NaturalGasSellingPrice CreateNewNaturalGasSellingPrice(CorrectActiveNaturalGasCommand command) =>
-            command.ActiveNaturalGasSellingPrice.CreateNew(
-                command.Amount, command.Remark, command.Month, command.Year, _identityFactory);
+        private NaturalGasSellingPrice GetActiveNaturalGasSellingPrice() =>
+            _repository.GetLatest<NaturalGasSellingPrice>();
 
-        private void LogNaturalGasSellingPriceUpdate(NaturalGasSellingPrice naturalGasSellingPrice) =>
+        private void LogNaturalGasSellingPriceCorrection(NaturalGasSellingPrice naturalGasSellingPrice) =>
             Log(new EntityExecutionLoggingEventArgs
             {
                 Message = string.Format(
-                    Infrastructure.Parameter.InsertParameterLog,
+                    Infrastructure.Parameter.ParameterCorrectionLog,
                     nameof(NaturalGasSellingPrice).Humanize(LetterCasing.LowerCase),
                     naturalGasSellingPrice.Period,
                     naturalGasSellingPrice.Amount)
             });
+
+        private IReadOnlyList<CogenerationTariff> GetActiveCogenerationTariffsFor(NaturalGasSellingPrice gsp) =>
+            _repository.GetAll(new GspCogenerationTariffSpecification(gsp.Id));
 
         private CogenerationTariff CreateNewRenewableEnergySourceTariff(
             CogenerationTariff cogenerationTariff,
@@ -75,11 +83,11 @@ namespace Acme.Seps.Domain.Parameter.CommandHandler
                 naturalGasSellingPrice,
                 _identityFactory);
 
-        private void LogNewCogenerationTariffCreation(CogenerationTariff cogenerationTariff) =>
+        private void LogNewCogenerationTariffCorrection(CogenerationTariff cogenerationTariff) =>
             Log(new EntityExecutionLoggingEventArgs
             {
                 Message = string.Format(
-                    Infrastructure.Parameter.InsertTariffLog,
+                    Infrastructure.Parameter.TariffCorrectionLog,
                     nameof(CogenerationTariff).Humanize(LetterCasing.LowerCase),
                     cogenerationTariff.Period,
                     cogenerationTariff.LowerRate,

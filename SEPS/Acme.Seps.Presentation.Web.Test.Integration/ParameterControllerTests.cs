@@ -45,7 +45,7 @@ namespace Acme.Seps.Presentation.Web.Test.Integration
         [Fact]
         public async Task CalculateCpi()
         {
-            var command = new CalculateCpiCommand { Amount = 102, Remark = "Integration test remark" };
+            var command = new CalculateCpiCommand { Amount = 102, Remark = "Integration test calculate CPI remark" };
 
             var response = await _client
                 .PostAsync(_baseUri + "CalculateCpi", new StringContent(JsonConvert.SerializeObject(command), Encoding.UTF8, "application/json"));
@@ -68,6 +68,23 @@ namespace Acme.Seps.Presentation.Web.Test.Integration
 
             var response = await _client
                 .PostAsync(_baseUri + "CalculateNaturalGas", new StringContent(JsonConvert.SerializeObject(command), Encoding.UTF8, "application/json"));
+
+            response.EnsureSuccessStatusCode();
+        }
+
+        [Fact]
+        public async Task CorrectActiveCpi()
+        {
+            var insertCommand =
+                new CalculateCpiCommand { Amount = 102, Remark = "Integration test calculate CPI by update remark" };
+
+            await _client
+                .PostAsync(_baseUri + "CalculateCpi", new StringContent(JsonConvert.SerializeObject(insertCommand), Encoding.UTF8, "application/json"));
+
+            var updateCommand = new CorrectActiveCpiCommand { Amount = 102, Remark = "Integration test correct active CPI remark" };
+
+            var response = await _client
+                .PutAsync(_baseUri + "CorrectActiveCpi", new StringContent(JsonConvert.SerializeObject(updateCommand), Encoding.UTF8, "application/json"));
 
             response.EnsureSuccessStatusCode();
         }

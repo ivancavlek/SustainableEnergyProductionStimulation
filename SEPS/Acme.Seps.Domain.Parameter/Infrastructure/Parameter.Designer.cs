@@ -151,7 +151,7 @@ namespace Acme.Seps.Domain.Parameter.Infrastructure {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Year and month must be set properly..
+        ///   Looks up a localized string similar to Month must be properly set..
         /// </summary>
         public static string MonthlyParameterException {
             get {
@@ -174,6 +174,15 @@ namespace Acme.Seps.Domain.Parameter.Infrastructure {
         public static string ParameterAmountBelowOrZeroException {
             get {
                 return ResourceManager.GetString("ParameterAmountBelowOrZeroException", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Corrected {0} for period {1} with amount {2:C}..
+        /// </summary>
+        public static string ParameterCorrectionLog {
+            get {
+                return ResourceManager.GetString("ParameterCorrectionLog", resourceCulture);
             }
         }
         
@@ -205,25 +214,16 @@ namespace Acme.Seps.Domain.Parameter.Infrastructure {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Updated {0} for period {1} with amount {2:C}..
+        ///   Looks up a localized string similar to Corrected {0} for period {1} with amounts {2:C}/{2:C}..
         /// </summary>
-        public static string UpdateParameterLog {
+        public static string TariffCorrectionLog {
             get {
-                return ResourceManager.GetString("UpdateParameterLog", resourceCulture);
+                return ResourceManager.GetString("TariffCorrectionLog", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Updated {0} for period {1} with amounts {2:C}/{2:C}..
-        /// </summary>
-        public static string UpdateTariffLog {
-            get {
-                return ResourceManager.GetString("UpdateTariffLog", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Year must be set properly..
+        ///   Looks up a localized string similar to Year must be properly set..
         /// </summary>
         public static string YearlyParameterException {
             get {

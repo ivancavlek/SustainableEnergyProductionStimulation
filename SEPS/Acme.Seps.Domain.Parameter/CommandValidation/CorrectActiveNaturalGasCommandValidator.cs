@@ -1,4 +1,5 @@
 ﻿using Acme.Seps.Domain.Parameter.Command;
+using Acme.Seps.Domain.Parameter.Entity;
 using FluentValidation;
 
 namespace Acme.Seps.Domain.Parameter.CommandValidation
@@ -7,18 +8,19 @@ namespace Acme.Seps.Domain.Parameter.CommandValidation
     {
         public CorrectActiveNaturalGasCommandValidator()
         {
-            RuleFor(customer => customer.ActiveNaturalGasSellingPrice)
-                .NotNull()
-                .WithMessage(Infrastructure.Parameter.NaturalGasSellingPriceNotSetException);
-            RuleForEach(customer => customer.ActiveCogenerationTariffs)
-                .NotNull()
-                .WithMessage(Infrastructure.Parameter.RemarkNotSetException);
-            RuleFor(cfc => cfc.Amount)
+            RuleFor(can => can.Amount)
                 .GreaterThan(0M)
                 .WithMessage(Infrastructure.Parameter.ParameterAmountBelowOrZeroException);
-            RuleFor(customer => customer.Remark)
+            RuleFor(can => can.Remark)
                 .NotEmpty()
                 .WithMessage(Infrastructure.Parameter.RemarkNotSetException);
+            RuleFor(can => can.Year)
+                .GreaterThan(EconometricIndex.InitialPeriod.Year)
+                .WithMessage(Infrastructure.Parameter.YearlyParameterException);
+            RuleFor(can => can.Month)
+                .GreaterThanOrEqualTo(1)
+                .LessThanOrEqualTo(12)
+                .WithMessage(Infrastructure.Parameter.MonthlyParameterException);
         }
     }
 }

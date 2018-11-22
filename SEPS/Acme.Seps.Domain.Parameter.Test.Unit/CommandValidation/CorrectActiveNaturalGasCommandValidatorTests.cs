@@ -21,5 +21,15 @@ namespace Acme.Seps.Domain.Parameter.Test.Unit.CommandValidation
         {
             _validator.ShouldHaveValidationErrorFor(vlr => vlr.Remark, null as string);
         }
+
+        public void ValidatorShouldHaveAnErrorOnYear()
+        {
+            _validator.ShouldHaveValidationErrorFor(vlr => vlr.Year, 2012);
+        }
+
+        public void ValidatorShouldHaveAnErrorOnMonth()
+        {
+            _validator.ShouldHaveValidationErrorFor(vlr => vlr.Month, 15);
+        }
     }
 }

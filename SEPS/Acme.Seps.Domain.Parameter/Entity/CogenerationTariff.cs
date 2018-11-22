@@ -42,8 +42,8 @@ namespace Acme.Seps.Domain.Parameter.Entity
             cogenerationParameterService.MustNotBeNull(message: Message.CogenerationParameterServiceException);
             naturalGasSellingPrice.MustNotBeNull(message: Message.NaturalGasSellingPriceNotSetException);
 
-            var cogenerationParameter = cogenerationParameterService
-                .GetFrom(yearsNaturalGasSellingPrices, naturalGasSellingPrice);
+            var cogenerationParameter = CalculateCogenerationParameter(
+                cogenerationParameterService, yearsNaturalGasSellingPrices, naturalGasSellingPrice);
 
             Period = new Period(new MonthlyPeriodFactory(Period.ValidFrom, naturalGasSellingPrice.Period.ValidFrom));
 
@@ -58,5 +58,25 @@ namespace Acme.Seps.Domain.Parameter.Entity
                 identityFactory
             );
         }
+
+        public void GspCorrection(
+            IEnumerable<NaturalGasSellingPrice> yearsNaturalGasSellingPrices,
+            ICogenerationParameterService cogenerationParameterService,
+            NaturalGasSellingPrice gsp,
+            CogenerationTariff previousCgn)
+        {
+            var cogenerationParameter = CalculateCogenerationParameter(
+                cogenerationParameterService, yearsNaturalGasSellingPrices, gsp);
+
+            LowerRate = cogenerationParameter * previousCgn.LowerRate;
+            HigherRate = cogenerationParameter * previousCgn.HigherRate;
+            Period = new Period(new MonthlyPeriodFactory(gsp.Period.ValidFrom));
+        }
+
+        private decimal CalculateCogenerationParameter(
+            ICogenerationParameterService cogenerationParameterService,
+            IEnumerable<NaturalGasSellingPrice> yearsNaturalGasSellingPrices,
+            NaturalGasSellingPrice gsp) =>
+            cogenerationParameterService.GetFrom(yearsNaturalGasSellingPrices, gsp);
     }
 }

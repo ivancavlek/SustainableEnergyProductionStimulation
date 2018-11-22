@@ -33,19 +33,23 @@ namespace Acme.Seps.Domain.Parameter.Entity
             Period.ValidTill.Value.Year.MustBe(consumerPriceIndex.Period.ValidFrom.Year, (_, __) =>
                 new DomainException(Message.RenewableEnergySourceTariffPeriodException));
 
-            var calculatedHigherRate = HigherRate * CalculatedCpiRate(consumerPriceIndex.Amount);
-
             return new RenewableEnergySourceTariff
             (
                 consumerPriceIndex,
                 LowerProductionLimit,
                 UpperProductionLimit,
                 LowerRate,
-                calculatedHigherRate,
+                CalculateHigherRate(HigherRate, CalculatedCpiRate(consumerPriceIndex.Amount)),
                 new YearlyPeriodFactory(consumerPriceIndex.Period.ValidFrom, consumerPriceIndex.Period.ValidTill.Value),
                 identityFactory
             );
         }
+
+        public void CpiCorrection(ConsumerPriceIndex cpi, RenewableEnergySourceTariff previousRes) =>
+            HigherRate = CalculateHigherRate(previousRes.HigherRate, cpi.Amount);
+
+        private decimal CalculateHigherRate(decimal higherRate, decimal cpiAmount) =>
+            higherRate * CalculatedCpiRate(cpiAmount);
 
         private decimal CalculatedCpiRate(decimal cpiAmount) =>
             cpiAmount / 100M;

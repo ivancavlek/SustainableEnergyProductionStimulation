@@ -7,10 +7,10 @@ namespace Acme.Seps.Domain.Parameter.CommandValidation
     {
         public CalculateNaturalGasCommandValidator()
         {
-            RuleFor(cfc => cfc.Amount)
+            RuleFor(cng => cng.Amount)
                 .GreaterThan(0M)
                 .WithMessage(Infrastructure.Parameter.ParameterAmountBelowOrZeroException);
-            RuleFor(customer => customer.Remark)
+            RuleFor(cng => cng.Remark)
                 .NotEmpty()
                 .WithMessage(Infrastructure.Parameter.RemarkNotSetException);
         }

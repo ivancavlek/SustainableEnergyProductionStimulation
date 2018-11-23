@@ -1,8 +1,6 @@
-﻿using Acme.Domain.Base.Command;
-
-namespace Acme.Seps.Domain.Parameter.Command
+﻿namespace Acme.Seps.Domain.Parameter.Command
 {
-    public sealed class CalculateCpiCommand : IBaseCommand
+    public sealed class CalculateCpiCommand
     {
         public decimal Amount { get; set; }
         public string Remark { get; set; }

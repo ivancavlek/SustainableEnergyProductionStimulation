@@ -45,7 +45,7 @@ namespace Acme.Seps.Domain.Parameter.CommandHandler
 
             var yearsNaturalGasSellingPrices = GetNaturalGasPricesWithinYear(command.Year);
 
-            GetActiveCogenerations().ToList()
+            GetActiveCogenerations(activeNaturalGasSellingPrice.Id).ToList()
                 .ForEach(ctf =>
                 {
                     var newCogenerationTariff =
@@ -67,8 +67,8 @@ namespace Acme.Seps.Domain.Parameter.CommandHandler
             naturalGasSellingPrice.CreateNew(
                 command.Amount, command.Remark, command.Month, command.Year, _identityFactory);
 
-        private IReadOnlyList<CogenerationTariff> GetActiveCogenerations() =>
-            _repository.GetAll(new CurrentActiveMonthlySpecification<CogenerationTariff>());
+        private IReadOnlyList<CogenerationTariff> GetActiveCogenerations(Guid gspId) =>
+            _repository.GetAll(new GspCogenerationTariffSpecification(gspId));
 
         private IReadOnlyList<NaturalGasSellingPrice> GetNaturalGasPricesWithinYear(int year) =>
            _repository.GetAll(new NaturalGasSellingPricesInAYearSpecification(year));

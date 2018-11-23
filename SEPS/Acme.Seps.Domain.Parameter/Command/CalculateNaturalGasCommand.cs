@@ -1,8 +1,6 @@
-﻿using Acme.Domain.Base.Command;
-
-namespace Acme.Seps.Domain.Parameter.Command
+﻿namespace Acme.Seps.Domain.Parameter.Command
 {
-    public sealed class CalculateNaturalGasCommand : IBaseCommand
+    public sealed class CalculateNaturalGasCommand
     {
         public decimal Amount { get; set; }
         public string Remark { get; set; }

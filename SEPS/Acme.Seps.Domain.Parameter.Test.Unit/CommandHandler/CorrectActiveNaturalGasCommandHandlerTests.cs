@@ -2,6 +2,7 @@
 using Acme.Domain.Base.Repository;
 using Acme.Seps.Domain.Base.CommandHandler;
 using Acme.Seps.Domain.Base.Factory;
+using Acme.Seps.Domain.Base.Repository;
 using Acme.Seps.Domain.Base.ValueType;
 using Acme.Seps.Domain.Parameter.Command;
 using Acme.Seps.Domain.Parameter.CommandHandler;
@@ -20,6 +21,7 @@ namespace Acme.Seps.Domain.Parameter.Test.Unit.CommandHandler
         private readonly ISepsCommandHandler<CorrectActiveNaturalGasCommand> _calculateNaturalGas;
         private readonly ICogenerationParameterService _cogenerationParameterService;
         private readonly IUnitOfWork _unitOfWork;
+        private readonly ISepsRepository _repository;
         private readonly IIdentityFactory<Guid> _identityFactory;
 
         private readonly NaturalGasSellingPrice _naturalGasSellingPrice;
@@ -70,20 +72,17 @@ namespace Acme.Seps.Domain.Parameter.Test.Unit.CommandHandler
             _unitOfWork = Substitute.For<IUnitOfWork>();
 
             _calculateNaturalGas = new CorrectActiveNaturalGasCommandHandler(
-                _cogenerationParameterService, _unitOfWork, _identityFactory);
+                _cogenerationParameterService, _repository, _unitOfWork, _identityFactory);
         }
 
         public void ExecutesProperly()
         {
             var correctActiveNaturalGasCommand = new CorrectActiveNaturalGasCommand
             {
-                ActiveNaturalGasSellingPrice = _naturalGasSellingPrice,
-                ActiveCogenerationTariffs = _cogenerationTariff,
                 Amount = 100M,
                 Month = _lastPeriod.Month,
                 Remark = nameof(CalculateNaturalGasCommand),
                 Year = _lastPeriod.Year,
-                YearsNaturalGasSellingPrices = new List<NaturalGasSellingPrice> { _naturalGasSellingPrice }
             };
 
             using (var monitoredEvent = _calculateNaturalGas.Monitor())

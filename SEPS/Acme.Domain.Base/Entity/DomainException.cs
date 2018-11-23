@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Runtime.Serialization;
 
 namespace Acme.Domain.Base.Entity
 {
@@ -9,6 +8,5 @@ namespace Acme.Domain.Base.Entity
         public DomainException() { }
         public DomainException(string message) : base(message) { }
         public DomainException(string message, Exception inner) : base(message, inner) { }
-        protected DomainException(SerializationInfo info, StreamingContext context) : base(info, context) { }
     }
 }

@@ -88,5 +88,45 @@ namespace Acme.Seps.Presentation.Web.Test.Integration
 
             response.EnsureSuccessStatusCode();
         }
+
+        [Fact]
+        public async Task GetActiveConsumerPriceIndexes()
+        {
+            var response = await _client.GetAsync(_baseUri + "GetActiveConsumerPriceIndexes");
+            var jsonResponse = await response.Content.ReadAsStringAsync();
+
+            jsonResponse.Should().NotBeNullOrWhiteSpace();
+            response.EnsureSuccessStatusCode();
+        }
+
+        [Fact]
+        public async Task GetActiveNaturalGasSellingPrices()
+        {
+            var response = await _client.GetAsync(_baseUri + "GetActiveNaturalGasSellingPrices");
+            var jsonResponse = await response.Content.ReadAsStringAsync();
+
+            jsonResponse.Should().NotBeNullOrWhiteSpace();
+            response.EnsureSuccessStatusCode();
+        }
+
+        [Fact]
+        public async Task GetActiveRenewableEnergySourceTariffs()
+        {
+            var response = await _client.GetAsync(_baseUri + "GetActiveRenewableEnergySourceTariffs");
+            var jsonResponse = await response.Content.ReadAsStringAsync();
+
+            jsonResponse.Should().NotBeNullOrWhiteSpace();
+            response.EnsureSuccessStatusCode();
+        }
+
+        [Fact]
+        public async Task GetActiveCogenerationTariffs()
+        {
+            var response = await _client.GetAsync(_baseUri + "GetActiveCogenerationTariffs");
+            var jsonResponse = await response.Content.ReadAsStringAsync();
+
+            jsonResponse.Should().NotBeNullOrWhiteSpace();
+            response.EnsureSuccessStatusCode();
+        }
     }
 }

@@ -1,8 +1,6 @@
-﻿using Acme.Domain.Base.Command;
-
-namespace Acme.Domain.Base.CommandHandler
+﻿namespace Acme.Domain.Base.CommandHandler
 {
-    public interface ICommandHandler<TCommand> where TCommand : IBaseCommand
+    public interface ICommandHandler<TCommand>
     {
         void Handle(TCommand command);
     }

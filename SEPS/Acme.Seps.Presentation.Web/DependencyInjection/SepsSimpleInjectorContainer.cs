@@ -10,6 +10,8 @@ using SimpleInjector;
 using SimpleInjector.Lifestyles;
 using System;
 using System.Collections.Generic;
+using System.Data;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Reflection;
 
@@ -21,6 +23,7 @@ namespace Acme.Seps.Presentation.Web.DependencyInjection
         private readonly char[] _onDot;
         private readonly string _projectName;
         private readonly string _executingProjectName;
+        private readonly string _connectionString;
 
         public static SepsSimpleInjectorContainer Container { get; } = new SepsSimpleInjectorContainer();
 
@@ -31,6 +34,7 @@ namespace Acme.Seps.Presentation.Web.DependencyInjection
             var currentAssemblyPartedFullName = Assembly.GetExecutingAssembly().GetName().Name.Split(_onDot);
             _projectName = currentAssemblyPartedFullName[0];
             _executingProjectName = currentAssemblyPartedFullName.Last();
+            _connectionString = @"Server=DL006132\IVAN;Database=IntegrationTesting;Trusted_Connection=True;";
 
             Options.DefaultLifestyle = new AsyncScopedLifestyle();
             Options.DefaultScopedLifestyle = new AsyncScopedLifestyle();
@@ -38,7 +42,7 @@ namespace Acme.Seps.Presentation.Web.DependencyInjection
 
         public void RegisterForTest()
         {
-            _options.UseSqlServer(@"Server=DL006132\IVAN;Database=IntegrationTesting;Trusted_Connection=True;");
+            _options.UseSqlServer(_connectionString);
             var bla = new ParameterContext(_options.Options);
             bla.Database.EnsureCreated();
             RegisterAbstractionsWithImplementation();
@@ -55,6 +59,7 @@ namespace Acme.Seps.Presentation.Web.DependencyInjection
 
             RegisterSepsAbstractionsWithImplementationsWith(typesFromAssemblies);
             RegisterFluentValidationAbstractionsWithImplementationsWith(typesFromAssemblies);
+            Register(typeof(IDbConnection), () => new SqlConnection(_connectionString));
         }
 
         private IEnumerable<Type> GetTypesFromAssemblies()

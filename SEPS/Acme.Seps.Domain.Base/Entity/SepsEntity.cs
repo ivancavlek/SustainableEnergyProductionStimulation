@@ -4,11 +4,11 @@ using System;
 
 namespace Acme.Seps.Domain.Base.Entity
 {
-    public abstract class SepsBaseEntity : Entity<Guid>
+    public abstract class SepsEntity : Entity<Guid>
     {
-        protected SepsBaseEntity() { }
+        protected SepsEntity() { }
 
-        protected SepsBaseEntity(IIdentityFactory<Guid> identityFactory)
+        protected SepsEntity(IIdentityFactory<Guid> identityFactory)
             : base(identityFactory) { }
     }
 }

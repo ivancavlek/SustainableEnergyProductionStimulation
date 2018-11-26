@@ -8,7 +8,7 @@ using System;
 
 namespace Acme.Seps.Domain.Subsidy.Entity
 {
-    public abstract class EconometricIndex : SepsBaseAggregate
+    public abstract class EconometricIndex : SepsAggregate
     {
         protected readonly int DecimalPlaces;
 

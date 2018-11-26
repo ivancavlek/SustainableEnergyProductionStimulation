@@ -32,7 +32,7 @@ namespace Acme.Seps.Domain.Base.Test.Unit.Entity
         }
     }
 
-    internal class DummySepsBaseAggregate : SepsBaseAggregate
+    internal class DummySepsBaseAggregate : SepsAggregate
     {
         public DummySepsBaseAggregate(IPeriodFactory periodFactory, IIdentityFactory<Guid> identityFactory)
             : base(periodFactory, identityFactory)

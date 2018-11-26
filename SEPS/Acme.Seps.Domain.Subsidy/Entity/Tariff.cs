@@ -8,7 +8,7 @@ using System;
 
 namespace Acme.Seps.Domain.Subsidy.Entity
 {
-    public abstract class Tariff : SepsBaseAggregate
+    public abstract class Tariff : SepsAggregate
     {
         public int LowerProductionLimit { get; private set; }
         public int UpperProductionLimit { get; private set; }

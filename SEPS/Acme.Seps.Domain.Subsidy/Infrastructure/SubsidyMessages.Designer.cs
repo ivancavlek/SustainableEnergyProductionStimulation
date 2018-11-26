@@ -196,6 +196,15 @@ namespace Acme.Seps.Domain.Subsidy.Infrastructure {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Project type identifier must be set..
+        /// </summary>
+        public static string ProjectTypeIdentifierException {
+            get {
+                return ResourceManager.GetString("ProjectTypeIdentifierException", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Remark must be set..
         /// </summary>
         public static string RemarkNotSetException {

@@ -14,6 +14,7 @@ namespace Acme.Seps.Domain.Subsidy.Entity
         public int UpperProductionLimit { get; private set; }
         public decimal LowerRate { get; protected set; }
         public decimal HigherRate { get; protected set; }
+        public Guid ProjectTypeId { get; private set; }
 
         protected Tariff() { }
 
@@ -22,6 +23,7 @@ namespace Acme.Seps.Domain.Subsidy.Entity
             int upperProductionLimit,
             decimal lowerRate,
             decimal higherRate,
+            Guid projectTypeId,
             IPeriodFactory periodFactory,
             IIdentityFactory<Guid> identityFactory) : base(periodFactory, identityFactory)
         {
@@ -37,11 +39,16 @@ namespace Acme.Seps.Domain.Subsidy.Entity
                 new DomainException(SubsidyMessages.BelowZeroUpperRateException));
             lowerRate.MustBeLessThanOrEqualTo(higherRate, (_, __) =>
                 new DomainException(SubsidyMessages.LowerRateAboveUpperException));
+            projectTypeId.MustNotBeEmpty(() =>
+                new DomainException(SubsidyMessages.ProjectTypeIdentifierException));
+            projectTypeId.MustNotBeDefault(() =>
+                new DomainException(SubsidyMessages.ProjectTypeIdentifierException));
 
             LowerProductionLimit = lowerProductionLimit;
             UpperProductionLimit = upperProductionLimit;
             LowerRate = lowerRate;
             HigherRate = higherRate;
+            ProjectTypeId = projectTypeId;
         }
     }
 }

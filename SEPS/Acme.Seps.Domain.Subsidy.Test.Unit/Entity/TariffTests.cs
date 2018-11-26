@@ -15,6 +15,7 @@ namespace Acme.Seps.Domain.Subsidy.Test.Unit.Entity
         private readonly int _higherProductionLimit;
         private readonly decimal _lowerRate;
         private readonly decimal _higherRate;
+        private readonly Guid _projectTypeId;
         private readonly IPeriodFactory _monthlyPeriod;
         private readonly IIdentityFactory<Guid> _identityFactory;
 
@@ -24,6 +25,7 @@ namespace Acme.Seps.Domain.Subsidy.Test.Unit.Entity
             _higherProductionLimit = 2;
             _lowerRate = 1M;
             _higherRate = 2M;
+            _projectTypeId = Guid.NewGuid();
             _monthlyPeriod = new MonthlyPeriodFactory(DateTime.UtcNow);
             _identityFactory = Substitute.For<IIdentityFactory<Guid>>();
         }
@@ -35,6 +37,7 @@ namespace Acme.Seps.Domain.Subsidy.Test.Unit.Entity
                 _higherProductionLimit,
                 _lowerRate,
                 _higherRate,
+                _projectTypeId,
                 _monthlyPeriod,
                 _identityFactory);
 
@@ -51,6 +54,7 @@ namespace Acme.Seps.Domain.Subsidy.Test.Unit.Entity
                 -1,
                 _lowerRate,
                 _higherRate,
+                _projectTypeId,
                 _monthlyPeriod,
                 _identityFactory);
 
@@ -67,6 +71,7 @@ namespace Acme.Seps.Domain.Subsidy.Test.Unit.Entity
                 1,
                 _lowerRate,
                 _higherRate,
+                _projectTypeId,
                 _monthlyPeriod,
                 _identityFactory);
 
@@ -83,6 +88,7 @@ namespace Acme.Seps.Domain.Subsidy.Test.Unit.Entity
                 _higherProductionLimit,
                 -1M,
                 _higherRate,
+                _projectTypeId,
                 _monthlyPeriod,
                 _identityFactory);
 
@@ -99,6 +105,7 @@ namespace Acme.Seps.Domain.Subsidy.Test.Unit.Entity
                 _higherProductionLimit,
                 _lowerRate,
                 -1M,
+                _projectTypeId,
                 _monthlyPeriod,
                 _identityFactory);
 
@@ -115,6 +122,41 @@ namespace Acme.Seps.Domain.Subsidy.Test.Unit.Entity
                 _higherProductionLimit,
                 2M,
                 1M,
+                _projectTypeId,
+                _monthlyPeriod,
+                _identityFactory);
+
+            action
+                .Should()
+                .ThrowExactly<DomainException>()
+                .WithMessage(SubsidyMessages.LowerRateAboveUpperException);
+        }
+
+        public void ProjectTypeIdentifierMustBeANonDefaultId()
+        {
+            Action action = () => new DummyTariff(
+                _lowerProductionLimit,
+                _higherProductionLimit,
+                _lowerRate,
+                -1M,
+                Guid.Empty,
+                _monthlyPeriod,
+                _identityFactory);
+
+            action
+                .Should()
+                .ThrowExactly<DomainException>()
+                .WithMessage(SubsidyMessages.BelowZeroUpperRateException);
+        }
+
+        public void ProjectTypeIdentifierMustBeNonEmpty()
+        {
+            Action action = () => new DummyTariff(
+                _lowerProductionLimit,
+                _higherProductionLimit,
+                2M,
+                1M,
+                new Guid(),
                 _monthlyPeriod,
                 _identityFactory);
 
@@ -131,6 +173,7 @@ namespace Acme.Seps.Domain.Subsidy.Test.Unit.Entity
                 _higherProductionLimit,
                 _lowerRate,
                 _higherRate,
+                _projectTypeId,
                 _monthlyPeriod,
                 _identityFactory); ;
 
@@ -146,9 +189,16 @@ namespace Acme.Seps.Domain.Subsidy.Test.Unit.Entity
             int higherProductionLimit,
             decimal lowerRate,
             decimal higherRate,
+            Guid projectTypeId,
             IPeriodFactory period,
             IIdentityFactory<Guid> identityFactory)
-            : base(lowerProductionLimit, higherProductionLimit, lowerRate, higherRate, period, identityFactory)
+            : base(lowerProductionLimit,
+                  higherProductionLimit,
+                  lowerRate,
+                  higherRate,
+                  projectTypeId,
+                  period,
+                  identityFactory)
         {
         }
     }

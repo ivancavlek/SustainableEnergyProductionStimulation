@@ -174,4 +174,7 @@
   <data name="LowerProductionLimitAboveUpperProductionLimitException" xml:space="preserve">
     <value>Upper production limit must be higher than lower production limit.</value>
   </data>
+  <data name="ProjectTypeIdentifierException" xml:space="preserve">
+    <value>Project type identifier must be set.</value>
+  </data>
 </root>

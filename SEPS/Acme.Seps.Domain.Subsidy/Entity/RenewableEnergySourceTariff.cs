@@ -19,9 +19,16 @@ namespace Acme.Seps.Domain.Subsidy.Entity
             int upperProductionLimit,
             decimal lowerRate,
             decimal higherRate,
+            Guid projectTypeId,
             IPeriodFactory periodFactory,
             IIdentityFactory<Guid> identityFactory)
-            : base(lowerProductionLimit, upperProductionLimit, lowerRate, higherRate, periodFactory, identityFactory)
+            : base(lowerProductionLimit,
+                  upperProductionLimit,
+                  lowerRate,
+                  higherRate,
+                  projectTypeId,
+                  periodFactory,
+                  identityFactory)
         {
             ConsumerPriceIndex = consumerPriceIndex;
         }
@@ -40,6 +47,7 @@ namespace Acme.Seps.Domain.Subsidy.Entity
                 UpperProductionLimit,
                 LowerRate,
                 CalculateHigherRate(HigherRate, CalculatedCpiRate(consumerPriceIndex.Amount)),
+                ProjectTypeId,
                 new YearlyPeriodFactory(consumerPriceIndex.Period.ValidFrom, consumerPriceIndex.Period.ValidTill.Value),
                 identityFactory
             );

@@ -21,12 +21,14 @@ namespace Acme.Seps.Domain.Subsidy.Entity
             int upperProductionLimit,
             decimal lowerRate,
             decimal higherRate,
+            Guid projectTypeId,
             MonthlyPeriodFactory monthlyPeriodFactory,
             IIdentityFactory<Guid> identityFactory)
             : base(lowerProductionLimit,
                   upperProductionLimit,
                   lowerRate,
                   higherRate,
+                  projectTypeId,
                   monthlyPeriodFactory,
                   identityFactory)
         {
@@ -54,6 +56,7 @@ namespace Acme.Seps.Domain.Subsidy.Entity
                 UpperProductionLimit,
                 cogenerationParameter * LowerRate,
                 cogenerationParameter * HigherRate,
+                ProjectTypeId,
                 new MonthlyPeriodFactory(naturalGasSellingPrice.Period.ValidFrom),
                 identityFactory
             );

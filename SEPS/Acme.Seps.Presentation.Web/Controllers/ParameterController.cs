@@ -1,10 +1,10 @@
 ﻿using Acme.Domain.Base.Entity;
 using Acme.Domain.Base.QueryHandler;
 using Acme.Seps.Domain.Base.CommandHandler;
-using Acme.Seps.Domain.Parameter.Command;
-using Acme.Seps.Domain.Parameter.Entity;
-using Acme.Seps.Domain.Parameter.Query;
-using Acme.Seps.Domain.Parameter.QueryResult;
+using Acme.Seps.Domain.Subsidy.Command;
+using Acme.Seps.Domain.Subsidy.Entity;
+using Acme.Seps.Domain.Subsidy.Query;
+using Acme.Seps.Domain.Subsidy.QueryResult;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;

@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="2.1.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Acme.Repository.Base\Acme.Repository.Base.csproj" />
+    <ProjectReference Include="..\Acme.Seps.Domain.Subsidy\Acme.Seps.Domain.Subsidy.csproj" />
+  </ItemGroup>
+
+</Project>

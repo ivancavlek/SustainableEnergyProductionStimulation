@@ -22,8 +22,8 @@
     <ProjectReference Include="..\Acme.Domain.Base\Acme.Domain.Base.csproj" />
     <ProjectReference Include="..\Acme.Repository.Base\Acme.Repository.Base.csproj" />
     <ProjectReference Include="..\Acme.Seps.Domain.Base\Acme.Seps.Domain.Base.csproj" />
-    <ProjectReference Include="..\Acme.Seps.Domain.Parameter\Acme.Seps.Domain.Parameter.csproj" />
-    <ProjectReference Include="..\Acme.Seps.Repository.Parameter\Acme.Seps.Repository.Parameter.csproj" />
+    <ProjectReference Include="..\Acme.Seps.Domain.Subsidy\Acme.Seps.Domain.Subsidy.csproj" />
+    <ProjectReference Include="..\Acme.Seps.Repository.Subsidy\Acme.Seps.Repository.Subsidy.csproj" />
   </ItemGroup>
 
 </Project>

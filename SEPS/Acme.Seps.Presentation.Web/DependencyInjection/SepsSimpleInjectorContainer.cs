@@ -2,7 +2,7 @@
 using Acme.Domain.Base.Factory;
 using Acme.Repository.Base;
 using Acme.Seps.Domain.Base.Factory;
-using Acme.Seps.Repository.Parameter;
+using Acme.Seps.Repository.Subsidy;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyModel;

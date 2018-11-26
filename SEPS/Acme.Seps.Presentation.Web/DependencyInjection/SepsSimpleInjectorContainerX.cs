@@ -1,6 +1,6 @@
 ﻿//using Acme.Domain.Base.Factory;
 //using Acme.Repository.Base;
-//using Acme.Seps.Repository.Parameter;
+//using Acme.Seps.Repository.Subsidy;
 //using Microsoft.EntityFrameworkCore;
 //using Microsoft.Extensions.DependencyModel;
 //using SimpleInjector;
@@ -47,7 +47,7 @@
 //                .ForEach(awi => awi.InterfaceAbstractionsWithImplementation(assembliesTypes)
 //                    .ForEach(RegisterAbstractionsWithImplementation));
 
-              // problem with calling DI, maybe somehow setting registry in get property and initializing in ctor
+// problem with calling DI, maybe somehow setting registry in get property and initializing in ctor
 //            List<IAbstractionsWithImplementation> GetAbstractionsWithImplementation() =>
 //                new List<IAbstractionsWithImplementation>
 //                {

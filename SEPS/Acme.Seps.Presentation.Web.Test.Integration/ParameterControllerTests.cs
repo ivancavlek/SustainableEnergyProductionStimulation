@@ -1,4 +1,4 @@
-using Acme.Seps.Domain.Parameter.Command;
+using Acme.Seps.Domain.Subsidy.Command;
 using Acme.Seps.Presentation.Web.DependencyInjection;
 using FluentAssertions;
 using Newtonsoft.Json;

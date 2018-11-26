@@ -1,0 +1,44 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <LangVersion>latest</LangVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Handler\**" />
+    <EmbeddedResource Remove="Handler\**" />
+    <None Remove="Handler\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Dapper" Version="1.50.5" />
+    <PackageReference Include="FluentValidation" Version="7.6.104" />
+    <PackageReference Include="Humanizer.Core" Version="2.4.2" />
+    <PackageReference Include="Light.GuardClauses" Version="5.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Acme.Domain.Base\Acme.Domain.Base.csproj" />
+    <ProjectReference Include="..\Acme.Seps.Domain.Base\Acme.Seps.Domain.Base.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Infrastructure\SubsidyMessages.Designer.cs">
+      <DependentUpon>SubsidyMessages.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Update="Infrastructure\SubsidyMessages.resx">
+      <LastGenOutput>SubsidyMessages.Designer.cs</LastGenOutput>
+      <Generator>PublicResXFileCodeGenerator</Generator>
+    </EmbeddedResource>
+  </ItemGroup>
+
+</Project>

@@ -29,7 +29,7 @@ namespace Acme.Seps.Domain.Subsidy.Entity
         {
             Period.ValidTill.HasValue.MustBe(false, (_, __) =>
                 new DomainException(SubsidyMessages.MonthlyParameterException));
-            Period.ValidFrom.MustBeGreaterThanOrEqualTo(InitialPeriod, (_, __) =>
+            Period.ValidFrom.MustBeGreaterThanOrEqualTo(SepsVersion.InitialPeriod(), (_, __) =>
                 new DomainException(SubsidyMessages.MonthlyParameterException));
             Period.ValidFrom.MustBeLessThan(SystemTime.CurrentMonth(), (_, __) =>
                 new DomainException(SubsidyMessages.MonthlyParameterException));

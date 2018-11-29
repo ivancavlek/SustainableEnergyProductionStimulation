@@ -17,8 +17,8 @@ namespace Acme.Seps.Domain.Subsidy.Entity
 
         protected CogenerationTariff(
             NaturalGasSellingPrice naturalGasSellingPrice,
-            int lowerProductionLimit,
-            int upperProductionLimit,
+            int? lowerProductionLimit,
+            int? upperProductionLimit,
             decimal lowerRate,
             decimal higherRate,
             Guid projectTypeId,

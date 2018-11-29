@@ -30,6 +30,23 @@ namespace Acme.Seps.Domain.Subsidy.Test.Unit.Entity
             _identityFactory = Substitute.For<IIdentityFactory<Guid>>();
         }
 
+        public void LowerProductionLimitMustHaveAValue()
+        {
+            Action action = () => new DummyTariff(
+                null,
+                _higherProductionLimit,
+                _lowerRate,
+                _higherRate,
+                _projectTypeId,
+                _monthlyPeriod,
+                _identityFactory);
+
+            action
+                .Should()
+                .ThrowExactly<DomainException>()
+                .WithMessage(SubsidyMessages.BelowZeroLowerProductionLimitException);
+        }
+
         public void LowerProductionLimitMustBeAPositiveNumber()
         {
             Action action = () => new DummyTariff(
@@ -45,6 +62,23 @@ namespace Acme.Seps.Domain.Subsidy.Test.Unit.Entity
                 .Should()
                 .ThrowExactly<DomainException>()
                 .WithMessage(SubsidyMessages.BelowZeroLowerProductionLimitException);
+        }
+
+        public void UpperProductionLimitMustHaveAValue()
+        {
+            Action action = () => new DummyTariff(
+                _lowerProductionLimit,
+                null,
+                _lowerRate,
+                _higherRate,
+                _projectTypeId,
+                _monthlyPeriod,
+                _identityFactory);
+
+            action
+                .Should()
+                .ThrowExactly<DomainException>()
+                .WithMessage(SubsidyMessages.BelowZeroUpperProductionLimitException);
         }
 
         public void UpperProductionLimitMustBeAPositiveNumber()
@@ -185,8 +219,8 @@ namespace Acme.Seps.Domain.Subsidy.Test.Unit.Entity
     internal class DummyTariff : Tariff
     {
         public DummyTariff(
-            int lowerProductionLimit,
-            int higherProductionLimit,
+            int? lowerProductionLimit,
+            int? higherProductionLimit,
             decimal lowerRate,
             decimal higherRate,
             Guid projectTypeId,

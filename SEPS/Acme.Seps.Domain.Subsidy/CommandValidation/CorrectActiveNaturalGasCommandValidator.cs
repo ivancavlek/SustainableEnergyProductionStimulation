@@ -1,5 +1,5 @@
-﻿using Acme.Seps.Domain.Subsidy.Command;
-using Acme.Seps.Domain.Subsidy.Entity;
+﻿using Acme.Seps.Domain.Base.Utility;
+using Acme.Seps.Domain.Subsidy.Command;
 using Acme.Seps.Domain.Subsidy.Infrastructure;
 using FluentValidation;
 
@@ -16,7 +16,7 @@ namespace Acme.Seps.Domain.Subsidy.CommandValidation
                 .NotEmpty()
                 .WithMessage(SubsidyMessages.RemarkNotSetException);
             RuleFor(can => can.Year)
-                .GreaterThan(EconometricIndex.InitialPeriod.Year)
+                .GreaterThan(SepsVersion.InitialPeriod().Year)
                 .WithMessage(SubsidyMessages.YearlyParameterException);
             RuleFor(can => can.Month)
                 .GreaterThanOrEqualTo(1)

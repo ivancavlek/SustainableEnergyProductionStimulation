@@ -1,15 +1,23 @@
-﻿using Acme.Repository.Base;
+﻿using Acme.Domain.Base.Factory;
+using Acme.Repository.Base;
 using Acme.Seps.Domain.Base.Repository;
 using Acme.Seps.Repository.Subsidy.Configuration;
 using Microsoft.EntityFrameworkCore;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Acme.Seps.Repository.Subsidy
 {
     public class ParameterContext : BaseContext, ISepsRepository
     {
-        public ParameterContext(DbContextOptions<BaseContext> options) : base(options) { }
+        private readonly IIdentityFactory<Guid> _identityFactory;
+
+        public ParameterContext(DbContextOptions<BaseContext> options, IIdentityFactory<Guid> identityFactory)
+            : base(options)
+        {
+            _identityFactory = identityFactory ?? throw new ArgumentNullException(nameof(identityFactory));
+        }
 
         TAggregateRoot ISepsRepository.GetLatest<TAggregateRoot>() =>
             Set<TAggregateRoot>()
@@ -18,17 +26,25 @@ namespace Acme.Seps.Repository.Subsidy
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            var cpiGuid = Guid.NewGuid();
-            var naturalGasSellingPriceGuid = Guid.NewGuid();
+            var cpiGuid = _identityFactory.CreateIdentity();
+            var naturalGasSellingPriceGuid = _identityFactory.CreateIdentity();
+
+            var projectTypeIds = new List<Guid>();
+
+            for (int i = 0; i < 11; i++)
+                projectTypeIds.Add(_identityFactory.CreateIdentity());
 
             modelBuilder.HasDefaultSchema("parameter");
             modelBuilder.ApplyConfiguration(new EconometricIndexConfiguration());
             modelBuilder.ApplyConfiguration(new ConsumerPriceIndexConfiguration(cpiGuid));
             modelBuilder.ApplyConfiguration(new MonthlyAverageElectricEnergyProductionPriceConfiguration());
             modelBuilder.ApplyConfiguration(new NaturalGasSellingPriceConfiguration(naturalGasSellingPriceGuid));
+            modelBuilder.ApplyConfiguration(new ProjectTypeConfiguration(projectTypeIds));
             modelBuilder.ApplyConfiguration(new TariffConfiguration());
-            modelBuilder.ApplyConfiguration(new CogenerationTariffConfiguration(naturalGasSellingPriceGuid));
-            modelBuilder.ApplyConfiguration(new RenewableEnergySourceTariffConfiguration(cpiGuid));
+            modelBuilder.ApplyConfiguration(
+                new CogenerationTariffConfiguration(naturalGasSellingPriceGuid, projectTypeIds, _identityFactory));
+            modelBuilder.ApplyConfiguration(
+                new RenewableEnergySourceTariffConfiguration(cpiGuid, projectTypeIds, _identityFactory));
         }
     }
 }

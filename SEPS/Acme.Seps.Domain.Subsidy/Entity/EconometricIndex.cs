@@ -12,8 +12,6 @@ namespace Acme.Seps.Domain.Subsidy.Entity
     {
         protected readonly int DecimalPlaces;
 
-        public static DateTime InitialPeriod { get; } = new DateTime(2007, 07, 01);
-
         public decimal Amount { get; private set; }
         public string Remark { get; private set; }
 

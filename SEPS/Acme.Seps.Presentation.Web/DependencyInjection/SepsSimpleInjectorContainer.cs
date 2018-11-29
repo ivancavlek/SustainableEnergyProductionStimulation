@@ -43,7 +43,7 @@ namespace Acme.Seps.Presentation.Web.DependencyInjection
         public void RegisterForTest()
         {
             _options.UseSqlServer(_connectionString);
-            var bla = new ParameterContext(_options.Options);
+            var bla = new ParameterContext(_options.Options, new GuidIdentityFactory(SequentialGuidType.SequentialAtEnd));
             bla.Database.EnsureCreated();
             RegisterAbstractionsWithImplementation();
         }
@@ -82,6 +82,8 @@ namespace Acme.Seps.Presentation.Web.DependencyInjection
 
         private void RegisterSepsAbstractionsWithImplementationsWith(IEnumerable<Type> types)
         {
+            var identityFactory = new GuidIdentityFactory(SequentialGuidType.SequentialAtEnd);
+
             types
                 .Where(TypeIsForInjection)
                 .Select(InterfaceAbstractionsWithImplementation)
@@ -106,10 +108,10 @@ namespace Acme.Seps.Presentation.Web.DependencyInjection
                     switch (registration.Implementation.Name)
                     {
                         case nameof(GuidIdentityFactory):
-                            Register(asn, () => new GuidIdentityFactory(SequentialGuidType.SequentialAtEnd));
+                            Register(asn, () => identityFactory);
                             break;
                         case nameof(ParameterContext):
-                            Register(asn, () => new ParameterContext(_options.Options));
+                            Register(asn, () => new ParameterContext(_options.Options, identityFactory));
                             break;
                         default:
                             Register(asn, registration.Implementation);

@@ -27,7 +27,7 @@ namespace Acme.Seps.Domain.Subsidy.Entity
                   new YearlyPeriodFactory(lastYearlyPeriod.ValidTill.Value, lastYearlyPeriod.ValidTill.Value.AddYears(1)),
                   identityFactory)
         {
-            Period.ValidFrom.Year.MustBeGreaterThanOrEqualTo(InitialPeriod.Year, (_, __) =>
+            Period.ValidFrom.Year.MustBeGreaterThanOrEqualTo(SepsVersion.InitialPeriod().Year, (_, __) =>
                 new DomainException(SubsidyMessages.YearlyParameterException));
             Period.ValidTill.Value.Year.MustBeLessThanOrEqualTo(SystemTime.CurrentYear().Year, (_, __) =>
                 new DomainException(SubsidyMessages.YearlyParameterException));

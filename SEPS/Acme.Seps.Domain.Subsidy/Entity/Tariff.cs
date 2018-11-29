@@ -10,8 +10,8 @@ namespace Acme.Seps.Domain.Subsidy.Entity
 {
     public abstract class Tariff : SepsAggregate
     {
-        public int LowerProductionLimit { get; private set; }
-        public int UpperProductionLimit { get; private set; }
+        public int? LowerProductionLimit { get; private set; }
+        public int? UpperProductionLimit { get; private set; }
         public decimal LowerRate { get; protected set; }
         public decimal HigherRate { get; protected set; }
         public Guid ProjectTypeId { get; private set; }
@@ -19,19 +19,23 @@ namespace Acme.Seps.Domain.Subsidy.Entity
         protected Tariff() { }
 
         protected Tariff(
-            int lowerProductionLimit,
-            int upperProductionLimit,
+            int? lowerProductionLimit,
+            int? upperProductionLimit,
             decimal lowerRate,
             decimal higherRate,
             Guid projectTypeId,
             IPeriodFactory periodFactory,
             IIdentityFactory<Guid> identityFactory) : base(periodFactory, identityFactory)
         {
-            lowerProductionLimit.MustBeGreaterThanOrEqualTo(0, (_, __) =>
+            lowerProductionLimit.MustHaveValue(() =>
                 new DomainException(SubsidyMessages.BelowZeroLowerProductionLimitException));
-            upperProductionLimit.MustBeGreaterThanOrEqualTo(0, (_, __) =>
+            lowerProductionLimit.Value.MustBeGreaterThanOrEqualTo(0, (_, __) =>
+                new DomainException(SubsidyMessages.BelowZeroLowerProductionLimitException));
+            upperProductionLimit.MustHaveValue(() =>
                 new DomainException(SubsidyMessages.BelowZeroUpperProductionLimitException));
-            lowerProductionLimit.MustBeLessThanOrEqualTo(upperProductionLimit, (_, __) =>
+            upperProductionLimit.Value.MustBeGreaterThanOrEqualTo(0, (_, __) =>
+                new DomainException(SubsidyMessages.BelowZeroUpperProductionLimitException));
+            lowerProductionLimit.Value.MustBeLessThanOrEqualTo(upperProductionLimit.Value, (_, __) =>
                 new DomainException(SubsidyMessages.LowerProductionLimitAboveUpperProductionLimitException));
             lowerRate.MustBeGreaterThanOrEqualTo(0m, (_, __) =>
                 new DomainException(SubsidyMessages.BelowZeroLowerRateException));

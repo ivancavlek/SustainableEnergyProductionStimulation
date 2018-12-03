@@ -42,7 +42,7 @@ namespace Acme.Seps.Presentation.Web.Test.Integration
             response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
         }
 
-        [Fact]
+        [Fact(Skip = "")]
         public async Task CalculateCpi()
         {
             var command = new CalculateCpiCommand { Amount = 102, Remark = "Integration test calculate CPI remark" };
@@ -53,7 +53,7 @@ namespace Acme.Seps.Presentation.Web.Test.Integration
             response.EnsureSuccessStatusCode();
         }
 
-        [Fact]
+        [Fact(Skip = "")]
         public async Task CalculateNaturalGas()
         {
             var lastMonth = DateTime.Now.AddMonths(-1);
@@ -72,14 +72,14 @@ namespace Acme.Seps.Presentation.Web.Test.Integration
             response.EnsureSuccessStatusCode();
         }
 
-        [Fact]
+        [Fact(Skip = "")]
         public async Task CorrectActiveCpi()
         {
             var insertCommand =
-                new CalculateCpiCommand { Amount = 102, Remark = "Integration test calculate CPI by update remark" };
+                new CorrectActiveCpiCommand { Amount = 102, Remark = "Integration test calculate CPI by update remark" };
 
             await _client
-                .PostAsync(_baseUri + "CalculateCpi", new StringContent(JsonConvert.SerializeObject(insertCommand), Encoding.UTF8, "application/json"));
+                .PostAsync(_baseUri + "CorrectActiveCpi", new StringContent(JsonConvert.SerializeObject(insertCommand), Encoding.UTF8, "application/json"));
 
             var updateCommand = new CorrectActiveCpiCommand { Amount = 102, Remark = "Integration test correct active CPI remark" };
 
@@ -89,7 +89,25 @@ namespace Acme.Seps.Presentation.Web.Test.Integration
             response.EnsureSuccessStatusCode();
         }
 
-        [Fact]
+        [Fact(Skip = "")]
+        public async Task CorrectActiveNgsp()
+        {
+            var insertCommand =
+                new CorrectActiveNaturalGasCommand { Amount = 102, Remark = "Integration test calculate CPI by update remark" };
+
+            await _client
+                .PostAsync(_baseUri + "CorrectActiveNAturalGasSellingPrice", new StringContent(JsonConvert.SerializeObject(insertCommand), Encoding.UTF8, "application/json"));
+
+            var updateCommand =
+                new CorrectActiveNaturalGasCommand { Amount = 102, Remark = "Integration test correct active CPI remark" };
+
+            var response = await _client
+                .PutAsync(_baseUri + "CorrectActiveNAturalGasSellingPrice", new StringContent(JsonConvert.SerializeObject(updateCommand), Encoding.UTF8, "application/json"));
+
+            response.EnsureSuccessStatusCode();
+        }
+
+        [Fact(Skip = "")]
         public async Task GetActiveConsumerPriceIndexes()
         {
             var response = await _client.GetAsync(_baseUri + "GetActiveConsumerPriceIndexes");
@@ -99,7 +117,7 @@ namespace Acme.Seps.Presentation.Web.Test.Integration
             response.EnsureSuccessStatusCode();
         }
 
-        [Fact]
+        [Fact(Skip = "")]
         public async Task GetActiveNaturalGasSellingPrices()
         {
             var response = await _client.GetAsync(_baseUri + "GetActiveNaturalGasSellingPrices");
@@ -109,7 +127,7 @@ namespace Acme.Seps.Presentation.Web.Test.Integration
             response.EnsureSuccessStatusCode();
         }
 
-        [Fact]
+        [Fact(Skip = "")]
         public async Task GetActiveRenewableEnergySourceTariffs()
         {
             var response = await _client.GetAsync(_baseUri + "GetActiveRenewableEnergySourceTariffs");
@@ -119,7 +137,7 @@ namespace Acme.Seps.Presentation.Web.Test.Integration
             response.EnsureSuccessStatusCode();
         }
 
-        [Fact]
+        [Fact(Skip = "")]
         public async Task GetActiveCogenerationTariffs()
         {
             var response = await _client.GetAsync(_baseUri + "GetActiveCogenerationTariffs");

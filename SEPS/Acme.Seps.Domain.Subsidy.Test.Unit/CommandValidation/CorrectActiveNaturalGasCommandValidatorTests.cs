@@ -24,7 +24,7 @@ namespace Acme.Seps.Domain.Subsidy.Test.Unit.CommandValidation
 
         public void ValidatorShouldHaveAnErrorOnYear()
         {
-            _validator.ShouldHaveValidationErrorFor(vlr => vlr.Year, 2012);
+            _validator.ShouldHaveValidationErrorFor(vlr => vlr.Year, 2002);
         }
 
         public void ValidatorShouldHaveAnErrorOnMonth()

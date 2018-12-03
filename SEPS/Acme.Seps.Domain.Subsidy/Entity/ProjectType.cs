@@ -7,7 +7,7 @@ using System.Collections.Generic;
 
 namespace Acme.Seps.Domain.Subsidy.Entity
 {
-    public class ProjectType : SepsAggregate
+    public class ProjectType : SepsAggregateRoot
     {
         public string Name { get; private set; }
         public string Code { get; private set; }

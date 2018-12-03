@@ -37,24 +37,32 @@ namespace Acme.Seps.Domain.Subsidy.CommandHandler
             var correctedCpi = CorrectActiveCpi();
             CorrectRenewableEnergySourceTariffs();
 
+            _unitOfWork.Commit();
+            LogSuccessfulCommit();
+
             ConsumerPriceIndex CorrectActiveCpi()
             {
                 var activeCpi = GetActiveCpi();
                 activeCpi.AmountCorrection(command.Amount, command.Remark);
-                //_unitOfWork.Update(activeCpi);
                 LogCpiCorrection(activeCpi);
 
                 return activeCpi;
             }
 
-            void CorrectRenewableEnergySourceTariffs() =>
+            void CorrectRenewableEnergySourceTariffs()
+            {
+                var previousRes = GetPreviousActiveRenewableEnergySourceTariffsFor(correctedCpi.Period.ValidFrom);
+
                 GetActiveRenewableEnergySourceTariffsFor(correctedCpi).ToList().ForEach(res =>
                 {
-                    // get by RES Type - connect those three tables
-                    //res.CpiCorrection(correctedCpi, );
+                    res.CpiCorrection(correctedCpi, PreviousRenewableEnergySourceBy(res.ProjectTypeId));
                     _unitOfWork.Update(res);
                     LogResCorrection(res);
                 });
+
+                RenewableEnergySourceTariff PreviousRenewableEnergySourceBy(Guid projectTypeId) =>
+                    previousRes.Single(res => res.ProjectTypeId.Equals(projectTypeId));
+            }
         }
 
         private ConsumerPriceIndex GetActiveCpi() =>
@@ -69,6 +77,10 @@ namespace Acme.Seps.Domain.Subsidy.CommandHandler
                     cpi.Period,
                     cpi.Amount)
             });
+
+        private IReadOnlyList<RenewableEnergySourceTariff> GetPreviousActiveRenewableEnergySourceTariffsFor(
+            DateTimeOffset validTill) =>
+            _repository.GetAll(new ValidTillSpecification<RenewableEnergySourceTariff>(validTill));
 
         private IReadOnlyList<RenewableEnergySourceTariff> GetActiveRenewableEnergySourceTariffsFor(
             ConsumerPriceIndex cpi) =>

@@ -25,7 +25,7 @@ namespace Acme.Seps.Domain.Subsidy.Test.Unit.CommandHandler
         private readonly IIdentityFactory<Guid> _identityFactory;
 
         private readonly NaturalGasSellingPrice _naturalGasSellingPrice;
-        private readonly IEnumerable<CogenerationTariff> _cogenerationTariff;
+        private readonly List<CogenerationTariff> _cogenerationTariffs;
         private readonly DateTime _lastPeriod;
 
         public CorrectActiveNaturalGasCommandHandlerTests()
@@ -53,7 +53,7 @@ namespace Acme.Seps.Domain.Subsidy.Test.Unit.CommandHandler
                 },
                 null) as NaturalGasSellingPrice;
 
-            _cogenerationTariff = new List<CogenerationTariff> { Activator.CreateInstance(
+            var previousCogenerationTariffs = new List<CogenerationTariff> { Activator.CreateInstance(
                     typeof(CogenerationTariff),
                 BindingFlags.Instance | BindingFlags.NonPublic,
                 null,
@@ -64,10 +64,40 @@ namespace Acme.Seps.Domain.Subsidy.Test.Unit.CommandHandler
                     500,
                     10M,
                     10M,
+                    Guid.NewGuid(),
                     new MonthlyPeriodFactory(DateTime.Now.AddMonths(-4), _lastPeriod),
                     _identityFactory
                 },
                 null) as CogenerationTariff };
+
+            _cogenerationTariffs = new List<CogenerationTariff> { Activator.CreateInstance(
+                    typeof(CogenerationTariff),
+                BindingFlags.Instance | BindingFlags.NonPublic,
+                null,
+                new object[]
+                {
+                    _naturalGasSellingPrice,
+                    100,
+                    500,
+                    10M,
+                    10M,
+                    Guid.NewGuid(),
+                    new MonthlyPeriodFactory(DateTime.Now.AddMonths(-4), _lastPeriod),
+                    _identityFactory
+                },
+                null) as CogenerationTariff };
+
+            var dummyGuid = Guid.NewGuid();
+            typeof(CogenerationTariff).BaseType
+                .GetProperty("ProjectTypeId").SetValue(previousCogenerationTariffs[0], dummyGuid);
+            typeof(CogenerationTariff).BaseType
+                .GetProperty("ProjectTypeId").SetValue(_cogenerationTariffs[0], dummyGuid);
+
+            _repository = Substitute.For<ISepsRepository>();
+            _repository.GetLatest<NaturalGasSellingPrice>().Returns(_naturalGasSellingPrice);
+            _repository
+                .GetAll(Arg.Any<BaseSpecification<CogenerationTariff>>())
+                .Returns(previousCogenerationTariffs, _cogenerationTariffs);
 
             _unitOfWork = Substitute.For<IUnitOfWork>();
 
@@ -89,10 +119,7 @@ namespace Acme.Seps.Domain.Subsidy.Test.Unit.CommandHandler
             {
                 _calculateNaturalGas.Handle(correctActiveNaturalGasCommand);
 
-                _unitOfWork.Received().Insert(Arg.Any<NaturalGasSellingPrice>());
-                _unitOfWork.Received().Delete(Arg.Any<NaturalGasSellingPrice>());
-                _unitOfWork.Received().Insert(Arg.Any<CogenerationTariff>());
-                _unitOfWork.Received().Delete(Arg.Any<CogenerationTariff>());
+                _unitOfWork.Received().Update(Arg.Any<CogenerationTariff>());
                 _unitOfWork.Received().Commit();
                 monitoredEvent.Should().Raise("UseCaseExecutionProcessing");
             }

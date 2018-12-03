@@ -7,13 +7,13 @@ using System;
 
 namespace Acme.Seps.Domain.Base.Entity
 {
-    public abstract class SepsAggregate : SepsEntity, IAggregateRoot
+    public abstract class SepsAggregateRoot : SepsEntity, IAggregateRoot
     {
         public Period Period { get; protected set; }
 
-        protected SepsAggregate() { }
+        protected SepsAggregateRoot() { }
 
-        protected SepsAggregate(IPeriodFactory periodFactory, IIdentityFactory<Guid> identityFactory)
+        protected SepsAggregateRoot(IPeriodFactory periodFactory, IIdentityFactory<Guid> identityFactory)
             : base(identityFactory)
         {
             periodFactory.MustNotBeNull(nameof(periodFactory));

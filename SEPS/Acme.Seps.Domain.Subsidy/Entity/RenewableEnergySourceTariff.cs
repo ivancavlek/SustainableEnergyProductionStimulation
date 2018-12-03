@@ -46,7 +46,7 @@ namespace Acme.Seps.Domain.Subsidy.Entity
                 LowerProductionLimit,
                 UpperProductionLimit,
                 LowerRate,
-                CalculateHigherRate(HigherRate, CalculatedCpiRate(consumerPriceIndex.Amount)),
+                CalculateHigherRate(HigherRate, consumerPriceIndex.Amount),
                 ProjectTypeId,
                 new YearlyPeriodFactory(consumerPriceIndex.Period.ValidFrom, consumerPriceIndex.Period.ValidTill.Value),
                 identityFactory

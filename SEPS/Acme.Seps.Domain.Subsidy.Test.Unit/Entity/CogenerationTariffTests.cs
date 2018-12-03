@@ -59,6 +59,7 @@ namespace Acme.Seps.Domain.Subsidy.Test.Unit.Entity
                     500,
                     10M,
                     10M,
+                    Guid.NewGuid(),
                     new MonthlyPeriodFactory(DateTime.Now.AddMonths(-4), DateTime.Now.AddMonths(-3)),
                     _identityFactory },
                 null) as CogenerationTariff;

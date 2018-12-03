@@ -53,6 +53,7 @@ namespace Acme.Seps.Domain.Subsidy.Test.Unit.CommandHandler
                         500,
                         5M,
                         10M,
+                        Guid.NewGuid(),
                         new YearlyPeriodFactory(DateTime.Now.AddYears(-3), DateTime.Now.AddYears(-2)),
                         _identityFactory
                     },

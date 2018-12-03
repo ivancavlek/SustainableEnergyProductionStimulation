@@ -71,6 +71,7 @@ namespace Acme.Seps.Domain.Subsidy.Test.Unit.CommandHandler
                         500,
                         10M,
                         10M,
+                        Guid.NewGuid(),
                         new MonthlyPeriodFactory(DateTime.Now.AddMonths(-4), _lastPeriod),
                         _identityFactory
                     },

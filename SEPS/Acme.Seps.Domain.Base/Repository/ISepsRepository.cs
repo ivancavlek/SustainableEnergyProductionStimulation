@@ -5,6 +5,6 @@ namespace Acme.Seps.Domain.Base.Repository
 {
     public interface ISepsRepository : IRepository
     {
-        TAggregateRoot GetLatest<TAggregateRoot>() where TAggregateRoot : SepsAggregate;
+        TAggregateRoot GetLatest<TAggregateRoot>() where TAggregateRoot : SepsAggregateRoot;
     }
 }

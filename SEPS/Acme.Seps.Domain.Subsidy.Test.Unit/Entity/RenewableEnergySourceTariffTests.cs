@@ -61,6 +61,7 @@ namespace Acme.Seps.Domain.Subsidy.Test.Unit.Entity
                     500,
                     5M,
                     _higherRate,
+                    Guid.NewGuid(),
                     new YearlyPeriodFactory(DateTime.Now.AddYears(-4), DateTime.Now.AddYears(-3)),
                     _identityFactory
                 },
@@ -100,6 +101,7 @@ namespace Acme.Seps.Domain.Subsidy.Test.Unit.Entity
                     500,
                     5M,
                     _higherRate,
+                    Guid.NewGuid(),
                     new YearlyPeriodFactory(DateTime.Now.AddYears(-2), DateTime.Now.AddYears(-1)),
                     _identityFactory
                 },

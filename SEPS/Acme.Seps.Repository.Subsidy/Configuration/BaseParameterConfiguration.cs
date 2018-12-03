@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Acme.Seps.Repository.Subsidy.Configuration
 {
-    internal class BaseParameterConfiguration<TParameterEntity> where TParameterEntity : SepsAggregate
+    internal class BaseParameterConfiguration<TParameterEntity> where TParameterEntity : SepsAggregateRoot
     {
         public virtual void Configure(EntityTypeBuilder<TParameterEntity> builder)
         {

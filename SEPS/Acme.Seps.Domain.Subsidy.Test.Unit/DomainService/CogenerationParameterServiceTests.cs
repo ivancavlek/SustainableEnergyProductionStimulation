@@ -9,7 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 
-namespace Acme.Seps.Domain.Subsidy.Test.Unit.Entity
+namespace Acme.Seps.Domain.Subsidy.Test.Unit.DomainService
 {
     public class CogenerationParameterServiceTests
     {

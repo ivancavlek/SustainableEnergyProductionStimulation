@@ -103,7 +103,7 @@ namespace Acme.Seps.Domain.Subsidy.Test.Unit.Entity
 
             _existingChp.Period.ValidTill.Should().Be(_naturalGasSellingPrice.Period.ValidFrom);
             result.LowerRate.Should().Be(_existingChp.LowerRate * cogenerationParameter);
-            result.HigherRate.Should().Be(_existingChp.LowerRate * cogenerationParameter);
+            result.HigherRate.Should().Be(_existingChp.HigherRate * cogenerationParameter);
             result.NaturalGasSellingPrice.Should().Be(_naturalGasSellingPrice);
             result.Period.Should().Be(_naturalGasSellingPrice.Period);
         }

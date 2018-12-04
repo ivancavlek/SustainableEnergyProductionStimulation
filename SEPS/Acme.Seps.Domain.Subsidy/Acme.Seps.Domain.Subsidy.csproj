@@ -16,9 +16,9 @@
 
   <ItemGroup>
     <PackageReference Include="Dapper" Version="1.50.5" />
-    <PackageReference Include="FluentValidation" Version="7.6.104" />
-    <PackageReference Include="Humanizer.Core" Version="2.4.2" />
-    <PackageReference Include="Light.GuardClauses" Version="5.0.0" />
+    <PackageReference Include="FluentValidation" Version="8.0.101" />
+    <PackageReference Include="Humanizer.Core" Version="2.5.16" />
+    <PackageReference Include="Light.GuardClauses" Version="6.1.0" />
   </ItemGroup>
 
   <ItemGroup>

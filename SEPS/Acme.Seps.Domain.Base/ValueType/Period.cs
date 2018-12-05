@@ -1,5 +1,6 @@
-﻿using Acme.Domain.Base.ValueType;
-using Acme.Seps.Domain.Base.Factory;
+﻿using Acme.Domain.Base.Entity;
+using Acme.Domain.Base.ValueType;
+using Acme.Seps.Domain.Base.Infrastructure;
 using Light.GuardClauses;
 using System;
 
@@ -12,13 +13,20 @@ namespace Acme.Seps.Domain.Base.ValueType
 
         private Period() { }
 
-        public Period(IPeriodFactory periodFactory)
+        private Period(DateTimeOffset validFrom, DateTimeOffset dateTill)
         {
-            periodFactory.MustNotBeNull(nameof(periodFactory));
+            validFrom.MustBeGreaterThanOrEqualTo(dateTill, (_, __) =>
+                new DomainException(SepsBaseMessage.ValidTillGreaterThanValidFromException));
 
-            ValidFrom = periodFactory.ValidFrom;
-            ValidTill = periodFactory.ValidTill;
+            ValidFrom = validFrom;
+            ValidTill = dateTill;
         }
+
+        internal Period(DateTimeOffset validFrom) =>
+            ValidFrom = validFrom;
+
+        internal Period SetValidTill(DateTimeOffset validTill) =>
+            new Period(ValidFrom, validTill);
 
         public override string ToString() =>
             string.Concat(

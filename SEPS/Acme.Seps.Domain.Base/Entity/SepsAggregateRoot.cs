@@ -1,8 +1,6 @@
 ﻿using Acme.Domain.Base.Entity;
 using Acme.Domain.Base.Factory;
-using Acme.Seps.Domain.Base.Factory;
 using Acme.Seps.Domain.Base.ValueType;
-using Light.GuardClauses;
 using System;
 
 namespace Acme.Seps.Domain.Base.Entity
@@ -13,12 +11,11 @@ namespace Acme.Seps.Domain.Base.Entity
 
         protected SepsAggregateRoot() { }
 
-        protected SepsAggregateRoot(IPeriodFactory periodFactory, IIdentityFactory<Guid> identityFactory)
-            : base(identityFactory)
-        {
-            periodFactory.MustNotBeNull(nameof(periodFactory));
+        protected SepsAggregateRoot(DateTimeOffset activeFrom, IIdentityFactory<Guid> identityFactory)
+            : base(identityFactory) =>
+            Period = new Period(activeFrom);
 
-            Period = new Period(periodFactory);
-        }
+        public void Deactivate(DateTimeOffset activeTill) =>
+            Period = Period.SetValidTill(activeTill);
     }
 }

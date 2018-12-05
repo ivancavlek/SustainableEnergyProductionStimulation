@@ -22,14 +22,14 @@ namespace Acme.Seps.Domain.Base.Infrastructure {
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    public class Base {
+    public class SepsBaseMessage {
         
         private static global::System.Resources.ResourceManager resourceMan;
         
         private static global::System.Globalization.CultureInfo resourceCulture;
         
         [global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-        internal Base() {
+        internal SepsBaseMessage() {
         }
         
         /// <summary>
@@ -39,7 +39,7 @@ namespace Acme.Seps.Domain.Base.Infrastructure {
         public static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Acme.Seps.Domain.Base.Infrastructure.Base", typeof(Base).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Acme.Seps.Domain.Base.Infrastructure.SepsBaseMessage", typeof(SepsBaseMessage).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -61,15 +61,6 @@ namespace Acme.Seps.Domain.Base.Infrastructure {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Period cannot be set to daily value.
-        /// </summary>
-        public static string DailyPeriodNotAllowedException {
-            get {
-                return ResourceManager.GetString("DailyPeriodNotAllowedException", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Successful save of entities to database.
         /// </summary>
         public static string SuccessfulSave {
@@ -79,29 +70,11 @@ namespace Acme.Seps.Domain.Base.Infrastructure {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Period cannot be set to time value.
-        /// </summary>
-        public static string TimeOfDayPeriodNotAllowedException {
-            get {
-                return ResourceManager.GetString("TimeOfDayPeriodNotAllowedException", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Valid till must be after valid from.
         /// </summary>
         public static string ValidTillGreaterThanValidFromException {
             get {
                 return ResourceManager.GetString("ValidTillGreaterThanValidFromException", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Yearly value not equal year.
-        /// </summary>
-        public static string YearlyValueNotEqualYearException {
-            get {
-                return ResourceManager.GetString("YearlyValueNotEqualYearException", resourceCulture);
             }
         }
     }

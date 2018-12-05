@@ -2,6 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
+    <LangVersion>latest</LangVersion>
   </PropertyGroup>
 
   <ItemGroup>
@@ -13,16 +14,16 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Update="Infrastructure\Base.Designer.cs">
-      <DependentUpon>Base.resx</DependentUpon>
+    <Compile Update="Infrastructure\SepsBaseMessage.Designer.cs">
+      <DependentUpon>SepsBaseMessage.resx</DependentUpon>
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
     </Compile>
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Update="Infrastructure\Base.resx">
-      <LastGenOutput>Base.Designer.cs</LastGenOutput>
+    <EmbeddedResource Update="Infrastructure\SepsBaseMessage.resx">
+      <LastGenOutput>SepsBaseMessage.Designer.cs</LastGenOutput>
       <Generator>PublicResXFileCodeGenerator</Generator>
     </EmbeddedResource>
   </ItemGroup>

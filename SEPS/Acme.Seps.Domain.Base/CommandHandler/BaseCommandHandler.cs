@@ -1,5 +1,6 @@
-﻿using System;
-using Acme.Domain.Base.Entity;
+﻿using Acme.Domain.Base.Entity;
+using Acme.Seps.Domain.Base.Infrastructure;
+using System;
 
 namespace Acme.Seps.Domain.Base.CommandHandler
 {
@@ -11,6 +12,6 @@ namespace Acme.Seps.Domain.Base.CommandHandler
             UseCaseExecutionProcessing(this, useCaseExecutionProcessingLog);
 
         protected void LogSuccessfulCommit() =>
-            Log(new EntityExecutionLoggingEventArgs { Message = Infrastructure.Base.SuccessfulSave });
+            Log(new EntityExecutionLoggingEventArgs { Message = SepsBaseMessage.SuccessfulSave });
     }
 }

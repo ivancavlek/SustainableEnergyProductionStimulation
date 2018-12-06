@@ -17,6 +17,6 @@ namespace Acme.Seps.Domain.Base.Utility
         }
 
         public static DateTimeOffset InitialPeriod() =>
-            _applicationVersions[1].ValidFrom;
+            _applicationVersions[1].ActiveFrom;
     }
 }

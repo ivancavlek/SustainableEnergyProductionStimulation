@@ -3,35 +3,31 @@ using Acme.Domain.Base.ValueType;
 using Acme.Seps.Domain.Base.Infrastructure;
 using Light.GuardClauses;
 using System;
+using System.Runtime.CompilerServices;
 
+[assembly: InternalsVisibleTo("Acme.Seps.Domain.Base.Test.Unit")]
 namespace Acme.Seps.Domain.Base.ValueType
 {
     public sealed class Period : ValueObject
     {
-        public DateTimeOffset ValidFrom { get; private set; }
-        public DateTimeOffset? ValidTill { get; private set; }
+        public DateTimeOffset ActiveFrom { get; private set; }
+        public DateTimeOffset? ActiveTill { get; private set; }
 
         private Period() { }
 
-        private Period(DateTimeOffset validFrom, DateTimeOffset dateTill)
+        private Period(DateTimeOffset activeFrom, DateTimeOffset activeTill)
         {
-            validFrom.MustBeGreaterThanOrEqualTo(dateTill, (_, __) =>
+            activeTill.MustBeGreaterThanOrEqualTo(activeFrom, (_, __) =>
                 new DomainException(SepsBaseMessage.ValidTillGreaterThanValidFromException));
 
-            ValidFrom = validFrom;
-            ValidTill = dateTill;
+            ActiveFrom = activeFrom;
+            ActiveTill = activeTill;
         }
 
-        internal Period(DateTimeOffset validFrom) =>
-            ValidFrom = validFrom;
+        internal Period(DateTimeOffset activeFrom) =>
+            ActiveFrom = activeFrom;
 
-        internal Period SetValidTill(DateTimeOffset validTill) =>
-            new Period(ValidFrom, validTill);
-
-        public override string ToString() =>
-            string.Concat(
-                ValidFrom.Date.ToShortDateString(),
-                " - ",
-                ValidTill.HasValue ? ValidTill.Value.Date.ToShortDateString() : "##.##.####");
+        internal Period SetActiveTill(DateTimeOffset activeTill) =>
+            new Period(ActiveFrom, activeTill);
     }
 }

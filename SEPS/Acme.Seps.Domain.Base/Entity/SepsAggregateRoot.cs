@@ -15,7 +15,7 @@ namespace Acme.Seps.Domain.Base.Entity
             : base(identityFactory) =>
             Period = new Period(activeFrom);
 
-        public void Deactivate(DateTimeOffset activeTill) =>
-            Period = Period.SetValidTill(activeTill);
+        public void Archive(DateTimeOffset activeTill) =>
+            Period = Period.SetActiveTill(activeTill);
     }
 }

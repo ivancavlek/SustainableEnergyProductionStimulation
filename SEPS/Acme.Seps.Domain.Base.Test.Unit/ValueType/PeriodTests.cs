@@ -1,4 +1,5 @@
-﻿using Acme.Seps.Domain.Base.Factory;
+﻿using Acme.Domain.Base.Entity;
+using Acme.Seps.Domain.Base.Infrastructure;
 using Acme.Seps.Domain.Base.ValueType;
 using FluentAssertions;
 using System;
@@ -7,21 +8,41 @@ namespace Acme.Seps.Domain.Base.Test.Unit.ValueType
 {
     public class PeriodTests
     {
-        public void PeriodFactoryMustBeSet()
-        {
-            Action action = () => new Period(null);
+        private readonly DateTimeOffset _activeFrom;
+        private readonly DateTimeOffset _activeTill;
+        private readonly Period _period;
 
-            action.Should().Throw<Exception>();
+        public PeriodTests()
+        {
+            _activeFrom = new DateTime(2000, 1, 1);
+            _activeTill = _activeFrom.AddYears(1);
+            _period = new Period(_activeFrom);
         }
 
-        public void PeriodIsProperlyInitializedWithPeriodFactory()
+        public void CreatesProperlyWithActiveFrom()
         {
-            var periodFactory = new MonthlyPeriodFactory(DateTime.Now);
+            _period.ActiveFrom.Should().Be(_activeFrom);
+        }
 
-            var period = new Period(periodFactory);
+        public void SetActiveTillArchivesThePeriod()
+        {
+            var newPeriod = _period.SetActiveTill(_activeTill);
 
-            period.ValidFrom.Should().Be(periodFactory.ValidFrom);
-            period.ValidTill.Should().Be(periodFactory.ValidTill);
+            _period.Should().NotBe(newPeriod);
+            _period.ActiveFrom.Should().Be(_activeFrom);
+            _period.ActiveTill.Should().BeNull();
+            newPeriod.ActiveFrom.Should().Be(_activeFrom);
+            newPeriod.ActiveTill.Should().Be(_activeTill);
+        }
+
+        public void ActiveFromMustNotBeLowerThanActiveTill()
+        {
+            Action action = () => _period.SetActiveTill(_activeFrom.AddYears(-1));
+
+            action
+                .Should()
+                .ThrowExactly<DomainException>()
+                .WithMessage(SepsBaseMessage.ValidTillGreaterThanValidFromException);
         }
     }
 }

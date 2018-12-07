@@ -1,7 +1,6 @@
 ﻿using Acme.Domain.Base.Entity;
 using Acme.Domain.Base.Factory;
 using Acme.Repository.Base;
-using Acme.Seps.Domain.Base.Factory;
 using Acme.Seps.Repository.Subsidy;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
@@ -93,7 +92,6 @@ namespace Acme.Seps.Presentation.Web.DependencyInjection
             bool TypeIsForInjection(Type type) =>
                 type.GetInterfaces().Any(NamespaceIsFromProject) &&
                 !type.IsAbstract &&
-                !type.GetInterfaces().Any(ite => ite == typeof(IPeriodFactory)) &&
                 !type.GetInterfaces().Any(ite => ite == typeof(IAggregateRoot));
 
             (List<Type> Abstractions, Type Implementation) InterfaceAbstractionsWithImplementation(Type type) =>

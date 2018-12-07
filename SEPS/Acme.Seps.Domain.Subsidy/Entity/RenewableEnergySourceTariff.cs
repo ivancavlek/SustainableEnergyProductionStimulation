@@ -1,6 +1,4 @@
-﻿using Acme.Domain.Base.Entity;
-using Acme.Domain.Base.Factory;
-using Acme.Seps.Domain.Base.Factory;
+﻿using Acme.Domain.Base.Factory;
 using Acme.Seps.Domain.Subsidy.Infrastructure;
 using Light.GuardClauses;
 using System;
@@ -20,25 +18,23 @@ namespace Acme.Seps.Domain.Subsidy.Entity
             decimal lowerRate,
             decimal higherRate,
             Guid projectTypeId,
-            IPeriodFactory periodFactory,
+            DateTimeOffset activeFrom,
             IIdentityFactory<Guid> identityFactory)
             : base(lowerProductionLimit,
                   upperProductionLimit,
                   lowerRate,
                   higherRate,
                   projectTypeId,
-                  periodFactory,
-                  identityFactory)
-        {
+                  activeFrom,
+                  identityFactory) =>
             ConsumerPriceIndex = consumerPriceIndex;
-        }
 
         public RenewableEnergySourceTariff CreateNewWith(
             ConsumerPriceIndex consumerPriceIndex, IIdentityFactory<Guid> identityFactory)
         {
             consumerPriceIndex.MustNotBeNull(message: SubsidyMessages.ConsumerPriceIndexNotSetException);
-            Period.ValidTill.Value.Year.MustBe(consumerPriceIndex.Period.ValidFrom.Year, (_, __) =>
-                new DomainException(SubsidyMessages.RenewableEnergySourceTariffPeriodException));
+
+            Archive(consumerPriceIndex.Period.ActiveFrom);
 
             return new RenewableEnergySourceTariff
             (
@@ -48,7 +44,7 @@ namespace Acme.Seps.Domain.Subsidy.Entity
                 LowerRate,
                 CalculateHigherRate(HigherRate, consumerPriceIndex.Amount),
                 ProjectTypeId,
-                new YearlyPeriodFactory(consumerPriceIndex.Period.ValidFrom, consumerPriceIndex.Period.ValidTill.Value),
+                consumerPriceIndex.Period.ActiveFrom,
                 identityFactory
             );
         }

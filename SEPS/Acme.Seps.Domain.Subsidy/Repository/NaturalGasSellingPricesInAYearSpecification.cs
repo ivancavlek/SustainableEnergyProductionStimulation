@@ -15,6 +15,6 @@ namespace Acme.Seps.Domain.Subsidy.Repository
         }
 
         public override Expression<Func<NaturalGasSellingPrice, bool>> ToExpression() =>
-            nsp => nsp.Period.ValidFrom.Year.Equals(_year);
+            nsp => nsp.Period.ActiveFrom.Year.Equals(_year);
     }
 }

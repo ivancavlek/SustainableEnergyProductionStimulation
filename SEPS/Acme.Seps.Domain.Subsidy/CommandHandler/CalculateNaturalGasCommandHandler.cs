@@ -3,7 +3,6 @@ using Acme.Domain.Base.Entity;
 using Acme.Domain.Base.Factory;
 using Acme.Domain.Base.Repository;
 using Acme.Seps.Domain.Base.CommandHandler;
-using Acme.Seps.Domain.Base.Repository;
 using Acme.Seps.Domain.Subsidy.Command;
 using Acme.Seps.Domain.Subsidy.DomainService;
 using Acme.Seps.Domain.Subsidy.Entity;
@@ -20,13 +19,13 @@ namespace Acme.Seps.Domain.Subsidy.CommandHandler
         : BaseCommandHandler, ISepsCommandHandler<CalculateNaturalGasCommand>
     {
         private readonly ICogenerationParameterService _cogenerationParameterService;
-        private readonly ISepsRepository _repository;
+        private readonly IRepository _repository;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IIdentityFactory<Guid> _identityFactory;
 
         public CalculateNaturalGasCommandHandler(
             ICogenerationParameterService cogenerationParameterService,
-            ISepsRepository repository,
+            IRepository repository,
             IUnitOfWork unitOfWork,
             IIdentityFactory<Guid> identityFactory)
         {
@@ -38,43 +37,52 @@ namespace Acme.Seps.Domain.Subsidy.CommandHandler
 
         void ICommandHandler<CalculateNaturalGasCommand>.Handle(CalculateNaturalGasCommand command)
         {
-            var activeNaturalGasSellingPrice = GetActiveNaturalGasSellingPrice();
-            var newNaturalGasSellingPrice = CreateNewNaturalGasSellingPrice(activeNaturalGasSellingPrice, command);
-            _unitOfWork.Update(activeNaturalGasSellingPrice);
-            _unitOfWork.Insert(newNaturalGasSellingPrice);
-            LogNewNaturalSellingPriceCreation(newNaturalGasSellingPrice);
-
-            var yearsNaturalGasSellingPrices = GetNaturalGasPricesWithinYear(command.Year);
-
-            GetActiveCogenerations(activeNaturalGasSellingPrice.Id).ToList()
-                .ForEach(ctf =>
-                {
-                    var newCogenerationTariff =
-                        CreateNewCogenerationTariff(ctf, yearsNaturalGasSellingPrices, newNaturalGasSellingPrice);
-                    _unitOfWork.Update(ctf);
-                    _unitOfWork.Insert(newCogenerationTariff);
-                    LogNewCogenerationTariffCreation(newCogenerationTariff);
-                });
+            var activeNgsp = GetActiveNaturalGasSellingPrice();
+            var newNgsp = GetNewNaturalGasSellingPrice();
+            CreateNewRenewableEnergySourceTariffs();
 
             _unitOfWork.Commit();
             LogSuccessfulCommit();
+
+            NaturalGasSellingPrice GetNewNaturalGasSellingPrice()
+            {
+                var ngsp = CreateNewNaturalGasSellingPrice(activeNgsp, command);
+                _unitOfWork.Insert(ngsp);
+                LogNewNaturalGasSellingPriceCreation(ngsp);
+
+                return ngsp;
+            }
+
+            void CreateNewRenewableEnergySourceTariffs()
+            {
+                var yearsNaturalGasSellingPrices = GetNaturalGasSellingPricesWithinYear(command.Year);
+
+                GetActiveCogenerationTariffs(activeNgsp.Id).ToList()
+                    .ForEach(ctf =>
+                    {
+                        var newCogenerationTariff =
+                            CreateNewCogenerationTariff(ctf, yearsNaturalGasSellingPrices, newNgsp);
+                        _unitOfWork.Insert(newCogenerationTariff);
+                        LogNewCogenerationTariffCreation(newCogenerationTariff);
+                    });
+            }
         }
 
         private NaturalGasSellingPrice GetActiveNaturalGasSellingPrice() =>
-            _repository.GetLatest<NaturalGasSellingPrice>();
+            _repository.GetSingle(new ActiveSpecification<NaturalGasSellingPrice>());
 
         private NaturalGasSellingPrice CreateNewNaturalGasSellingPrice(
             NaturalGasSellingPrice naturalGasSellingPrice, CalculateNaturalGasCommand command) =>
             naturalGasSellingPrice.CreateNew(
                 command.Amount, command.Remark, command.Month, command.Year, _identityFactory);
 
-        private IReadOnlyList<CogenerationTariff> GetActiveCogenerations(Guid gspId) =>
-            _repository.GetAll(new GspCogenerationTariffSpecification(gspId));
+        private IReadOnlyList<CogenerationTariff> GetActiveCogenerationTariffs(Guid gspId) =>
+            _repository.GetAll(new NgspCogenerationTariffSpecification(gspId));
 
-        private IReadOnlyList<NaturalGasSellingPrice> GetNaturalGasPricesWithinYear(int year) =>
+        private IReadOnlyList<NaturalGasSellingPrice> GetNaturalGasSellingPricesWithinYear(int year) =>
            _repository.GetAll(new NaturalGasSellingPricesInAYearSpecification(year));
 
-        private void LogNewNaturalSellingPriceCreation(NaturalGasSellingPrice naturalGasSellingPrice) =>
+        private void LogNewNaturalGasSellingPriceCreation(NaturalGasSellingPrice naturalGasSellingPrice) =>
             Log(new EntityExecutionLoggingEventArgs
             {
                 Message = string.Format(

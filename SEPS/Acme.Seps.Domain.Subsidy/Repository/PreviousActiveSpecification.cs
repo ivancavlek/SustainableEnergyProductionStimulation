@@ -5,17 +5,17 @@ using System.Linq.Expressions;
 
 namespace Acme.Seps.Domain.Subsidy.Repository
 {
-    public sealed class ValidTillSpecification<TAggregateRoot>
+    public sealed class PreviousActiveSpecification<TAggregateRoot>
         : BaseSpecification<TAggregateRoot> where TAggregateRoot : SepsAggregateRoot
     {
-        private readonly DateTimeOffset _validTill;
+        private readonly DateTimeOffset _activeTill;
 
-        public ValidTillSpecification(DateTimeOffset validTill)
+        public PreviousActiveSpecification(DateTimeOffset activeTill)
         {
-            _validTill = validTill;
+            _activeTill = activeTill;
         }
 
         public override Expression<Func<TAggregateRoot, bool>> ToExpression() =>
-            res => res.Period.ValidTill == _validTill;
+            art => art.Period.ActiveTill == _activeTill;
     }
 }

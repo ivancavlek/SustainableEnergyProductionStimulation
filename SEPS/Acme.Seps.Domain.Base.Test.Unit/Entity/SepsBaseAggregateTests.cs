@@ -1,5 +1,7 @@
-﻿using Acme.Domain.Base.Factory;
+﻿using Acme.Domain.Base.Entity;
+using Acme.Domain.Base.Factory;
 using Acme.Seps.Domain.Base.Entity;
+using Acme.Seps.Domain.Base.Infrastructure;
 using FluentAssertions;
 using NSubstitute;
 using System;
@@ -36,6 +38,21 @@ namespace Acme.Seps.Domain.Base.Test.Unit.Entity
             result.Period.Should().NotBe(oldPeriod);
             result.Period.ActiveFrom.Should().Be(_activeFrom);
             result.Period.ActiveTill.Should().Be(activeTill);
+        }
+
+        public void OnlyActiveEntityCanBeArchived()
+        {
+            var activeTill = _activeFrom.AddYears(1);
+
+            var result = new DummySepsBaseAggregate(_activeFrom, _identityFactory);
+            result.Archive(activeTill);
+
+            Action action = () => result.Archive(activeTill);
+
+            action
+                .Should()
+                .ThrowExactly<DomainException>()
+                .WithMessage(SepsBaseMessage.ArchivingArchivedEntityException);
         }
 
         private class DummySepsBaseAggregate : SepsAggregateRoot

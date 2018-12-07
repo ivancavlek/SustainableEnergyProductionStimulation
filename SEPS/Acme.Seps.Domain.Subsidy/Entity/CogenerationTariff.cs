@@ -1,6 +1,4 @@
 ﻿using Acme.Domain.Base.Factory;
-using Acme.Seps.Domain.Base.Factory;
-using Acme.Seps.Domain.Base.ValueType;
 using Acme.Seps.Domain.Subsidy.DomainService;
 using Acme.Seps.Domain.Subsidy.Infrastructure;
 using Light.GuardClauses;
@@ -22,18 +20,16 @@ namespace Acme.Seps.Domain.Subsidy.Entity
             decimal lowerRate,
             decimal higherRate,
             Guid projectTypeId,
-            MonthlyPeriodFactory monthlyPeriodFactory,
+            DateTimeOffset activeFrom,
             IIdentityFactory<Guid> identityFactory)
             : base(lowerProductionLimit,
                   upperProductionLimit,
                   lowerRate,
                   higherRate,
                   projectTypeId,
-                  monthlyPeriodFactory,
-                  identityFactory)
-        {
+                  activeFrom,
+                  identityFactory) =>
             NaturalGasSellingPrice = naturalGasSellingPrice;
-        }
 
         public CogenerationTariff CreateNewWith(
             IEnumerable<NaturalGasSellingPrice> yearsNaturalGasSellingPrices,
@@ -47,7 +43,7 @@ namespace Acme.Seps.Domain.Subsidy.Entity
             var cogenerationParameter = CalculateCogenerationParameter(
                 cogenerationParameterService, yearsNaturalGasSellingPrices, naturalGasSellingPrice);
 
-            Period = new Period(new MonthlyPeriodFactory(Period.ValidFrom, naturalGasSellingPrice.Period.ValidFrom));
+            Archive(naturalGasSellingPrice.Period.ActiveFrom);
 
             return new CogenerationTariff
             (
@@ -57,12 +53,12 @@ namespace Acme.Seps.Domain.Subsidy.Entity
                 cogenerationParameter * LowerRate,
                 cogenerationParameter * HigherRate,
                 ProjectTypeId,
-                new MonthlyPeriodFactory(naturalGasSellingPrice.Period.ValidFrom),
+                naturalGasSellingPrice.Period.ActiveFrom,
                 identityFactory
             );
         }
 
-        public void GspCorrection(
+        public void NgspCorrection(
             IEnumerable<NaturalGasSellingPrice> yearsNaturalGasSellingPrices,
             ICogenerationParameterService cogenerationParameterService,
             NaturalGasSellingPrice gsp,
@@ -73,7 +69,7 @@ namespace Acme.Seps.Domain.Subsidy.Entity
 
             LowerRate = cogenerationParameter * previousCgn.LowerRate;
             HigherRate = cogenerationParameter * previousCgn.HigherRate;
-            Period = new Period(new MonthlyPeriodFactory(gsp.Period.ValidFrom));
+            Archive(gsp.Period.ActiveFrom);
         }
 
         private decimal CalculateCogenerationParameter(

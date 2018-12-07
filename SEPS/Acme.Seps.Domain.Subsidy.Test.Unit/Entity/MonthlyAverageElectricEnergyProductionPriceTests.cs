@@ -1,52 +1,32 @@
 ﻿using Acme.Domain.Base.Factory;
-using Acme.Seps.Domain.Base.Factory;
-using Acme.Seps.Domain.Base.ValueType;
+using Acme.Seps.Domain.Base.Utility;
 using Acme.Seps.Domain.Subsidy.Entity;
+using Acme.Seps.Domain.Subsidy.Test.Unit.Factory;
 using FluentAssertions;
 using NSubstitute;
 using System;
-using System.Reflection;
 
 namespace Acme.Seps.Domain.Subsidy.Test.Unit.Entity
 {
     public class MonthlyAverageElectricEnergyProductionPriceTests
     {
-        private readonly decimal _amount;
-        private readonly string _remark;
-        private readonly MonthlyAverageElectricEnergyProductionPrice _existingMaep;
-        private readonly IIdentityFactory<Guid> _identityFactory;
-
-        public MonthlyAverageElectricEnergyProductionPriceTests()
+        public void CreatesProperly()
         {
-            _amount = 1.123456M;
-            _remark = nameof(_remark);
-            _identityFactory = Substitute.For<IIdentityFactory<Guid>>();
+            const decimal amount = 1.123456M;
+            DateTimeOffset activeFrom = DateTimeOffset.Now.Date.AddMonths(-6);
+            var activeTill = DateTimeOffset.Now.ToFirstDayOfTheMonth().AddMonths(-5);
+            IEconometricIndexFactory<MonthlyAverageElectricEnergyProductionPrice> maepFactory =
+                new EconometricIndexFactory<MonthlyAverageElectricEnergyProductionPrice>(activeFrom);
+            var activeMaep = maepFactory.Create();
 
-            _existingMaep = Activator.CreateInstance(
-                typeof(MonthlyAverageElectricEnergyProductionPrice),
-                BindingFlags.Instance | BindingFlags.NonPublic,
-                null,
-                new object[] {
-                    10M,
-                    nameof(MonthlyAverageElectricEnergyProductionPrice),
-                    new Period(new MonthlyPeriodFactory(DateTime.Now.AddYears(-3), DateTime.Now.AddYears(-2))),
-                    _identityFactory },
-                null) as MonthlyAverageElectricEnergyProductionPrice;
-        }
+            var newMaep = activeMaep.CreateNew(
+                amount, "Remark", activeTill.Month, activeTill.Year, Substitute.For<IIdentityFactory<Guid>>());
 
-        public void MonthlyAverageElectricEnergyProductionPriceIsProperlyConstructed()
-        {
-            var validTill = DateTime.Now.AddMonths(-5);
-
-            var result = _existingMaep.CreateNew(
-                _amount, _remark, validTill.Month, validTill.Year, _identityFactory);
-
-            result.Amount.Should().Be(Math.Round(_amount, 4, MidpointRounding.AwayFromZero));
-            _existingMaep.Period.ValidTill.Should().NotBeNull();
-            _existingMaep.Period.ValidTill.Value
-                .Should().Be(new DateTimeOffset(new DateTime(validTill.Year, validTill.Month, 1)));
-            result.Period.ValidFrom.Should().Be(new DateTimeOffset(new DateTime(validTill.Year, validTill.Month, 1)));
-            result.Period.ValidTill.Should().BeNull();
+            activeMaep.Period.ActiveFrom.Should().Be(activeFrom.ToFirstDayOfTheMonth());
+            activeMaep.Period.ActiveTill.Should().Be(activeTill.ToFirstDayOfTheMonth());
+            newMaep.Period.ActiveFrom.Should().Be(activeTill.ToFirstDayOfTheMonth());
+            newMaep.Period.ActiveTill.Should().BeNull();
+            newMaep.Amount.Should().Be(Math.Round(amount, 4, MidpointRounding.AwayFromZero));
         }
     }
 }

@@ -12,8 +12,8 @@ namespace Acme.Seps.Repository.Subsidy.Configuration
 
             builder.OwnsOne(vte => vte.Period, vte =>
             {
-                vte.Property(ppy => ppy.ValidFrom).HasColumnName("ValidFrom").IsRequired();
-                vte.Property(ppy => ppy.ValidTill).HasColumnName("ValidTill");
+                vte.Property(ppy => ppy.ActiveFrom).HasColumnName("ValidFrom").IsRequired();
+                vte.Property(ppy => ppy.ActiveTill).HasColumnName("ValidTill");
             });
         }
     }

@@ -1,15 +1,13 @@
 ﻿using Acme.Domain.Base.Factory;
 using Acme.Repository.Base;
-using Acme.Seps.Domain.Base.Repository;
 using Acme.Seps.Repository.Subsidy.Configuration;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace Acme.Seps.Repository.Subsidy
 {
-    public class ParameterContext : BaseContext, ISepsRepository
+    public class ParameterContext : BaseContext
     {
         private readonly IIdentityFactory<Guid> _identityFactory;
 
@@ -18,11 +16,6 @@ namespace Acme.Seps.Repository.Subsidy
         {
             _identityFactory = identityFactory ?? throw new ArgumentNullException(nameof(identityFactory));
         }
-
-        TAggregateRoot ISepsRepository.GetLatest<TAggregateRoot>() =>
-            Set<TAggregateRoot>()
-                .OrderByDescending(art => art.Period.ValidFrom)
-                .FirstOrDefault();
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

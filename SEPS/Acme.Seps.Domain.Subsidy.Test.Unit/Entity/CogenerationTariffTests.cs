@@ -1,74 +1,46 @@
 ﻿using Acme.Domain.Base.Factory;
-using Acme.Seps.Domain.Base.Factory;
-using Acme.Seps.Domain.Base.ValueType;
+using Acme.Seps.Domain.Base.Utility;
 using Acme.Seps.Domain.Subsidy.DomainService;
 using Acme.Seps.Domain.Subsidy.Entity;
 using Acme.Seps.Domain.Subsidy.Infrastructure;
+using Acme.Seps.Domain.Subsidy.Test.Unit.Factory;
 using FluentAssertions;
 using NSubstitute;
 using System;
 using System.Collections.Generic;
-using System.Reflection;
 
 namespace Acme.Seps.Domain.Subsidy.Test.Unit.Entity
 {
     public class CogenerationTariffTests
     {
-        private readonly CogenerationTariff _existingChp;
-        private readonly NaturalGasSellingPrice _naturalGasSellingPrice;
+        private readonly CogenerationTariff _activeCgn;
+        private readonly NaturalGasSellingPrice _newNaturalGasSellingPrice;
         private readonly IEnumerable<NaturalGasSellingPrice> _yearsNaturalGasSellingPrices;
         private readonly ICogenerationParameterService _cogenerationParameterService;
         private readonly IIdentityFactory<Guid> _identityFactory;
-        private readonly Period _chpPeriod;
 
         public CogenerationTariffTests()
         {
-            _chpPeriod = new Period(new MonthlyPeriodFactory(DateTime.Now.AddMonths(-4), DateTime.Now.AddMonths(-3)));
             _identityFactory = Substitute.For<IIdentityFactory<Guid>>();
             _cogenerationParameterService = Substitute.For<ICogenerationParameterService>();
-            _yearsNaturalGasSellingPrices = new List<NaturalGasSellingPrice> { _naturalGasSellingPrice };
+            _yearsNaturalGasSellingPrices = new List<NaturalGasSellingPrice> { _newNaturalGasSellingPrice };
 
-            _naturalGasSellingPrice = Activator.CreateInstance(
-                typeof(NaturalGasSellingPrice),
-                BindingFlags.Instance | BindingFlags.NonPublic,
-                null,
-                new object[] {
-                    10M,
-                    nameof(NaturalGasSellingPrice),
-                    new Period(new MonthlyPeriodFactory(DateTime.Now.AddMonths(-4), DateTime.Now.AddMonths(-3))),
-                    _identityFactory },
-                null) as NaturalGasSellingPrice;
-            var chpNaturalGasSellingPrice = Activator.CreateInstance(
-                typeof(NaturalGasSellingPrice),
-                BindingFlags.Instance | BindingFlags.NonPublic,
-                null,
-                new object[] {
-                    100M,
-                    nameof(NaturalGasSellingPrice),
-                    _chpPeriod,
-                    _identityFactory },
-                null) as NaturalGasSellingPrice;
-            _existingChp = Activator.CreateInstance(
-                typeof(CogenerationTariff),
-                BindingFlags.Instance | BindingFlags.NonPublic,
-                null,
-                new object[]
-                {
-                    chpNaturalGasSellingPrice,
-                    100,
-                    500,
-                    10M,
-                    10M,
-                    Guid.NewGuid(),
-                    new MonthlyPeriodFactory(DateTime.Now.AddMonths(-4), DateTime.Now.AddMonths(-3)),
-                    _identityFactory },
-                null) as CogenerationTariff;
+            DateTimeOffset cgnActiveFrom = DateTimeOffset.Now.ToFirstDayOfTheMonth().AddMonths(-9);
+            IEconometricIndexFactory<NaturalGasSellingPrice> ngspFactory =
+                new EconometricIndexFactory<NaturalGasSellingPrice>(cgnActiveFrom);
+            ITariffFactory<CogenerationTariff> cogenerationFactory =
+                new TariffFactory<CogenerationTariff>(ngspFactory.Create(), cgnActiveFrom);
+            _activeCgn = cogenerationFactory.Create();
+
+            DateTimeOffset ngspActiveFrom = DateTimeOffset.Now.ToFirstDayOfTheMonth().AddMonths(-4);
+            ngspFactory = new EconometricIndexFactory<NaturalGasSellingPrice>(ngspActiveFrom);
+            _newNaturalGasSellingPrice = ngspFactory.Create();
         }
 
         public void CogenerationParameterServiceMustBeSet()
         {
-            Action action = () => _existingChp.CreateNewWith(
-                _yearsNaturalGasSellingPrices, null, _naturalGasSellingPrice, _identityFactory);
+            Action action = () => _activeCgn.CreateNewWith(
+                _yearsNaturalGasSellingPrices, null, _newNaturalGasSellingPrice, _identityFactory);
 
             action
                 .Should()
@@ -78,7 +50,7 @@ namespace Acme.Seps.Domain.Subsidy.Test.Unit.Entity
 
         public void NaturalGasSellingPriceMustBeSet()
         {
-            Action action = () => _existingChp.CreateNewWith(
+            Action action = () => _activeCgn.CreateNewWith(
                 _yearsNaturalGasSellingPrices, _cogenerationParameterService, null, _identityFactory);
 
             action
@@ -87,7 +59,7 @@ namespace Acme.Seps.Domain.Subsidy.Test.Unit.Entity
                 .WithMessage(SubsidyMessages.NaturalGasSellingPriceNotSetException);
         }
 
-        public void ChpTariffIsCorrectlyConstructed()
+        public void CreatesProperly()
         {
             const decimal cogenerationParameter = 1M;
 
@@ -95,17 +67,17 @@ namespace Acme.Seps.Domain.Subsidy.Test.Unit.Entity
                 .GetFrom(Arg.Any<IEnumerable<NaturalGasSellingPrice>>(), Arg.Any<NaturalGasSellingPrice>())
                 .Returns(cogenerationParameter);
 
-            var result = _existingChp.CreateNewWith(
+            var newChp = _activeCgn.CreateNewWith(
                 _yearsNaturalGasSellingPrices,
                 _cogenerationParameterService,
-                _naturalGasSellingPrice,
+                _newNaturalGasSellingPrice,
                 _identityFactory);
 
-            _existingChp.Period.ValidTill.Should().Be(_naturalGasSellingPrice.Period.ValidFrom);
-            result.LowerRate.Should().Be(_existingChp.LowerRate * cogenerationParameter);
-            result.HigherRate.Should().Be(_existingChp.HigherRate * cogenerationParameter);
-            result.NaturalGasSellingPrice.Should().Be(_naturalGasSellingPrice);
-            result.Period.Should().Be(_naturalGasSellingPrice.Period);
+            _activeCgn.Period.ActiveTill.Should().Be(_newNaturalGasSellingPrice.Period.ActiveFrom);
+            newChp.LowerRate.Should().Be(_activeCgn.LowerRate * cogenerationParameter);
+            newChp.HigherRate.Should().Be(_activeCgn.HigherRate * cogenerationParameter);
+            newChp.NaturalGasSellingPrice.Should().Be(_newNaturalGasSellingPrice);
+            newChp.Period.Should().Be(_newNaturalGasSellingPrice.Period);
         }
     }
 }

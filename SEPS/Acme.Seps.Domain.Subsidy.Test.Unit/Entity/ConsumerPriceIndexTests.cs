@@ -1,44 +1,31 @@
 ﻿using Acme.Domain.Base.Factory;
-using Acme.Seps.Domain.Base.Factory;
-using Acme.Seps.Domain.Base.ValueType;
+using Acme.Seps.Domain.Base.Utility;
 using Acme.Seps.Domain.Subsidy.Entity;
+using Acme.Seps.Domain.Subsidy.Test.Unit.Factory;
 using FluentAssertions;
 using NSubstitute;
 using System;
-using System.Reflection;
 
 namespace Acme.Seps.Domain.Subsidy.Test.Unit.Entity
 {
     public class ConsumerPriceIndexTests
     {
-        private readonly decimal _amount;
-        private readonly string _remark;
-        private readonly IIdentityFactory<Guid> _identityFactory;
-        private readonly ConsumerPriceIndex _existingCpi;
-
-        public ConsumerPriceIndexTests()
+        public void CreatesProperly()
         {
-            _amount = 1.123456M;
-            _remark = nameof(_remark);
-            _identityFactory = Substitute.For<IIdentityFactory<Guid>>();
+            const decimal amount = 1.123456M;
+            DateTimeOffset activeFrom = DateTimeOffset.Now.Date.AddYears(-4);
+            var activeTill = DateTimeOffset.Now.ToFirstMonthOfTheYear().AddYears(-3);
+            IEconometricIndexFactory<ConsumerPriceIndex> cpiFactory =
+                new EconometricIndexFactory<ConsumerPriceIndex>(activeFrom);
+            var activeCpi = cpiFactory.Create();
 
-            _existingCpi = Activator.CreateInstance(
-                typeof(ConsumerPriceIndex),
-                BindingFlags.Instance | BindingFlags.NonPublic,
-                null,
-                new object[] {
-                    10M,
-                    nameof(ConsumerPriceIndex),
-                    new Period(new YearlyPeriodFactory(DateTime.Now.AddYears(-4), DateTime.Now.AddYears(-3))),
-                    _identityFactory },
-                null) as ConsumerPriceIndex;
-        }
+            var newCpi = activeCpi.CreateNew(amount, "Remark", Substitute.For<IIdentityFactory<Guid>>());
 
-        public void AmountIsProperlyRounded()
-        {
-            var result = _existingCpi.CreateNew(_amount, _remark, _identityFactory);
-
-            result.Amount.Should().Be(Math.Round(_amount, 4, MidpointRounding.AwayFromZero));
+            activeCpi.Period.ActiveFrom.Should().Be(activeFrom.ToFirstMonthOfTheYear());
+            activeCpi.Period.ActiveTill.Should().Be(activeTill);
+            newCpi.Period.ActiveFrom.Should().Be(activeTill);
+            newCpi.Period.ActiveTill.Should().BeNull();
+            newCpi.Amount.Should().Be(Math.Round(amount, 4, MidpointRounding.AwayFromZero));
         }
     }
 }

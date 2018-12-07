@@ -1,7 +1,4 @@
 ﻿using Acme.Seps.Domain.Base.Entity;
-using Acme.Seps.Domain.Base.Factory;
-using Acme.Seps.Domain.Base.Utility;
-using Acme.Seps.Domain.Base.ValueType;
 using System;
 using System.Collections.Generic;
 
@@ -20,10 +17,5 @@ namespace Acme.Seps.Domain.Subsidy.Entity
         public ICollection<ProjectType> SubordinateProjectTypes { get; private set; }
 
         protected ProjectType() { }
-
-        public void PermanentlyDisable()
-        {
-            Period = new Period(new MonthlyPeriodFactory(Period.ValidFrom, SystemTime.CurrentMonth()));
-        }
     }
 }

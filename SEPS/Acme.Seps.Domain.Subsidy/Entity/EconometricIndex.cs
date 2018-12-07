@@ -1,7 +1,6 @@
 ﻿using Acme.Domain.Base.Entity;
 using Acme.Domain.Base.Factory;
 using Acme.Seps.Domain.Base.Entity;
-using Acme.Seps.Domain.Base.Factory;
 using Acme.Seps.Domain.Subsidy.Infrastructure;
 using Light.GuardClauses;
 using System;
@@ -21,9 +20,9 @@ namespace Acme.Seps.Domain.Subsidy.Entity
             decimal amount,
             int decimalPlaces,
             string remark,
-            IPeriodFactory periodFactory,
+            DateTimeOffset activeFrom,
             IIdentityFactory<Guid> identityFactory)
-            : base(periodFactory, identityFactory)
+            : base(activeFrom, identityFactory)
         {
             amount.MustBeGreaterThan(0m, (_, __) =>
                 new DomainException(SubsidyMessages.ParameterAmountBelowOrZeroException));
@@ -44,6 +43,5 @@ namespace Acme.Seps.Domain.Subsidy.Entity
 
         private decimal RoundAmount(decimal amount) =>
             Math.Round(amount, DecimalPlaces, MidpointRounding.AwayFromZero);
-
     }
 }

@@ -1,6 +1,5 @@
 ﻿using Acme.Domain.Base.Entity;
 using Acme.Domain.Base.Factory;
-using Acme.Seps.Domain.Base.Factory;
 using Acme.Seps.Domain.Base.Utility;
 using Acme.Seps.Domain.Base.ValueType;
 using Acme.Seps.Domain.Subsidy.Infrastructure;
@@ -18,30 +17,41 @@ namespace Acme.Seps.Domain.Subsidy.Entity
             decimal amount,
             int decimalPlaces,
             string remark,
-            Period lastMonthlyPeriod,
+            DateTimeOffset activeFrom,
             IIdentityFactory<Guid> identityFactory)
-            : base(
-                  amount,
-                  decimalPlaces,
-                  remark,
-                  new MonthlyPeriodFactory(lastMonthlyPeriod.ValidTill.Value),
-                  identityFactory)
+            : base(amount, decimalPlaces, remark, activeFrom.ToFirstDayOfTheMonth(), identityFactory)
         {
-            Period.ValidTill.HasValue.MustBe(false, (_, __) =>
+            Period.ActiveFrom.MustBeGreaterThanOrEqualTo(SepsVersion.InitialDate(), (_, __) =>
                 new DomainException(SubsidyMessages.MonthlyParameterException));
-            Period.ValidFrom.MustBeGreaterThanOrEqualTo(SepsVersion.InitialPeriod(), (_, __) =>
-                new DomainException(SubsidyMessages.MonthlyParameterException));
-            Period.ValidFrom.MustBeLessThan(SystemTime.CurrentMonth(), (_, __) =>
+            Period.ActiveFrom.MustBeLessThan(SystemTime.CurrentMonth(), (_, __) =>
                 new DomainException(SubsidyMessages.MonthlyParameterException));
         }
 
-        public abstract TMonthlyEconometricIndex CreateNew(
-            decimal amount, string remark, int month, int year, IIdentityFactory<Guid> identityFactory);
+        public TMonthlyEconometricIndex CreateNew(
+            decimal amount, string remark, int month, int year, IIdentityFactory<Guid> identityFactory)
+
+        {
+            var activeTill = new DateTime(year, month, 1);
+
+            Archive(activeTill);
+
+            switch (this)
+            {
+                case MonthlyAverageElectricEnergyProductionPrice _:
+                    return new MonthlyAverageElectricEnergyProductionPrice(amount, remark, activeTill, identityFactory)
+                        as TMonthlyEconometricIndex;
+                case NaturalGasSellingPrice _:
+                    return new NaturalGasSellingPrice(amount, remark, activeTill, identityFactory)
+                        as TMonthlyEconometricIndex;
+                default:
+                    throw new ArgumentException();
+            }
+        }
 
         public void AmountCorrection(decimal amount, string remark, int year, int month)
         {
             AmountCorrection(amount, remark);
-            Period = new Period(new MonthlyPeriodFactory(new DateTimeOffset(new DateTime(year, month, 1))));
+            Archive(new DateTime(year, month, 1));
         }
     }
 }

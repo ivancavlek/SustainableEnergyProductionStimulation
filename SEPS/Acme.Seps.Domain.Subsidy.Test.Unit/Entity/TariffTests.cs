@@ -1,6 +1,5 @@
 ﻿using Acme.Domain.Base.Entity;
 using Acme.Domain.Base.Factory;
-using Acme.Seps.Domain.Base.Factory;
 using Acme.Seps.Domain.Subsidy.Entity;
 using Acme.Seps.Domain.Subsidy.Infrastructure;
 using FluentAssertions;
@@ -16,7 +15,7 @@ namespace Acme.Seps.Domain.Subsidy.Test.Unit.Entity
         private readonly decimal _lowerRate;
         private readonly decimal _higherRate;
         private readonly Guid _projectTypeId;
-        private readonly IPeriodFactory _monthlyPeriod;
+        private readonly DateTimeOffset _activeFrom;
         private readonly IIdentityFactory<Guid> _identityFactory;
 
         public TariffTests()
@@ -26,7 +25,7 @@ namespace Acme.Seps.Domain.Subsidy.Test.Unit.Entity
             _lowerRate = 1M;
             _higherRate = 2M;
             _projectTypeId = Guid.NewGuid();
-            _monthlyPeriod = new MonthlyPeriodFactory(DateTime.UtcNow);
+            _activeFrom = DateTime.UtcNow;
             _identityFactory = Substitute.For<IIdentityFactory<Guid>>();
         }
 
@@ -38,7 +37,7 @@ namespace Acme.Seps.Domain.Subsidy.Test.Unit.Entity
                 _lowerRate,
                 _higherRate,
                 _projectTypeId,
-                _monthlyPeriod,
+                _activeFrom,
                 _identityFactory);
 
             action
@@ -55,7 +54,7 @@ namespace Acme.Seps.Domain.Subsidy.Test.Unit.Entity
                 _lowerRate,
                 _higherRate,
                 _projectTypeId,
-                _monthlyPeriod,
+                _activeFrom,
                 _identityFactory);
 
             action
@@ -72,7 +71,7 @@ namespace Acme.Seps.Domain.Subsidy.Test.Unit.Entity
                 _lowerRate,
                 _higherRate,
                 _projectTypeId,
-                _monthlyPeriod,
+                _activeFrom,
                 _identityFactory);
 
             action
@@ -89,7 +88,7 @@ namespace Acme.Seps.Domain.Subsidy.Test.Unit.Entity
                 _lowerRate,
                 _higherRate,
                 _projectTypeId,
-                _monthlyPeriod,
+                _activeFrom,
                 _identityFactory);
 
             action
@@ -106,7 +105,7 @@ namespace Acme.Seps.Domain.Subsidy.Test.Unit.Entity
                 _lowerRate,
                 _higherRate,
                 _projectTypeId,
-                _monthlyPeriod,
+                _activeFrom,
                 _identityFactory);
 
             action
@@ -123,7 +122,7 @@ namespace Acme.Seps.Domain.Subsidy.Test.Unit.Entity
                 -1M,
                 _higherRate,
                 _projectTypeId,
-                _monthlyPeriod,
+                _activeFrom,
                 _identityFactory);
 
             action
@@ -140,7 +139,7 @@ namespace Acme.Seps.Domain.Subsidy.Test.Unit.Entity
                 _lowerRate,
                 -1M,
                 _projectTypeId,
-                _monthlyPeriod,
+                _activeFrom,
                 _identityFactory);
 
             action
@@ -157,7 +156,7 @@ namespace Acme.Seps.Domain.Subsidy.Test.Unit.Entity
                 2M,
                 1M,
                 _projectTypeId,
-                _monthlyPeriod,
+                _activeFrom,
                 _identityFactory);
 
             action
@@ -174,7 +173,7 @@ namespace Acme.Seps.Domain.Subsidy.Test.Unit.Entity
                 _lowerRate,
                 -1M,
                 Guid.Empty,
-                _monthlyPeriod,
+                _activeFrom,
                 _identityFactory);
 
             action
@@ -191,7 +190,7 @@ namespace Acme.Seps.Domain.Subsidy.Test.Unit.Entity
                 2M,
                 1M,
                 new Guid(),
-                _monthlyPeriod,
+                _activeFrom,
                 _identityFactory);
 
             action
@@ -208,32 +207,32 @@ namespace Acme.Seps.Domain.Subsidy.Test.Unit.Entity
                 _lowerRate,
                 _higherRate,
                 _projectTypeId,
-                _monthlyPeriod,
+                _activeFrom,
                 _identityFactory); ;
 
             result.LowerRate.Should().Be(_lowerRate);
             result.HigherRate.Should().Be(_higherRate);
         }
-    }
 
-    internal class DummyTariff : Tariff
-    {
-        public DummyTariff(
-            int? lowerProductionLimit,
-            int? higherProductionLimit,
-            decimal lowerRate,
-            decimal higherRate,
-            Guid projectTypeId,
-            IPeriodFactory period,
-            IIdentityFactory<Guid> identityFactory)
-            : base(lowerProductionLimit,
-                  higherProductionLimit,
-                  lowerRate,
-                  higherRate,
-                  projectTypeId,
-                  period,
-                  identityFactory)
+        private class DummyTariff : Tariff
         {
+            public DummyTariff(
+                int? lowerProductionLimit,
+                int? higherProductionLimit,
+                decimal lowerRate,
+                decimal higherRate,
+                Guid projectTypeId,
+                DateTimeOffset activeFrom,
+                IIdentityFactory<Guid> identityFactory)
+                : base(lowerProductionLimit,
+                      higherProductionLimit,
+                      lowerRate,
+                      higherRate,
+                      projectTypeId,
+                      activeFrom,
+                      identityFactory)
+            {
+            }
         }
     }
 }

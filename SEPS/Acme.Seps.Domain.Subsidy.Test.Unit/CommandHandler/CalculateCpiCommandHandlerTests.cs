@@ -1,17 +1,15 @@
 ﻿using Acme.Domain.Base.Factory;
 using Acme.Domain.Base.Repository;
 using Acme.Seps.Domain.Base.CommandHandler;
-using Acme.Seps.Domain.Base.Factory;
-using Acme.Seps.Domain.Base.Repository;
-using Acme.Seps.Domain.Base.ValueType;
 using Acme.Seps.Domain.Subsidy.Command;
 using Acme.Seps.Domain.Subsidy.CommandHandler;
 using Acme.Seps.Domain.Subsidy.Entity;
+using Acme.Seps.Domain.Subsidy.Repository;
+using Acme.Seps.Domain.Subsidy.Test.Unit.Factory;
 using FluentAssertions;
 using NSubstitute;
 using System;
 using System.Collections.Generic;
-using System.Reflection;
 
 namespace Acme.Seps.Domain.Subsidy.Test.Unit.CommandHandler
 {
@@ -19,56 +17,29 @@ namespace Acme.Seps.Domain.Subsidy.Test.Unit.CommandHandler
     {
         private readonly ISepsCommandHandler<CalculateCpiCommand> _calculateCpi;
         private readonly IUnitOfWork _unitOfWork;
-        private readonly ISepsRepository _repository;
-        private readonly IPeriodFactory _periodFactory;
-        private readonly IIdentityFactory<Guid> _identityFactory;
 
         public CalculateCpiCommandHandlerTests()
         {
-            _periodFactory = new YearlyPeriodFactory(DateTime.Now.AddYears(-4), DateTime.Now.AddYears(-3));
-            _identityFactory = Substitute.For<IIdentityFactory<Guid>>();
-            _identityFactory.CreateIdentity().Returns(Guid.NewGuid());
+            IEconometricIndexFactory<ConsumerPriceIndex> cpiFactory =
+                new EconometricIndexFactory<ConsumerPriceIndex>(DateTime.Now.AddYears(-4));
+            var activeCpi = cpiFactory.Create();
 
-            var cpi = Activator.CreateInstance(
-                typeof(ConsumerPriceIndex),
-                BindingFlags.Instance | BindingFlags.NonPublic,
-                null,
-                new object[]
-                {
-                    10M,
-                    nameof(ConsumerPriceIndex),
-                    new Period(new YearlyPeriodFactory(DateTime.Now.AddYears(-4), DateTime.Now.AddYears(-3))),
-                    _identityFactory
-                },
-                null) as ConsumerPriceIndex;
+            ITariffFactory<RenewableEnergySourceTariff> resFactory =
+                new TariffFactory<RenewableEnergySourceTariff>(activeCpi, activeCpi.Period.ActiveFrom);
+            var activeRenewableEnergySourceTariff = resFactory.Create();
 
-            var renewableEnergySourceTariff = Activator.CreateInstance(
-                    typeof(RenewableEnergySourceTariff),
-                    BindingFlags.Instance | BindingFlags.NonPublic,
-                    null,
-                    new object[]
-                    {
-                        cpi,
-                        100,
-                        500,
-                        5M,
-                        10M,
-                        Guid.NewGuid(),
-                        new YearlyPeriodFactory(DateTime.Now.AddYears(-3), DateTime.Now.AddYears(-2)),
-                        _identityFactory
-                    },
-                    null) as RenewableEnergySourceTariff;
-            _repository = Substitute.For<ISepsRepository>();
-            _repository
-                .GetAll(Arg.Any<BaseSpecification<RenewableEnergySourceTariff>>())
-                .Returns(new List<RenewableEnergySourceTariff> { renewableEnergySourceTariff });
-            _repository
-                .GetLatest<ConsumerPriceIndex>()
-                .Returns(cpi);
+            var repository = Substitute.For<IRepository>();
+            repository
+                .GetSingle(Arg.Any<ActiveSpecification<ConsumerPriceIndex>>())
+                .Returns(activeCpi);
+            repository
+                .GetAll(Arg.Any<CpiRenewableEnergySourceTariffSpecification>())
+                .Returns(new List<RenewableEnergySourceTariff> { activeRenewableEnergySourceTariff });
 
             _unitOfWork = Substitute.For<IUnitOfWork>();
 
-            _calculateCpi = new CalculateCpiCommandHandler(_repository, _unitOfWork, _identityFactory);
+            _calculateCpi = new CalculateCpiCommandHandler(
+                repository, _unitOfWork, Substitute.For<IIdentityFactory<Guid>>());
         }
 
         public void ExecutesProperly()

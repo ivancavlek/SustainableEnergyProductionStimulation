@@ -214,20 +214,20 @@ namespace Acme.Seps.Domain.Subsidy.Infrastructure {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Renewable energy source tariff period must be in sequence..
-        /// </summary>
-        public static string RenewableEnergySourceTariffPeriodException {
-            get {
-                return ResourceManager.GetString("RenewableEnergySourceTariffPeriodException", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Corrected {0} for period {1} with amounts {2:C}/{2:C}..
         /// </summary>
         public static string TariffCorrectionLog {
             get {
                 return ResourceManager.GetString("TariffCorrectionLog", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Tariff period must be in sequence..
+        /// </summary>
+        public static string TariffPeriodException {
+            get {
+                return ResourceManager.GetString("TariffPeriodException", resourceCulture);
             }
         }
         

@@ -8,7 +8,7 @@ namespace Acme.Seps.Domain.Base.Test.Unit.Utility
     {
         public void InitialPeriodIsCorrectlySet()
         {
-            SepsVersion.InitialPeriod().Should().Be(new DateTimeOffset(new DateTime(2007, 7, 1)));
+            SepsVersion.InitialDate().Should().Be(new DateTimeOffset(new DateTime(2007, 7, 1)));
         }
     }
 }

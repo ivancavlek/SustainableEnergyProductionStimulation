@@ -1,7 +1,6 @@
 ﻿using Acme.Domain.Base.Entity;
 using Acme.Domain.Base.Factory;
 using Acme.Seps.Domain.Base.Entity;
-using Acme.Seps.Domain.Base.Factory;
 using Acme.Seps.Domain.Subsidy.Infrastructure;
 using Light.GuardClauses;
 using System;
@@ -24,8 +23,8 @@ namespace Acme.Seps.Domain.Subsidy.Entity
             decimal lowerRate,
             decimal higherRate,
             Guid projectTypeId,
-            IPeriodFactory periodFactory,
-            IIdentityFactory<Guid> identityFactory) : base(periodFactory, identityFactory)
+            DateTimeOffset activeFrom,
+            IIdentityFactory<Guid> identityFactory) : base(activeFrom, identityFactory)
         {
             lowerProductionLimit.MustHaveValue(() =>
                 new DomainException(SubsidyMessages.BelowZeroLowerProductionLimitException));

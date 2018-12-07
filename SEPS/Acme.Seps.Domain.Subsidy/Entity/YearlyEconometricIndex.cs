@@ -1,6 +1,5 @@
 ﻿using Acme.Domain.Base.Entity;
 using Acme.Domain.Base.Factory;
-using Acme.Seps.Domain.Base.Factory;
 using Acme.Seps.Domain.Base.Utility;
 using Acme.Seps.Domain.Base.ValueType;
 using Acme.Seps.Domain.Subsidy.Infrastructure;
@@ -18,22 +17,29 @@ namespace Acme.Seps.Domain.Subsidy.Entity
             decimal amount,
             int decimalPlaces,
             string remark,
-            Period lastYearlyPeriod,
+            DateTimeOffset activeFrom,
             IIdentityFactory<Guid> identityFactory)
-            : base(
-                  amount,
-                  decimalPlaces,
-                  remark,
-                  new YearlyPeriodFactory(lastYearlyPeriod.ValidTill.Value, lastYearlyPeriod.ValidTill.Value.AddYears(1)),
-                  identityFactory)
+            : base(amount, decimalPlaces, remark, activeFrom.ToFirstMonthOfTheYear(), identityFactory)
         {
-            Period.ValidFrom.Year.MustBeGreaterThanOrEqualTo(SepsVersion.InitialPeriod().Year, (_, __) =>
+            Period.ActiveFrom.Year.MustBeGreaterThanOrEqualTo(SepsVersion.InitialDate().Year, (_, __) =>
                 new DomainException(SubsidyMessages.YearlyParameterException));
-            Period.ValidTill.Value.Year.MustBeLessThanOrEqualTo(SystemTime.CurrentYear().Year, (_, __) =>
+            Period.ActiveFrom.MustBeLessThan(SystemTime.CurrentYear(), (_, __) =>
                 new DomainException(SubsidyMessages.YearlyParameterException));
         }
 
-        public abstract TYearlyEconometricIndex CreateNew(
-            decimal amount, string remark, IIdentityFactory<Guid> identityFactory);
+        public TYearlyEconometricIndex CreateNew(
+            decimal amount, string remark, IIdentityFactory<Guid> identityFactory)
+        {
+            Archive(Period.ActiveFrom.AddYears(1));
+
+            switch (this)
+            {
+                case ConsumerPriceIndex cpi:
+                    return new ConsumerPriceIndex(amount, remark, Period.ActiveTill.Value, identityFactory)
+                        as TYearlyEconometricIndex;
+                default:
+                    throw new ArgumentException();
+            }
+        }
     }
 }

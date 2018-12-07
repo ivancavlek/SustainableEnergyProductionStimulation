@@ -1,7 +1,6 @@
 ﻿using Acme.Domain.Base.Entity;
 using Acme.Domain.Base.Factory;
-using Acme.Seps.Domain.Base.Factory;
-using Acme.Seps.Domain.Base.ValueType;
+using Acme.Seps.Domain.Base.Utility;
 using Acme.Seps.Domain.Subsidy.Entity;
 using Acme.Seps.Domain.Subsidy.Infrastructure;
 using FluentAssertions;
@@ -25,13 +24,12 @@ namespace Acme.Seps.Domain.Subsidy.Test.Unit.Entity
             _identityFactory = Substitute.For<IIdentityFactory<Guid>>();
         }
 
-        public void PeriodCannotStartBeforeInitialPeriod()
+        public void DateCannotBeBeforeInitialDate()
         {
-            var initialPeriodMinusYear = new DateTime(2007, 07, 01).AddYears(-1);
-            var period = new Period(new YearlyPeriodFactory(initialPeriodMinusYear.AddYears(-1), initialPeriodMinusYear));
+            var yearBeforeInitialDate = SepsVersion.InitialDate().AddYears(-1);
 
             Action action = () => new DummyYearlyEconometricIndex(
-                _amount, _decimalPlaces, _remark, period, _identityFactory);
+                _amount, _decimalPlaces, _remark, yearBeforeInitialDate, _identityFactory);
 
             action
                 .Should()
@@ -39,13 +37,12 @@ namespace Acme.Seps.Domain.Subsidy.Test.Unit.Entity
                 .WithMessage(SubsidyMessages.YearlyParameterException);
         }
 
-        public void PeriodMustStartBeforeCurrentYear()
+        public void DateCannotBeFromCurrentYear()
         {
-            var currentDate = DateTime.UtcNow;
-            var period = new Period(new YearlyPeriodFactory(currentDate.AddYears(-1), DateTime.UtcNow));
+            var currentYear = DateTime.Now.Date;
 
             Action action = () => new DummyYearlyEconometricIndex(
-                _amount, _decimalPlaces, _remark, period, _identityFactory);
+                _amount, _decimalPlaces, _remark, currentYear, _identityFactory);
 
             action
                 .Should()
@@ -53,32 +50,25 @@ namespace Acme.Seps.Domain.Subsidy.Test.Unit.Entity
                 .WithMessage(SubsidyMessages.YearlyParameterException);
         }
 
-        public void PeriodIsCorrectlySet()
+        public void DateIsCorrectlySet()
         {
-            var correctDate = DateTime.UtcNow.AddYears(-2);
-            var period = new Period(new YearlyPeriodFactory(correctDate.AddYears(-1), correctDate));
+            DateTimeOffset yearBeforeCurrentYear = DateTime.Now.Date.AddYears(-1);
 
-            Action action = () => new DummyYearlyEconometricIndex(
-                _amount, _decimalPlaces, _remark, period, _identityFactory);
+            var econometricIndex = new DummyYearlyEconometricIndex(
+                _amount, _decimalPlaces, _remark, yearBeforeCurrentYear, _identityFactory);
 
-            action
-                .Should()
-                .NotThrow<Exception>();
+            econometricIndex.Period.ActiveFrom.Should().Be(yearBeforeCurrentYear.ToFirstMonthOfTheYear());
         }
-    }
 
-    internal class DummyYearlyEconometricIndex : YearlyEconometricIndex<DummyYearlyEconometricIndex>
-    {
-        public DummyYearlyEconometricIndex(
-            decimal amount,
-            int decimalPlaces,
-            string remark,
-            Period period,
-            IIdentityFactory<Guid> identityFactory)
-            : base(amount, decimalPlaces, remark, period, identityFactory) { }
-
-        public override DummyYearlyEconometricIndex CreateNew(
-            decimal amount, string remark, IIdentityFactory<Guid> identityFactory) =>
-            this;
+        private class DummyYearlyEconometricIndex : YearlyEconometricIndex<DummyYearlyEconometricIndex>
+        {
+            public DummyYearlyEconometricIndex(
+                decimal amount,
+                int decimalPlaces,
+                string remark,
+                DateTimeOffset activeFrom,
+                IIdentityFactory<Guid> identityFactory)
+                : base(amount, decimalPlaces, remark, activeFrom, identityFactory) { }
+        }
     }
 }

@@ -1,52 +1,32 @@
 ﻿using Acme.Domain.Base.Factory;
-using Acme.Seps.Domain.Base.Factory;
-using Acme.Seps.Domain.Base.ValueType;
+using Acme.Seps.Domain.Base.Utility;
 using Acme.Seps.Domain.Subsidy.Entity;
+using Acme.Seps.Domain.Subsidy.Test.Unit.Factory;
 using FluentAssertions;
 using NSubstitute;
 using System;
-using System.Reflection;
 
 namespace Acme.Seps.Domain.Subsidy.Test.Unit.Entity
 {
     public class NaturalGasSellingPriceTests
     {
-        private readonly decimal _amount;
-        private readonly string _remark;
-        private readonly IIdentityFactory<Guid> _identityFactory;
-        private readonly NaturalGasSellingPrice _existingNaturalGasSellingPrice;
-
-        public NaturalGasSellingPriceTests()
+        public void CreatesProperly()
         {
-            _amount = 1.123456M;
-            _remark = nameof(_remark);
-            _identityFactory = Substitute.For<IIdentityFactory<Guid>>();
+            const decimal amount = 1.123456M;
+            DateTimeOffset activeFrom = DateTimeOffset.Now.Date.AddMonths(-6);
+            var activeTill = DateTimeOffset.Now.ToFirstDayOfTheMonth().AddMonths(-5);
+            IEconometricIndexFactory<NaturalGasSellingPrice> ngspFactory =
+                new EconometricIndexFactory<NaturalGasSellingPrice>(activeFrom);
+            var activeNgsp = ngspFactory.Create();
 
-            _existingNaturalGasSellingPrice = Activator.CreateInstance(
-                typeof(NaturalGasSellingPrice),
-                BindingFlags.Instance | BindingFlags.NonPublic,
-                null,
-                new object[] {
-                    10M,
-                    nameof(NaturalGasSellingPrice),
-                    new Period(new MonthlyPeriodFactory(DateTime.Now.AddYears(-3), DateTime.Now.AddYears(-2))),
-                    _identityFactory },
-                null) as NaturalGasSellingPrice;
-        }
+            var newMaep = activeNgsp.CreateNew(
+                amount, "Remark", activeTill.Month, activeTill.Year, Substitute.For<IIdentityFactory<Guid>>());
 
-        public void NewNaturalGasSellingPriceIsProperlyConstructed()
-        {
-            var validTill = DateTime.Now.AddMonths(-5);
-
-            var result = _existingNaturalGasSellingPrice.CreateNew(
-                _amount, _remark, validTill.Month, validTill.Year, _identityFactory);
-
-            result.Amount.Should().Be(Math.Round(_amount, 2, MidpointRounding.AwayFromZero));
-            _existingNaturalGasSellingPrice.Period.ValidTill.Should().NotBeNull();
-            _existingNaturalGasSellingPrice.Period.ValidTill.Value
-                .Should().Be(new DateTimeOffset(new DateTime(validTill.Year, validTill.Month, 1)));
-            result.Period.ValidFrom.Should().Be(new DateTimeOffset(new DateTime(validTill.Year, validTill.Month, 1)));
-            result.Period.ValidTill.Should().BeNull();
+            activeNgsp.Period.ActiveFrom.Should().Be(activeFrom.ToFirstDayOfTheMonth());
+            activeNgsp.Period.ActiveTill.Should().Be(activeTill.ToFirstDayOfTheMonth());
+            newMaep.Period.ActiveFrom.Should().Be(activeTill.ToFirstDayOfTheMonth());
+            newMaep.Period.ActiveTill.Should().BeNull();
+            newMaep.Amount.Should().Be(Math.Round(amount, 2, MidpointRounding.AwayFromZero));
         }
     }
 }

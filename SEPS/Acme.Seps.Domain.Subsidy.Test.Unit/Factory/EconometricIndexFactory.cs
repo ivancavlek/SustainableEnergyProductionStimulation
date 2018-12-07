@@ -1,6 +1,4 @@
 ﻿using Acme.Domain.Base.Factory;
-using Acme.Seps.Domain.Base.Factory;
-using Acme.Seps.Domain.Base.ValueType;
 using Acme.Seps.Domain.Subsidy.Entity;
 using NSubstitute;
 using System;
@@ -11,20 +9,22 @@ namespace Acme.Seps.Domain.Subsidy.Test.Unit.Factory
     internal class EconometricIndexFactory<TEconomtricIndex>
         : IEconometricIndexFactory<TEconomtricIndex> where TEconomtricIndex : EconometricIndex
     {
-        private readonly IPeriodFactory _periodFactory;
+        private readonly DateTimeOffset _activeFrom;
+        private readonly IIdentityFactory<Guid> _identityFactory;
 
-        public EconometricIndexFactory(IPeriodFactory periodFactory) =>
-            _periodFactory = periodFactory ?? throw new ArgumentNullException(nameof(periodFactory));
+        public EconometricIndexFactory(DateTimeOffset activeFrom)
+        {
+            _activeFrom = activeFrom;
+            _identityFactory = Substitute.For<IIdentityFactory<Guid>>();
+            _identityFactory.CreateIdentity().Returns(Guid.NewGuid());
+        }
 
         TEconomtricIndex IEconometricIndexFactory<TEconomtricIndex>.Create() =>
             Activator.CreateInstance(
                 typeof(TEconomtricIndex),
                 BindingFlags.Instance | BindingFlags.NonPublic,
                 null,
-                new object[]
-                {
-                    10M, nameof(TEconomtricIndex), new Period(_periodFactory), Substitute.For<IIdentityFactory<Guid>>()
-                },
+                new object[] { 100M, nameof(TEconomtricIndex), _activeFrom, _identityFactory },
                 null) as TEconomtricIndex;
     }
 }

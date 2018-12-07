@@ -16,7 +16,7 @@ namespace Acme.Seps.Domain.Base.Utility
             };
         }
 
-        public static DateTimeOffset InitialPeriod() =>
+        public static DateTimeOffset InitialDate() =>
             _applicationVersions[1].ActiveFrom;
     }
 }

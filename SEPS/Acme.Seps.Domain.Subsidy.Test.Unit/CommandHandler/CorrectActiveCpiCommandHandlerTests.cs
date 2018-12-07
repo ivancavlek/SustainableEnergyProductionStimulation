@@ -1,17 +1,15 @@
 ﻿using Acme.Domain.Base.Factory;
 using Acme.Domain.Base.Repository;
 using Acme.Seps.Domain.Base.CommandHandler;
-using Acme.Seps.Domain.Base.Factory;
-using Acme.Seps.Domain.Base.Repository;
-using Acme.Seps.Domain.Base.ValueType;
 using Acme.Seps.Domain.Subsidy.Command;
 using Acme.Seps.Domain.Subsidy.CommandHandler;
 using Acme.Seps.Domain.Subsidy.Entity;
+using Acme.Seps.Domain.Subsidy.Repository;
+using Acme.Seps.Domain.Subsidy.Test.Unit.Factory;
 using FluentAssertions;
 using NSubstitute;
 using System;
 using System.Collections.Generic;
-using System.Reflection;
 
 namespace Acme.Seps.Domain.Subsidy.Test.Unit.CommandHandler
 {
@@ -19,79 +17,43 @@ namespace Acme.Seps.Domain.Subsidy.Test.Unit.CommandHandler
     {
         private readonly ISepsCommandHandler<CorrectActiveCpiCommand> _correctActiveCpi;
         private readonly IUnitOfWork _unitOfWork;
-        private readonly ISepsRepository _repository;
-        private readonly IIdentityFactory<Guid> _identityFactory;
-
-        private readonly ConsumerPriceIndex _cpi;
-        private readonly List<RenewableEnergySourceTariff> _resTariffs;
 
         public CorrectActiveCpiCommandHandlerTests()
         {
-            _identityFactory = Substitute.For<IIdentityFactory<Guid>>();
-            _identityFactory.CreateIdentity().Returns(Guid.NewGuid());
+            IEconometricIndexFactory<ConsumerPriceIndex> cpiFactory =
+                new EconometricIndexFactory<ConsumerPriceIndex>(DateTime.Now.AddYears(-4));
+            var activeCpi = cpiFactory.Create();
 
-            _cpi = Activator.CreateInstance(
-                typeof(ConsumerPriceIndex),
-                BindingFlags.Instance | BindingFlags.NonPublic,
-                null,
-                new object[]
-                {
-                    10M,
-                    nameof(ConsumerPriceIndex),
-                    new Period(new YearlyPeriodFactory(DateTime.Now.AddYears(-4), DateTime.Now.AddYears(-3))),
-                    _identityFactory
-                },
-                null) as ConsumerPriceIndex;
+            ITariffFactory<RenewableEnergySourceTariff> resFactory =
+                new TariffFactory<RenewableEnergySourceTariff>(activeCpi, activeCpi.Period.ActiveFrom);
+            var activeResTariffs = new List<RenewableEnergySourceTariff> { resFactory.Create() };
 
-            var previousResTariffs = new List<RenewableEnergySourceTariff> { Activator.CreateInstance(
-                typeof(RenewableEnergySourceTariff),
-                BindingFlags.Instance | BindingFlags.NonPublic,
-                null,
-                new object[]
-                {
-                    _cpi,
-                    100,
-                    500,
-                    5M,
-                    10M,
-                    Guid.NewGuid(),
-                    new YearlyPeriodFactory(DateTime.Now.AddYears(-4), DateTime.Now.AddYears(-3)),
-                    _identityFactory
-                },
-                null) as RenewableEnergySourceTariff };
-
-            _resTariffs = new List<RenewableEnergySourceTariff> { Activator.CreateInstance(
-                typeof(RenewableEnergySourceTariff),
-                BindingFlags.Instance | BindingFlags.NonPublic,
-                null,
-                new object[]
-                {
-                    _cpi,
-                    100,
-                    500,
-                    5M,
-                    10M,
-                    Guid.NewGuid(),
-                    new YearlyPeriodFactory(DateTime.Now.AddYears(-3), DateTime.Now.AddYears(-2)),
-                    _identityFactory
-                },
-                null) as RenewableEnergySourceTariff };
+            resFactory = new TariffFactory<RenewableEnergySourceTariff>(
+                activeCpi, activeCpi.Period.ActiveFrom.AddYears(-1));
+            var previousActiveResTariffs = new List<RenewableEnergySourceTariff> { resFactory.Create() };
 
             var dummyGuid = Guid.NewGuid();
+            const string projectTypeIdProperty = "ProjectTypeId";
             typeof(RenewableEnergySourceTariff).BaseType
-                .GetProperty("ProjectTypeId").SetValue(previousResTariffs[0], dummyGuid);
+                .GetProperty(projectTypeIdProperty).SetValue(activeResTariffs[0], dummyGuid);
             typeof(RenewableEnergySourceTariff).BaseType
-                .GetProperty("ProjectTypeId").SetValue(_resTariffs[0], dummyGuid);
+                .GetProperty(projectTypeIdProperty).SetValue(previousActiveResTariffs[0], dummyGuid);
 
-            _repository = Substitute.For<ISepsRepository>();
-            _repository.GetLatest<ConsumerPriceIndex>().Returns(_cpi);
-            _repository
+            var repository = Substitute.For<IRepository>();
+            repository
+                .GetSingle(Arg.Any<ActiveSpecification<ConsumerPriceIndex>>())
+                .Returns(activeCpi);
+            repository
                 .GetAll(Arg.Any<BaseSpecification<RenewableEnergySourceTariff>>())
-                .Returns(previousResTariffs, _resTariffs);
+                .Returns(previousActiveResTariffs);
+            repository
+                .GetAll(Arg.Any<CpiRenewableEnergySourceTariffSpecification>())
+                .Returns(activeResTariffs);
 
             _unitOfWork = Substitute.For<IUnitOfWork>();
 
-            _correctActiveCpi = new CorrectActiveCpiCommandHandler(_repository, _unitOfWork, _identityFactory);
+            _correctActiveCpi = new CorrectActiveCpiCommandHandler(
+                repository, _unitOfWork, Substitute.For<IIdentityFactory<Guid>>());
         }
 
         public void ExecutesProperly()

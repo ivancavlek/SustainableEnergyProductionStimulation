@@ -16,7 +16,7 @@ namespace Acme.Seps.Domain.Subsidy.CommandValidation
                 .NotEmpty()
                 .WithMessage(SubsidyMessages.RemarkNotSetException);
             RuleFor(can => can.Year)
-                .GreaterThan(SepsVersion.InitialPeriod().Year)
+                .GreaterThan(SepsVersion.InitialDate().Year)
                 .WithMessage(SubsidyMessages.YearlyParameterException);
             RuleFor(can => can.Month)
                 .GreaterThanOrEqualTo(1)

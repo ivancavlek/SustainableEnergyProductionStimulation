@@ -1,99 +1,66 @@
 ﻿using Acme.Domain.Base.Factory;
 using Acme.Domain.Base.Repository;
 using Acme.Seps.Domain.Base.CommandHandler;
-using Acme.Seps.Domain.Base.Factory;
-using Acme.Seps.Domain.Base.Repository;
-using Acme.Seps.Domain.Base.ValueType;
 using Acme.Seps.Domain.Subsidy.Command;
 using Acme.Seps.Domain.Subsidy.CommandHandler;
 using Acme.Seps.Domain.Subsidy.DomainService;
 using Acme.Seps.Domain.Subsidy.Entity;
+using Acme.Seps.Domain.Subsidy.Repository;
+using Acme.Seps.Domain.Subsidy.Test.Unit.Factory;
 using FluentAssertions;
 using NSubstitute;
 using System;
 using System.Collections.Generic;
-using System.Reflection;
 
 namespace Acme.Seps.Domain.Subsidy.Test.Unit.CommandHandler
 {
     public class CalculateNaturalGasCommandHandlerTests
     {
         private readonly ISepsCommandHandler<CalculateNaturalGasCommand> _calculateNaturalGas;
-        private readonly ICogenerationParameterService _cogenerationParameterService;
         private readonly IUnitOfWork _unitOfWork;
-        private readonly ISepsRepository _repository;
-        private readonly IIdentityFactory<Guid> _identityFactory;
-
-        private readonly NaturalGasSellingPrice _naturalGasSellingPrice;
-        private readonly DateTime _lastPeriod;
 
         public CalculateNaturalGasCommandHandlerTests()
         {
-            _identityFactory = Substitute.For<IIdentityFactory<Guid>>();
-            _identityFactory.CreateIdentity().Returns(Guid.NewGuid());
+            IEconometricIndexFactory<NaturalGasSellingPrice> ngspFactory =
+                new EconometricIndexFactory<NaturalGasSellingPrice>(DateTime.Now.AddMonths(-9));
+            var activeNgsp = ngspFactory.Create();
 
-            _lastPeriod = DateTime.Now.AddMonths(-3);
+            ITariffFactory<CogenerationTariff> cogenerationFactory =
+                new TariffFactory<CogenerationTariff>(activeNgsp, activeNgsp.Period.ActiveFrom);
+            var activeCogenerationTariff = cogenerationFactory.Create();
 
-            _cogenerationParameterService = Substitute.For<ICogenerationParameterService>();
-            _cogenerationParameterService
-                .GetFrom(Arg.Any<IEnumerable<NaturalGasSellingPrice>>(), Arg.Any<NaturalGasSellingPrice>())
-                .Returns(1M);
-
-            _naturalGasSellingPrice = Activator.CreateInstance(
-                typeof(NaturalGasSellingPrice),
-                BindingFlags.Instance | BindingFlags.NonPublic,
-                null,
-                new object[]
-                {
-                    10M,
-                    nameof(NaturalGasSellingPrice),
-                    new Period(new MonthlyPeriodFactory(DateTime.Now.AddYears(-3), DateTime.Now.AddYears(-2))),
-                    _identityFactory
-                },
-                null) as NaturalGasSellingPrice;
-
-            _repository = Substitute.For<ISepsRepository>();
-            _repository
-                .GetAll(Arg.Any<BaseSpecification<NaturalGasSellingPrice>>())
-                .Returns(new List<NaturalGasSellingPrice> { _naturalGasSellingPrice });
-            _repository
-                .GetLatest<NaturalGasSellingPrice>()
-                .Returns(_naturalGasSellingPrice);
-
-            var cogenerationTariff = Activator.CreateInstance(
-                    typeof(CogenerationTariff),
-                    BindingFlags.Instance | BindingFlags.NonPublic,
-                    null,
-                    new object[]
-                    {
-                        _naturalGasSellingPrice,
-                        100,
-                        500,
-                        10M,
-                        10M,
-                        Guid.NewGuid(),
-                        new MonthlyPeriodFactory(DateTime.Now.AddMonths(-4), _lastPeriod),
-                        _identityFactory
-                    },
-                    null) as CogenerationTariff;
-            _repository
-                .GetAll(Arg.Any<BaseSpecification<CogenerationTariff>>())
-                .Returns(new List<CogenerationTariff> { cogenerationTariff });
+            var repository = Substitute.For<IRepository>();
+            repository
+                .GetSingle(Arg.Any<ActiveSpecification<NaturalGasSellingPrice>>())
+                .Returns(activeNgsp);
+            repository
+                .GetAll(Arg.Any<NgspCogenerationTariffSpecification>())
+                .Returns(new List<CogenerationTariff> { activeCogenerationTariff });
+            repository
+                .GetAll(Arg.Any<NaturalGasSellingPricesInAYearSpecification>())
+                .Returns(new List<NaturalGasSellingPrice> { activeNgsp });
 
             _unitOfWork = Substitute.For<IUnitOfWork>();
 
+            var cogenerationParameterService = Substitute.For<ICogenerationParameterService>();
+            cogenerationParameterService
+                .GetFrom(Arg.Any<IEnumerable<NaturalGasSellingPrice>>(), Arg.Any<NaturalGasSellingPrice>())
+                .Returns(1M);
+
             _calculateNaturalGas = new CalculateNaturalGasCommandHandler(
-                _cogenerationParameterService, _repository, _unitOfWork, _identityFactory);
+                cogenerationParameterService, repository, _unitOfWork, Substitute.For<IIdentityFactory<Guid>>());
         }
 
         public void ExecutesProperly()
         {
+            var lastPeriod = DateTime.Now.AddMonths(-3);
+
             var calculateNaturalGasCommand = new CalculateNaturalGasCommand
             {
                 Amount = 100M,
-                Month = _lastPeriod.Month,
+                Month = lastPeriod.Month,
                 Remark = nameof(CalculateNaturalGasCommand),
-                Year = _lastPeriod.Year,
+                Year = lastPeriod.Year,
             };
 
             using (var monitoredEvent = _calculateNaturalGas.Monitor())

@@ -1,6 +1,8 @@
 ﻿using Acme.Domain.Base.Entity;
 using Acme.Domain.Base.Factory;
+using Acme.Seps.Domain.Base.Infrastructure;
 using Acme.Seps.Domain.Base.ValueType;
+using Light.GuardClauses;
 using System;
 
 namespace Acme.Seps.Domain.Base.Entity
@@ -15,7 +17,12 @@ namespace Acme.Seps.Domain.Base.Entity
             : base(identityFactory) =>
             Period = new Period(activeFrom);
 
-        public void Archive(DateTimeOffset activeTill) =>
+        public void Archive(DateTimeOffset activeTill)
+        {
+            Period.ActiveTill.HasValue.MustBe(false, (_, __) =>
+                new DomainException(SepsBaseMessage.ArchivingArchivedEntityException));
+
             Period = Period.SetActiveTill(activeTill);
+        }
     }
 }

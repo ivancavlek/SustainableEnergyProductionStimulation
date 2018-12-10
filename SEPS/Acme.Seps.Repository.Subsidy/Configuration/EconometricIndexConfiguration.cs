@@ -16,17 +16,27 @@ namespace Acme.Seps.Repository.Subsidy.Configuration
 
         public override void Configure(EntityTypeBuilder<EconometricIndex> builder)
         {
-            builder.Property<string>(_discriminator).HasMaxLength(50);
-            builder.Property(ppy => ppy.Remark).HasMaxLength(250).IsRequired();
+            ConfigureProperties(builder);
+            ConfigureTables(builder);
 
+            base.Configure(builder);
+        }
+
+        private void ConfigureTables(EntityTypeBuilder<EconometricIndex> builder)
+        {
             builder
                 .ToTable("EconometricIndexes")
                 .HasDiscriminator<string>(_discriminator)
                 .HasValue<ConsumerPriceIndex>(nameof(ConsumerPriceIndex))
                 .HasValue<NaturalGasSellingPrice>(nameof(NaturalGasSellingPrice))
-                .HasValue<MonthlyAverageElectricEnergyProductionPrice>(nameof(MonthlyAverageElectricEnergyProductionPrice));
+                .HasValue<MonthlyAverageElectricEnergyProductionPrice>(
+                    nameof(MonthlyAverageElectricEnergyProductionPrice));
+        }
 
-            base.Configure(builder);
+        private void ConfigureProperties(EntityTypeBuilder<EconometricIndex> builder)
+        {
+            builder.Property<string>(_discriminator).HasMaxLength(50);
+            builder.Property(ppy => ppy.Remark).HasMaxLength(250).IsRequired();
         }
     }
 }

@@ -24,8 +24,8 @@ namespace Acme.Seps.Domain.Subsidy.QueryHandler
             _connection
                 .Query<ActiveEconometricIndexesQueryResult>(
                     "SELECT " +
-                        "FORMAT(eix.ValidFrom, 'd') AS ValidFrom, " +
-                        "FORMAT(eix.ValidTill, 'd') AS ValidTill, " +
+                        "FORMAT(eix.ActiveFrom, 'd') AS ActiveFrom, " +
+                        "FORMAT(eix.ActiveTill, 'd') AS ActiveTill, " +
                         "eix.Amount, " +
                         "eix.Remark " +
                     "FROM parameter.EconometricIndexes AS eix " +

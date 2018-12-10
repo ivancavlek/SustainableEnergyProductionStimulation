@@ -24,8 +24,8 @@ namespace Acme.Seps.Domain.Subsidy.QueryHandler
             _connection
                 .Query<ActiveTariffsQueryResult>(
                     "SELECT " +
-                    "FORMAT(trf.ValidFrom, 'd') AS ValidFrom, " +
-                    "FORMAT(trf.ValidTill, 'd') AS ValidTill, " +
+                    "FORMAT(trf.ActiveFrom, 'd') AS ActiveFrom, " +
+                    "FORMAT(trf.ActiveTill, 'd') AS ActiveTill, " +
                     "trf.LowerProductionLimit, " +
                     "trf.UpperProductionLimit, " +
                     "trf.LowerRate, " +

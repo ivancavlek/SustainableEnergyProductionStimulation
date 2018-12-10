@@ -15,15 +15,24 @@ namespace Acme.Seps.Repository.Subsidy.Configuration
 
         public override void Configure(EntityTypeBuilder<Tariff> builder)
         {
-            builder.Property<string>(_discriminator).HasMaxLength(50);
+            ConfigureProperties(builder);
+            ConfigureTables(builder);
 
+            base.Configure(builder);
+        }
+
+        private void ConfigureProperties(EntityTypeBuilder<Tariff> builder)
+        {
+            builder.Property<string>(_discriminator).HasMaxLength(50);
+        }
+
+        private void ConfigureTables(EntityTypeBuilder<Tariff> builder)
+        {
             builder
                 .ToTable("Tariffs")
                 .HasDiscriminator<string>(_discriminator)
                 .HasValue<CogenerationTariff>(nameof(CogenerationTariff))
                 .HasValue<RenewableEnergySourceTariff>(nameof(RenewableEnergySourceTariff));
-
-            base.Configure(builder);
         }
     }
 }

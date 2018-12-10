@@ -10,10 +10,15 @@ namespace Acme.Seps.Repository.Subsidy.Configuration
         {
             //builder.Property<byte[]>("RowVersion").IsRowVersion();
 
+            ConfigureValueTypes(builder);
+        }
+
+        private static void ConfigureValueTypes(EntityTypeBuilder<TParameterEntity> builder)
+        {
             builder.OwnsOne(vte => vte.Period, vte =>
             {
-                vte.Property(ppy => ppy.ActiveFrom).HasColumnName("ValidFrom").IsRequired();
-                vte.Property(ppy => ppy.ActiveTill).HasColumnName("ValidTill");
+                vte.Property(ppy => ppy.ActiveFrom).HasColumnName("ActiveFrom").IsRequired();
+                vte.Property(ppy => ppy.ActiveTill).HasColumnName("ActiveTill");
             });
         }
     }

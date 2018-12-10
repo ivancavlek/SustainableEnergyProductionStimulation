@@ -1,9 +1,11 @@
 ﻿using Acme.Domain.Base.Factory;
+using Acme.Seps.Domain.Base.Utility;
 using Acme.Seps.Domain.Subsidy.Entity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Acme.Seps.Repository.Subsidy.Configuration
 {
@@ -25,33 +27,50 @@ namespace Acme.Seps.Repository.Subsidy.Configuration
         public override void Configure(EntityTypeBuilder<CogenerationTariff> builder)
         {
             base.Configure(builder);
+            SeedData(builder);
+        }
 
-            var random = new Random();
+        private void SeedData(EntityTypeBuilder<CogenerationTariff> builder)
+        {
+            var id = _identityFactory.CreateIdentity();
 
-            foreach (var projectId in _projectIds)
+            builder.HasData(new
             {
-                var id = _identityFactory.CreateIdentity();
+                Id = id,
+                LowerRate = 0M,
+                HigherRate = 0.36M,
+                TarrifType = nameof(CogenerationTariff),
+                ProjectTypeId = _projectIds.ElementAt(10),
+                NaturalGasSellingPriceId = _naturalGasSellingPriceId
+            });
+            builder.OwnsOne(vte => vte.Period, vte =>
+            {
+                vte.HasData(new
+                {
+                    TariffId = id,
+                    ActiveFrom = SepsVersion.InitialDate()
+                });
+            });
 
-                builder.HasData(new
+            id = _identityFactory.CreateIdentity();
+
+            builder.HasData(new
+            {
+                Id = id,
+                LowerRate = 0M,
+                HigherRate = 0.50M,
+                TarrifType = nameof(CogenerationTariff),
+                ProjectTypeId = _projectIds.ElementAt(11),
+                NaturalGasSellingPriceId = _naturalGasSellingPriceId
+            });
+            builder.OwnsOne(vte => vte.Period, vte =>
+            {
+                vte.HasData(new
                 {
-                    Id = id,
-                    LowerProductionLimit = random.Next(250, 500),
-                    UpperProductionLimit = random.Next(650, 1000),
-                    LowerRate = new decimal(random.Next(250, 500)),
-                    HigherRate = new decimal(random.Next(750, 900)),
-                    TarrifType = nameof(CogenerationTariff),
-                    ProjectTypeId = projectId,
-                    NaturalGasSellingPriceId = _naturalGasSellingPriceId
+                    TariffId = id,
+                    ActiveFrom = SepsVersion.InitialDate()
                 });
-                builder.OwnsOne(vte => vte.Period, vte =>
-                {
-                    vte.HasData(new
-                    {
-                        TariffId = id,
-                        ValidFrom = new DateTimeOffset(new DateTime(2007, 07, 01))
-                    });
-                });
-            }
+            });
         }
     }
 }

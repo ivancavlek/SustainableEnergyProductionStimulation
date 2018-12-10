@@ -1,5 +1,4 @@
 ﻿using Acme.Seps.Domain.Base.Entity;
-using System;
 using System.Collections.Generic;
 
 namespace Acme.Seps.Domain.Subsidy.Entity
@@ -11,9 +10,7 @@ namespace Acme.Seps.Domain.Subsidy.Entity
         public string ContractLabel { get; private set; }
         public bool ConsumesFuel { get; private set; }
         public ProjectTypeGroup ProjectTypeGroup { get; private set; }
-        //public ICollection<ProjectType> SubordinateProjectTypes { get; private set; }
         public ICollection<Tariff> Tariffs { get; private set; }
-        public Guid? SuperiorProjectTypeId { get; private set; }
         public ICollection<ProjectType> SubordinateProjectTypes { get; private set; }
 
         protected ProjectType() { }

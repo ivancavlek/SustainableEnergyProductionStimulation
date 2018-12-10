@@ -21,28 +21,40 @@ namespace Acme.Seps.Repository.Subsidy.Configuration
         public override void Configure(EntityTypeBuilder<ProjectType> builder)
         {
             base.Configure(builder);
+            ConfigureProperties(builder);
+            ConfigureRelationships(builder);
+            SeedData(builder);
+        }
 
+        private static void ConfigureProperties(EntityTypeBuilder<ProjectType> builder)
+        {
             builder.Property(ppy => ppy.Code).IsRequired().HasMaxLength(10);
             builder.Property(ppy => ppy.ContractLabel).IsRequired().HasMaxLength(10);
             builder.Property(ppy => ppy.Name).IsRequired().HasMaxLength(100);
             builder.Property(ppy => ppy.ProjectTypeGroup).IsRequired().HasMaxLength(25);
-            builder.Property(ppy => ppy.Code).IsRequired().HasMaxLength(10);
+            builder.Property(ppy => ppy.ProjectTypeGroup)
+                .HasConversion(
+                    dbe => dbe.ToString(),
+                    apn => (ProjectTypeGroup)Enum.Parse(typeof(ProjectTypeGroup), apn));
+            builder.Property<Guid?>("SuperiorProjectTypeId");
+        }
 
+        private static void ConfigureRelationships(EntityTypeBuilder<ProjectType> builder)
+        {
             builder
                 .HasMany(ppy => ppy.SubordinateProjectTypes)
                 .WithOne()
-                .HasForeignKey(ppy => ppy.SuperiorProjectTypeId);
+                .HasForeignKey("SuperiorProjectTypeId");
+            //.OnDelete(DeleteBehavior.Cascade);
 
             builder
                 .HasMany(ppy => ppy.Tariffs)
                 .WithOne()
                 .HasForeignKey(ppy => ppy.ProjectTypeId);
+        }
 
-            builder.Property(ppy => ppy.ProjectTypeGroup)
-                .HasConversion(
-                    dbe => dbe.ToString(), // humanizer, repository dictionary int, Period za initial period te PDV
-                    apn => (ProjectTypeGroup)Enum.Parse(typeof(ProjectTypeGroup), apn));
-
+        private void SeedData(EntityTypeBuilder<ProjectType> builder)
+        {
             builder.HasData(new
             {
                 Id = _ids.ElementAt(0),
@@ -57,7 +69,7 @@ namespace Acme.Seps.Repository.Subsidy.Configuration
                 vte.HasData(new
                 {
                     ProjectTypeId = _ids.ElementAt(0),
-                    ValidFrom = SepsVersion.InitialDate()
+                    ActiveFrom = SepsVersion.InitialDate()
                 });
             });
 
@@ -76,7 +88,7 @@ namespace Acme.Seps.Repository.Subsidy.Configuration
                 vte.HasData(new
                 {
                     ProjectTypeId = _ids.ElementAt(1),
-                    ValidFrom = SepsVersion.InitialDate()
+                    ActiveFrom = SepsVersion.InitialDate()
                 });
             });
 
@@ -95,7 +107,7 @@ namespace Acme.Seps.Repository.Subsidy.Configuration
                 vte.HasData(new
                 {
                     ProjectTypeId = _ids.ElementAt(2),
-                    ValidFrom = SepsVersion.InitialDate()
+                    ActiveFrom = SepsVersion.InitialDate()
                 });
             });
 
@@ -114,7 +126,7 @@ namespace Acme.Seps.Repository.Subsidy.Configuration
                 vte.HasData(new
                 {
                     ProjectTypeId = _ids.ElementAt(3),
-                    ValidFrom = SepsVersion.InitialDate()
+                    ActiveFrom = SepsVersion.InitialDate()
                 });
             });
 
@@ -132,7 +144,7 @@ namespace Acme.Seps.Repository.Subsidy.Configuration
                 vte.HasData(new
                 {
                     ProjectTypeId = _ids.ElementAt(4),
-                    ValidFrom = SepsVersion.InitialDate()
+                    ActiveFrom = SepsVersion.InitialDate()
                 });
             });
 
@@ -150,7 +162,7 @@ namespace Acme.Seps.Repository.Subsidy.Configuration
                 vte.HasData(new
                 {
                     ProjectTypeId = _ids.ElementAt(5),
-                    ValidFrom = SepsVersion.InitialDate()
+                    ActiveFrom = SepsVersion.InitialDate()
                 });
             });
 
@@ -168,7 +180,7 @@ namespace Acme.Seps.Repository.Subsidy.Configuration
                 vte.HasData(new
                 {
                     ProjectTypeId = _ids.ElementAt(6),
-                    ValidFrom = SepsVersion.InitialDate()
+                    ActiveFrom = SepsVersion.InitialDate()
                 });
             });
 
@@ -187,7 +199,7 @@ namespace Acme.Seps.Repository.Subsidy.Configuration
                 vte.HasData(new
                 {
                     ProjectTypeId = _ids.ElementAt(7),
-                    ValidFrom = SepsVersion.InitialDate()
+                    ActiveFrom = SepsVersion.InitialDate()
                 });
             });
 
@@ -206,32 +218,32 @@ namespace Acme.Seps.Repository.Subsidy.Configuration
                 vte.HasData(new
                 {
                     ProjectTypeId = _ids.ElementAt(8),
-                    ValidFrom = SepsVersion.InitialDate()
+                    ActiveFrom = SepsVersion.InitialDate()
                 });
             });
 
             builder.HasData(new
             {
                 Id = _ids.ElementAt(9),
-                Name = "Small cogeneration",
+                Name = "Hydroelectric power plant",
                 Code = "6.",
-                ContractLabel = "COGEN",
+                ContractLabel = "HE",
                 ConsumesFuel = false,
-                ProjectTypeGroup = ProjectTypeGroup.Cogeneration
+                ProjectTypeGroup = ProjectTypeGroup.RenewableEnergy
             });
             builder.OwnsOne(vte => vte.Period, vte =>
             {
                 vte.HasData(new
                 {
                     ProjectTypeId = _ids.ElementAt(9),
-                    ValidFrom = SepsVersion.InitialDate()
+                    ActiveFrom = SepsVersion.InitialDate()
                 });
             });
 
             builder.HasData(new
             {
                 Id = _ids.ElementAt(10),
-                Name = "Large cogeneration",
+                Name = "Small cogeneration",
                 Code = "7.",
                 ContractLabel = "COGEN",
                 ConsumesFuel = false,
@@ -242,7 +254,25 @@ namespace Acme.Seps.Repository.Subsidy.Configuration
                 vte.HasData(new
                 {
                     ProjectTypeId = _ids.ElementAt(10),
-                    ValidFrom = SepsVersion.InitialDate()
+                    ActiveFrom = SepsVersion.InitialDate()
+                });
+            });
+
+            builder.HasData(new
+            {
+                Id = _ids.ElementAt(11),
+                Name = "Large cogeneration",
+                Code = "8.",
+                ContractLabel = "COGEN",
+                ConsumesFuel = false,
+                ProjectTypeGroup = ProjectTypeGroup.Cogeneration
+            });
+            builder.OwnsOne(vte => vte.Period, vte =>
+            {
+                vte.HasData(new
+                {
+                    ProjectTypeId = _ids.ElementAt(11),
+                    ActiveFrom = SepsVersion.InitialDate()
                 });
             });
         }

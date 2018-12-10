@@ -1,4 +1,5 @@
-﻿using Acme.Seps.Domain.Subsidy.Entity;
+﻿using Acme.Seps.Domain.Base.Utility;
+using Acme.Seps.Domain.Subsidy.Entity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using System;
@@ -19,12 +20,16 @@ namespace Acme.Seps.Repository.Subsidy.Configuration
         public override void Configure(EntityTypeBuilder<NaturalGasSellingPrice> builder)
         {
             base.Configure(builder);
+            SeedData(builder);
+        }
 
+        private void SeedData(EntityTypeBuilder<NaturalGasSellingPrice> builder)
+        {
             builder.HasData(
                 new
                 {
                     Id = _id,
-                    Amount = 4M,
+                    Amount = 1.07M,
                     Remark = "Initial value",
                     EconometricIndexType = nameof(NaturalGasSellingPrice)
                 });
@@ -33,7 +38,7 @@ namespace Acme.Seps.Repository.Subsidy.Configuration
                 vte.HasData(new
                 {
                     EconometricIndexId = _id,
-                    ValidFrom = new DateTimeOffset(new DateTime(2007, 07, 01)),
+                    ActiveFrom = SepsVersion.InitialDate(),
                 });
             });
         }

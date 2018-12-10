@@ -1,9 +1,11 @@
 ﻿using Acme.Domain.Base.Factory;
+using Acme.Seps.Domain.Base.Utility;
 using Acme.Seps.Domain.Subsidy.Entity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Acme.Seps.Repository.Subsidy.Configuration
 {
@@ -26,32 +28,195 @@ namespace Acme.Seps.Repository.Subsidy.Configuration
         public override void Configure(EntityTypeBuilder<RenewableEnergySourceTariff> builder)
         {
             base.Configure(builder);
+            SeedData(builder);
+        }
 
-            foreach (var projectId in _projectIds)
+        private void SeedData(EntityTypeBuilder<RenewableEnergySourceTariff> builder)
+        {
+            var id = _identityFactory.CreateIdentity();
+
+            builder.HasData(new
             {
-                var id = _identityFactory.CreateIdentity();
+                Id = id,
+                LowerRate = 0M,
+                HigherRate = 3.40M,
+                ProjectTypeId = _projectIds.ElementAt(1),
+                TarrifType = nameof(RenewableEnergySourceTariff),
+                ConsumerPriceIndexId = _cpiId
+            });
+            builder.OwnsOne(vte => vte.Period, vte =>
+            {
+                vte.HasData(new
+                {
+                    TariffId = id,
+                    ActiveFrom = SepsVersion.InitialDate()
+                });
+            });
 
-                builder.HasData(new
+            id = _identityFactory.CreateIdentity();
+
+            builder.HasData(new
+            {
+                Id = id,
+                LowerRate = 0M,
+                HigherRate = 3.00M,
+                ProjectTypeId = _projectIds.ElementAt(2),
+                TarrifType = nameof(RenewableEnergySourceTariff),
+                ConsumerPriceIndexId = _cpiId
+            });
+            builder.OwnsOne(vte => vte.Period, vte =>
+            {
+                vte.HasData(new
                 {
-                    Id = id,
-                    LowerProductionLimit = 100,
-                    UpperProductionLimit = 200,
-                    LowerRate = 10M,
-                    HigherRate = 20M,
-                    ProjectTypeId = projectId,
-                    TarrifType = nameof(RenewableEnergySourceTariff),
-                    ConsumerPriceIndexId = _cpiId
+                    TariffId = id,
+                    ActiveFrom = SepsVersion.InitialDate()
                 });
-                builder.OwnsOne(vte => vte.Period, vte =>
+            });
+
+            id = _identityFactory.CreateIdentity();
+
+            builder.HasData(new
+            {
+                Id = id,
+                LowerRate = 0M,
+                HigherRate = 0.69M,
+                ProjectTypeId = _projectIds.ElementAt(4),
+                TarrifType = nameof(RenewableEnergySourceTariff),
+                ConsumerPriceIndexId = _cpiId
+            });
+            builder.OwnsOne(vte => vte.Period, vte =>
+            {
+                vte.HasData(new
                 {
-                    vte.HasData(new
-                    {
-                        TariffId = id,
-                        ValidFrom = new DateTimeOffset(new DateTime(2016, 01, 01)),
-                        ValidTill = new DateTimeOffset(new DateTime(2017, 01, 01))
-                    });
+                    TariffId = id,
+                    ActiveFrom = SepsVersion.InitialDate()
                 });
-            }
+            });
+
+            id = _identityFactory.CreateIdentity();
+
+            builder.HasData(new
+            {
+                Id = id,
+                LowerRate = 0M,
+                HigherRate = 0.64M,
+                ProjectTypeId = _projectIds.ElementAt(5),
+                TarrifType = nameof(RenewableEnergySourceTariff),
+                ConsumerPriceIndexId = _cpiId
+            });
+            builder.OwnsOne(vte => vte.Period, vte =>
+            {
+                vte.HasData(new
+                {
+                    TariffId = id,
+                    ActiveFrom = SepsVersion.InitialDate()
+                });
+            });
+
+            id = _identityFactory.CreateIdentity();
+
+            builder.HasData(new
+            {
+                Id = id,
+                LowerRate = 0M,
+                HigherRate = 1.20M,
+                ProjectTypeId = _projectIds.ElementAt(7),
+                TarrifType = nameof(RenewableEnergySourceTariff),
+                ConsumerPriceIndexId = _cpiId
+            });
+            builder.OwnsOne(vte => vte.Period, vte =>
+            {
+                vte.HasData(new
+                {
+                    TariffId = id,
+                    ActiveFrom = SepsVersion.InitialDate()
+                });
+            });
+
+            id = _identityFactory.CreateIdentity();
+
+            builder.HasData(new
+            {
+                Id = id,
+                LowerRate = 0M,
+                HigherRate = 0.95M,
+                ProjectTypeId = _projectIds.ElementAt(8),
+                TarrifType = nameof(RenewableEnergySourceTariff),
+                ConsumerPriceIndexId = _cpiId
+            });
+            builder.OwnsOne(vte => vte.Period, vte =>
+            {
+                vte.HasData(new
+                {
+                    TariffId = id,
+                    ActiveFrom = SepsVersion.InitialDate()
+                });
+            });
+
+            id = _identityFactory.CreateIdentity();
+
+            builder.HasData(new
+            {
+                Id = id,
+                LowerProductionLimit = 0,
+                UpperProductionLimit = 5000,
+                LowerRate = 0M,
+                HigherRate = 0.69M,
+                ProjectTypeId = _projectIds.ElementAt(9),
+                TarrifType = nameof(RenewableEnergySourceTariff),
+                ConsumerPriceIndexId = _cpiId
+            });
+            builder.OwnsOne(vte => vte.Period, vte =>
+            {
+                vte.HasData(new
+                {
+                    TariffId = id,
+                    ActiveFrom = SepsVersion.InitialDate()
+                });
+            });
+
+            id = _identityFactory.CreateIdentity();
+
+            builder.HasData(new
+            {
+                Id = id,
+                LowerProductionLimit = 5000,
+                UpperProductionLimit = 15000,
+                LowerRate = 0M,
+                HigherRate = 0.55M,
+                ProjectTypeId = _projectIds.ElementAt(9),
+                TarrifType = nameof(RenewableEnergySourceTariff),
+                ConsumerPriceIndexId = _cpiId
+            });
+            builder.OwnsOne(vte => vte.Period, vte =>
+            {
+                vte.HasData(new
+                {
+                    TariffId = id,
+                    ActiveFrom = SepsVersion.InitialDate()
+                });
+            });
+
+            id = _identityFactory.CreateIdentity();
+
+            builder.HasData(new
+            {
+                Id = id,
+                LowerProductionLimit = 15000,
+                LowerRate = 0M,
+                HigherRate = 0.42M,
+                ProjectTypeId = _projectIds.ElementAt(9),
+                TarrifType = nameof(RenewableEnergySourceTariff),
+                ConsumerPriceIndexId = _cpiId
+            });
+            builder.OwnsOne(vte => vte.Period, vte =>
+            {
+                vte.HasData(new
+                {
+                    TariffId = id,
+                    ActiveFrom = SepsVersion.InitialDate()
+                });
+            });
         }
     }
 }

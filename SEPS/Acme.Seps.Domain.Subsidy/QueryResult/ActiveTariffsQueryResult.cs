@@ -2,8 +2,8 @@
 {
     public class ActiveTariffsQueryResult
     {
-        public string ValidFrom { get; set; }
-        public string ValidTill { get; set; }
+        public string ActiveFrom { get; set; }
+        public string ActiveTill { get; set; }
         public int LowerProductionLimit { get; set; }
         public int UpperProductionLimit { get; set; }
         public decimal LowerRate { get; set; }

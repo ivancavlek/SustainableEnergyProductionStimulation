@@ -18,7 +18,7 @@ namespace Acme.Seps.Domain.Base.ValueType
         private Period(DateTimeOffset activeFrom, DateTimeOffset activeTill)
         {
             activeTill.MustBeGreaterThanOrEqualTo(activeFrom, (_, __) =>
-                new DomainException(SepsBaseMessage.ValidTillGreaterThanValidFromException));
+                new DomainException(SepsBaseMessage.ActiveTillGreaterThanActiveFromException));
 
             ActiveFrom = activeFrom;
             ActiveTill = activeTill;

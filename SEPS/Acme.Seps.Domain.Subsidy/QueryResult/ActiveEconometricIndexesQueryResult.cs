@@ -2,8 +2,8 @@
 {
     public class ActiveEconometricIndexesQueryResult
     {
-        public string ValidFrom { get; set; }
-        public string ValidTill { get; set; }
+        public string ActiveFrom { get; set; }
+        public string ActiveTill { get; set; }
         public decimal Amount { get; set; }
         public string Remark { get; set; }
     }

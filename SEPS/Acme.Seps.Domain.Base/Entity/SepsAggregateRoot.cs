@@ -1,6 +1,7 @@
 ﻿using Acme.Domain.Base.Entity;
 using Acme.Domain.Base.Factory;
 using Acme.Seps.Domain.Base.Infrastructure;
+using Acme.Seps.Domain.Base.Utility;
 using Acme.Seps.Domain.Base.ValueType;
 using Light.GuardClauses;
 using System;
@@ -26,6 +27,6 @@ namespace Acme.Seps.Domain.Base.Entity
         }
 
         public bool IsActive() =>
-            !Period.ActiveTill.HasValue && Period.ActiveFrom >= new DateTime(2007, 7, 1);
+            !Period.ActiveTill.HasValue && Period.ActiveFrom >= SepsVersion.InitialDate();
     }
 }

@@ -2,6 +2,7 @@
 using Acme.Domain.Base.Factory;
 using Acme.Seps.Domain.Base.Entity;
 using Acme.Seps.Domain.Base.Infrastructure;
+using Acme.Seps.Domain.Base.Utility;
 using FluentAssertions;
 using NSubstitute;
 using System;
@@ -57,9 +58,9 @@ namespace Acme.Seps.Domain.Base.Test.Unit.Entity
 
         public void EntityWithActiveTillDateIsInActive()
         {
-            var dateAfter20070101 = new DateTime(2008, 01, 01);
+            var dateAfterInitialDate = SepsVersion.InitialDate().AddYears(1);
 
-            var result = new DummySepsBaseAggregate(dateAfter20070101, _identityFactory);
+            var result = new DummySepsBaseAggregate(dateAfterInitialDate, _identityFactory);
             result.Archive(new DateTime(2019, 01, 01));
 
             result.IsActive().Should().BeFalse();
@@ -67,18 +68,18 @@ namespace Acme.Seps.Domain.Base.Test.Unit.Entity
 
         public void EntityWithActiveFromDateBefore20170101IsInactive()
         {
-            var dateBefore20070101 = new DateTime(2006, 01, 01);
+            var dateBeforeInitialDate = SepsVersion.InitialDate().AddYears(-1);
 
-            var result = new DummySepsBaseAggregate(dateBefore20070101, _identityFactory);
+            var result = new DummySepsBaseAggregate(dateBeforeInitialDate, _identityFactory);
 
             result.IsActive().Should().BeFalse();
         }
 
         public void EntityIsActive()
         {
-            var dateAfter20070101 = new DateTime(2008, 01, 01);
+            var dateAfterInitialDate = SepsVersion.InitialDate().AddYears(1);
 
-            var result = new DummySepsBaseAggregate(dateAfter20070101, _identityFactory);
+            var result = new DummySepsBaseAggregate(dateAfterInitialDate, _identityFactory);
 
             result.IsActive().Should().BeTrue();
         }

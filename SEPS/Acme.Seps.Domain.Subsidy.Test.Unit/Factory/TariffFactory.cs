@@ -8,13 +8,11 @@ namespace Acme.Seps.Domain.Subsidy.Test.Unit.Factory
 {
     internal class TariffFactory<TTariff> : ITariffFactory<TTariff> where TTariff : Tariff
     {
-        private readonly DateTimeOffset _activeFrom;
         private readonly EconometricIndex _econometricIndex;
 
-        public TariffFactory(EconometricIndex econometricIndex, DateTimeOffset activeFrom)
+        public TariffFactory(EconometricIndex econometricIndex)
         {
             _econometricIndex = econometricIndex ?? throw new ArgumentNullException(nameof(econometricIndex));
-            _activeFrom = activeFrom;
         }
 
         TTariff ITariffFactory<TTariff>.Create() =>
@@ -30,7 +28,6 @@ namespace Acme.Seps.Domain.Subsidy.Test.Unit.Factory
                     10M,
                     10M,
                     Guid.NewGuid(),
-                    _activeFrom,
                     Substitute.For<IIdentityFactory<Guid>>() },
                 null) as TTariff;
     }

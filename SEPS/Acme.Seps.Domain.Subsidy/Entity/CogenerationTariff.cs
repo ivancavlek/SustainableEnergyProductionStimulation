@@ -1,4 +1,5 @@
 ﻿using Acme.Domain.Base.Factory;
+using Acme.Seps.Domain.Base.Infrastructure;
 using Acme.Seps.Domain.Subsidy.DomainService;
 using Acme.Seps.Domain.Subsidy.Infrastructure;
 using Light.GuardClauses;
@@ -20,14 +21,13 @@ namespace Acme.Seps.Domain.Subsidy.Entity
             decimal lowerRate,
             decimal higherRate,
             Guid projectTypeId,
-            DateTimeOffset activeFrom,
             IIdentityFactory<Guid> identityFactory)
             : base(lowerProductionLimit,
                   upperProductionLimit,
                   lowerRate,
                   higherRate,
                   projectTypeId,
-                  activeFrom,
+                  naturalGasSellingPrice.Period.ActiveFrom,
                   identityFactory) =>
             NaturalGasSellingPrice = naturalGasSellingPrice;
 
@@ -39,6 +39,7 @@ namespace Acme.Seps.Domain.Subsidy.Entity
         {
             cogenerationParameterService.MustNotBeNull(message: SubsidyMessages.CogenerationParameterServiceException);
             naturalGasSellingPrice.MustNotBeNull(message: SubsidyMessages.NaturalGasSellingPriceNotSetException);
+            naturalGasSellingPrice.IsActive().MustBe(true, message: SepsBaseMessage.InactiveException);
 
             var cogenerationParameter = CalculateCogenerationParameter(
                 cogenerationParameterService, yearsNaturalGasSellingPrices, naturalGasSellingPrice);
@@ -53,7 +54,6 @@ namespace Acme.Seps.Domain.Subsidy.Entity
                 cogenerationParameter * LowerRate,
                 cogenerationParameter * HigherRate,
                 ProjectTypeId,
-                naturalGasSellingPrice.Period.ActiveFrom,
                 identityFactory
             );
         }

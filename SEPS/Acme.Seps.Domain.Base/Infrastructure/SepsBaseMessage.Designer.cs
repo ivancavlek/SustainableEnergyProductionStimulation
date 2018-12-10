@@ -61,11 +61,20 @@ namespace Acme.Seps.Domain.Base.Infrastructure {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Only active entities can be archived..
+        ///   Looks up a localized string similar to Only active entities can be archived.
         /// </summary>
         public static string ArchivingArchivedEntityException {
             get {
                 return ResourceManager.GetString("ArchivingArchivedEntityException", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Entity must be active.
+        /// </summary>
+        public static string InactiveException {
+            get {
+                return ResourceManager.GetString("InactiveException", resourceCulture);
             }
         }
         

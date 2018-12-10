@@ -1,5 +1,5 @@
 ﻿using Acme.Domain.Base.Factory;
-using Acme.Seps.Domain.Base.Utility;
+using Acme.Seps.Domain.Base.Infrastructure;
 using Acme.Seps.Domain.Subsidy.Entity;
 using Acme.Seps.Domain.Subsidy.Infrastructure;
 using Acme.Seps.Domain.Subsidy.Test.Unit.Factory;
@@ -18,13 +18,12 @@ namespace Acme.Seps.Domain.Subsidy.Test.Unit.Entity
         public RenewableEnergySourceTariffTests()
         {
             _identityFactory = Substitute.For<IIdentityFactory<Guid>>();
+            _cpiFactory = new EconometricIndexFactory<ConsumerPriceIndex>(DateTime.Now.AddYears(-3));
         }
 
         public void ConsumerPriceIndexMustBeSet()
         {
-            _cpiFactory = new EconometricIndexFactory<ConsumerPriceIndex>(DateTime.Now.AddYears(-3));
-            _resFactory = new TariffFactory<RenewableEnergySourceTariff>(
-                _cpiFactory.Create(), DateTime.Now.AddYears(-4));
+            _resFactory = new TariffFactory<RenewableEnergySourceTariff>(_cpiFactory.Create());
 
             Action action = () => _resFactory.Create().CreateNewWith(null, _identityFactory);
 
@@ -34,11 +33,22 @@ namespace Acme.Seps.Domain.Subsidy.Test.Unit.Entity
                 .WithMessage(SubsidyMessages.ConsumerPriceIndexNotSetException);
         }
 
+        public void ConsumerPriceIndexMustBeActive()
+        {
+            var cpi = _cpiFactory.Create();
+            cpi.Archive(DateTime.Now);
+
+            Action action = () => _resFactory.Create().CreateNewWith(cpi, _identityFactory);
+
+            action
+                .Should()
+                .Throw<Exception>()
+                .WithMessage(SepsBaseMessage.InactiveException);
+        }
+
         public void CreatesProperly()
         {
-            DateTimeOffset activeFrom = DateTimeOffset.Now.ToFirstMonthOfTheYear().AddYears(-3);
-            _cpiFactory = new EconometricIndexFactory<ConsumerPriceIndex>(activeFrom);
-            _resFactory = new TariffFactory<RenewableEnergySourceTariff>(_cpiFactory.Create(), activeFrom);
+            _resFactory = new TariffFactory<RenewableEnergySourceTariff>(_cpiFactory.Create());
             var activeRenewableEnergySourceTariff = _resFactory.Create();
 
             _cpiFactory = new EconometricIndexFactory<ConsumerPriceIndex>(DateTime.Now.AddYears(-2));

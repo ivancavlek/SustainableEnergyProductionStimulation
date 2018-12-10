@@ -1,4 +1,5 @@
 ﻿using Acme.Domain.Base.Factory;
+using Acme.Seps.Domain.Base.Infrastructure;
 using Acme.Seps.Domain.Base.Utility;
 using Acme.Seps.Domain.Subsidy.DomainService;
 using Acme.Seps.Domain.Subsidy.Entity;
@@ -29,7 +30,7 @@ namespace Acme.Seps.Domain.Subsidy.Test.Unit.Entity
             IEconometricIndexFactory<NaturalGasSellingPrice> ngspFactory =
                 new EconometricIndexFactory<NaturalGasSellingPrice>(cgnActiveFrom);
             ITariffFactory<CogenerationTariff> cogenerationFactory =
-                new TariffFactory<CogenerationTariff>(ngspFactory.Create(), cgnActiveFrom);
+                new TariffFactory<CogenerationTariff>(ngspFactory.Create());
             _activeCgn = cogenerationFactory.Create();
 
             DateTimeOffset ngspActiveFrom = DateTimeOffset.Now.ToFirstDayOfTheMonth().AddMonths(-4);
@@ -57,6 +58,22 @@ namespace Acme.Seps.Domain.Subsidy.Test.Unit.Entity
                 .Should()
                 .ThrowExactly<ArgumentNullException>()
                 .WithMessage(SubsidyMessages.NaturalGasSellingPriceNotSetException);
+        }
+
+        public void NaturalGasSellingPriceMustBeActive()
+        {
+            _newNaturalGasSellingPrice.Archive(DateTime.Now);
+
+            Action action = () => _activeCgn.CreateNewWith(
+                _yearsNaturalGasSellingPrices,
+                _cogenerationParameterService,
+                _newNaturalGasSellingPrice,
+                _identityFactory);
+
+            action
+                .Should()
+                .Throw<Exception>()
+                .WithMessage(SepsBaseMessage.InactiveException);
         }
 
         public void CreatesProperly()

@@ -1,4 +1,5 @@
 ﻿using Acme.Domain.Base.Factory;
+using Acme.Seps.Domain.Base.Infrastructure;
 using Acme.Seps.Domain.Subsidy.Infrastructure;
 using Light.GuardClauses;
 using System;
@@ -18,14 +19,13 @@ namespace Acme.Seps.Domain.Subsidy.Entity
             decimal lowerRate,
             decimal higherRate,
             Guid projectTypeId,
-            DateTimeOffset activeFrom,
             IIdentityFactory<Guid> identityFactory)
             : base(lowerProductionLimit,
                   upperProductionLimit,
                   lowerRate,
                   higherRate,
                   projectTypeId,
-                  activeFrom,
+                  consumerPriceIndex.Period.ActiveFrom,
                   identityFactory) =>
             ConsumerPriceIndex = consumerPriceIndex;
 
@@ -33,6 +33,7 @@ namespace Acme.Seps.Domain.Subsidy.Entity
             ConsumerPriceIndex consumerPriceIndex, IIdentityFactory<Guid> identityFactory)
         {
             consumerPriceIndex.MustNotBeNull(message: SubsidyMessages.ConsumerPriceIndexNotSetException);
+            consumerPriceIndex.IsActive().MustBe(true, message: SepsBaseMessage.InactiveException);
 
             Archive(consumerPriceIndex.Period.ActiveFrom);
 
@@ -44,7 +45,6 @@ namespace Acme.Seps.Domain.Subsidy.Entity
                 LowerRate,
                 CalculateHigherRate(HigherRate, consumerPriceIndex.Amount),
                 ProjectTypeId,
-                consumerPriceIndex.Period.ActiveFrom,
                 identityFactory
             );
         }

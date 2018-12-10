@@ -24,5 +24,8 @@ namespace Acme.Seps.Domain.Base.Entity
 
             Period = Period.SetActiveTill(activeTill);
         }
+
+        public bool IsActive() =>
+            !Period.ActiveTill.HasValue && Period.ActiveFrom >= new DateTime(2007, 7, 1);
     }
 }

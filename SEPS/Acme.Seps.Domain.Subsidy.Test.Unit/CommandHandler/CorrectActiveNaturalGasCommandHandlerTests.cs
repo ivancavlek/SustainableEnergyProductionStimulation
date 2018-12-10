@@ -30,17 +30,20 @@ namespace Acme.Seps.Domain.Subsidy.Test.Unit.CommandHandler
                 .GetFrom(Arg.Any<IEnumerable<NaturalGasSellingPrice>>(), Arg.Any<NaturalGasSellingPrice>())
                 .Returns(1M);
 
-            ITariffFactory<CogenerationTariff> cogenerationFactory = new TariffFactory<CogenerationTariff>(
-                activeNgsp, activeNgsp.Period.ActiveFrom.AddMonths(-5));
-            var previousCtfs = new List<CogenerationTariff> { cogenerationFactory.Create() };
+            ngspFactory =
+                new EconometricIndexFactory<NaturalGasSellingPrice>(activeNgsp.Period.ActiveFrom.AddMonths(-5));
+            var previousActiveNgsp = ngspFactory.Create();
 
-            cogenerationFactory = new TariffFactory<CogenerationTariff>(
-                activeNgsp, activeNgsp.Period.ActiveFrom);
+            ITariffFactory<CogenerationTariff> cogenerationFactory = new TariffFactory<CogenerationTariff>(
+                previousActiveNgsp);
+            var previousActiveCtfs = new List<CogenerationTariff> { cogenerationFactory.Create() };
+
+            cogenerationFactory = new TariffFactory<CogenerationTariff>(activeNgsp);
             var activeCtfs = new List<CogenerationTariff> { cogenerationFactory.Create() };
 
             var dummyGuid = Guid.NewGuid();
             typeof(CogenerationTariff).BaseType
-                .GetProperty("ProjectTypeId").SetValue(previousCtfs[0], dummyGuid);
+                .GetProperty("ProjectTypeId").SetValue(previousActiveCtfs[0], dummyGuid);
             typeof(CogenerationTariff).BaseType
                 .GetProperty("ProjectTypeId").SetValue(activeCtfs[0], dummyGuid);
 
@@ -48,7 +51,7 @@ namespace Acme.Seps.Domain.Subsidy.Test.Unit.CommandHandler
             repository.GetSingle(Arg.Any<ActiveSpecification<NaturalGasSellingPrice>>()).Returns(activeNgsp);
             repository
                 .GetAll(Arg.Any<PreviousActiveSpecification<CogenerationTariff>>())
-                .Returns(previousCtfs);
+                .Returns(previousActiveCtfs);
             repository
                 .GetAll(Arg.Any<NgspCogenerationTariffSpecification>())
                 .Returns(activeCtfs);

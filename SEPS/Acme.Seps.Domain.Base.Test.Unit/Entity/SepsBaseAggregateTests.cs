@@ -55,6 +55,34 @@ namespace Acme.Seps.Domain.Base.Test.Unit.Entity
                 .WithMessage(SepsBaseMessage.ArchivingArchivedEntityException);
         }
 
+        public void EntityWithActiveTillDateIsInActive()
+        {
+            var dateAfter20070101 = new DateTime(2008, 01, 01);
+
+            var result = new DummySepsBaseAggregate(dateAfter20070101, _identityFactory);
+            result.Archive(new DateTime(2019, 01, 01));
+
+            result.IsActive().Should().BeFalse();
+        }
+
+        public void EntityWithActiveFromDateBefore20170101IsInactive()
+        {
+            var dateBefore20070101 = new DateTime(2006, 01, 01);
+
+            var result = new DummySepsBaseAggregate(dateBefore20070101, _identityFactory);
+
+            result.IsActive().Should().BeFalse();
+        }
+
+        public void EntityIsActive()
+        {
+            var dateAfter20070101 = new DateTime(2008, 01, 01);
+
+            var result = new DummySepsBaseAggregate(dateAfter20070101, _identityFactory);
+
+            result.IsActive().Should().BeTrue();
+        }
+
         private class DummySepsBaseAggregate : SepsAggregateRoot
         {
             public DummySepsBaseAggregate(DateTimeOffset activeFrom, IIdentityFactory<Guid> identityFactory)

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Acme.Domain.Base.Entity
+namespace Acme.Seps.Domain.Base.Entity
 {
     public class EntityExecutionLoggingEventArgs : EventArgs
     {

@@ -9,8 +9,6 @@ namespace Acme.Domain.Base.Entity
     /// </summary>
     public abstract class Entity<TKey> : BaseEntity, IEquatable<Entity<TKey>>
     {
-        public event EventHandler<EntityExecutionLoggingEventArgs> EntityExecutionLogging = delegate { };
-
         public TKey Id { get; private set; }
 
         protected Entity()
@@ -38,8 +36,5 @@ namespace Acme.Domain.Base.Entity
 
         public static bool operator !=(Entity<TKey> x, Entity<TKey> y) =>
             !(x == y);
-
-        protected void Log(EntityExecutionLoggingEventArgs entityExecutionLoggingEventArgs) =>
-            EntityExecutionLogging(this, entityExecutionLoggingEventArgs);
     }
 }

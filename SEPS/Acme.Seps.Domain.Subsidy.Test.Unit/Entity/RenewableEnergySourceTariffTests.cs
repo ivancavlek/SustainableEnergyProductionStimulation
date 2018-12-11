@@ -19,12 +19,11 @@ namespace Acme.Seps.Domain.Subsidy.Test.Unit.Entity
         {
             _identityFactory = Substitute.For<IIdentityFactory<Guid>>();
             _cpiFactory = new EconometricIndexFactory<ConsumerPriceIndex>(DateTime.Now.AddYears(-3));
+            _resFactory = new TariffFactory<RenewableEnergySourceTariff>(_cpiFactory.Create());
         }
 
         public void ConsumerPriceIndexMustBeSet()
         {
-            _resFactory = new TariffFactory<RenewableEnergySourceTariff>(_cpiFactory.Create());
-
             Action action = () => _resFactory.Create().CreateNewWith(null, _identityFactory);
 
             action
@@ -48,7 +47,6 @@ namespace Acme.Seps.Domain.Subsidy.Test.Unit.Entity
 
         public void CreatesProperly()
         {
-            _resFactory = new TariffFactory<RenewableEnergySourceTariff>(_cpiFactory.Create());
             var activeRenewableEnergySourceTariff = _resFactory.Create();
 
             _cpiFactory = new EconometricIndexFactory<ConsumerPriceIndex>(DateTime.Now.AddYears(-2));

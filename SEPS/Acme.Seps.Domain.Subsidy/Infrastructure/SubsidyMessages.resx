@@ -150,9 +150,6 @@
   <data name="MonthlyParameterException" xml:space="preserve">
     <value>Month must be properly set.</value>
   </data>
-  <data name="TariffPeriodException" xml:space="preserve">
-    <value>Tariff period must be in sequence.</value>
-  </data>
   <data name="CogenerationParameterServiceException" xml:space="preserve">
     <value>Cogeneration Parameter Service must be set.</value>
   </data>

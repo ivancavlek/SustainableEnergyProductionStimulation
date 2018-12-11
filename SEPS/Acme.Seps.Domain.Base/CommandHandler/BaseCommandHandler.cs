@@ -1,4 +1,5 @@
 ﻿using Acme.Domain.Base.Entity;
+using Acme.Seps.Domain.Base.Entity;
 using Acme.Seps.Domain.Base.Infrastructure;
 using System;
 

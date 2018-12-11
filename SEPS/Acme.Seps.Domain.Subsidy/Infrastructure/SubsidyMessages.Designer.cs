@@ -223,15 +223,6 @@ namespace Acme.Seps.Domain.Subsidy.Infrastructure {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Tariff period must be in sequence..
-        /// </summary>
-        public static string TariffPeriodException {
-            get {
-                return ResourceManager.GetString("TariffPeriodException", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Year must be properly set..
         /// </summary>
         public static string YearlyParameterException {

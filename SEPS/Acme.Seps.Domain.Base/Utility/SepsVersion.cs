@@ -8,13 +8,11 @@ namespace Acme.Seps.Domain.Base.Utility
     {
         private readonly static Dictionary<int, Period> _applicationVersions;
 
-        static SepsVersion()
-        {
+        static SepsVersion() =>
             _applicationVersions = new Dictionary<int, Period>()
             {
                 [1] = new Period(new DateTimeOffset(new DateTime(2007, 7, 1)))
             };
-        }
 
         public static DateTimeOffset InitialDate() =>
             _applicationVersions[1].ActiveFrom;

@@ -45,7 +45,7 @@ namespace Acme.Seps.Presentation.Web.Test.Integration
         [Fact(Skip = "")]
         public async Task CalculateCpi()
         {
-            var command = new CalculateCpiCommand { Amount = 102, Remark = "Integration test calculate CPI remark" };
+            var command = new CalculateCpiCommand { Amount = 102.9M, Remark = "Integration test calculate CPI remark" };
 
             var response = await _client
                 .PostAsync(_baseUri + "CalculateCpi", new StringContent(JsonConvert.SerializeObject(command), Encoding.UTF8, "application/json"));
@@ -60,7 +60,7 @@ namespace Acme.Seps.Presentation.Web.Test.Integration
 
             var command = new CalculateNaturalGasCommand
             {
-                Amount = 2,
+                Amount = 1.32M,
                 Month = lastMonth.Month,
                 Year = lastMonth.Year,
                 Remark = "Integration test remark"
@@ -76,7 +76,7 @@ namespace Acme.Seps.Presentation.Web.Test.Integration
         public async Task CorrectActiveCpi()
         {
             var insertCommand =
-                new CorrectActiveCpiCommand { Amount = 102, Remark = "Integration test calculate CPI by update remark" };
+                new CorrectActiveCpiCommand { Amount = 102.9M, Remark = "Integration test calculate CPI by update remark" };
 
             await _client
                 .PostAsync(_baseUri + "CorrectActiveCpi", new StringContent(JsonConvert.SerializeObject(insertCommand), Encoding.UTF8, "application/json"));
@@ -93,13 +93,13 @@ namespace Acme.Seps.Presentation.Web.Test.Integration
         public async Task CorrectActiveNgsp()
         {
             var insertCommand =
-                new CorrectActiveNaturalGasCommand { Amount = 102, Remark = "Integration test calculate CPI by update remark" };
+                new CorrectActiveNaturalGasCommand { Amount = 1.32M, Remark = "Integration test calculate CPI by update remark" };
 
             await _client
                 .PostAsync(_baseUri + "CorrectActiveNAturalGasSellingPrice", new StringContent(JsonConvert.SerializeObject(insertCommand), Encoding.UTF8, "application/json"));
 
             var updateCommand =
-                new CorrectActiveNaturalGasCommand { Amount = 102, Remark = "Integration test correct active CPI remark" };
+                new CorrectActiveNaturalGasCommand { Amount = 1.32M, Remark = "Integration test correct active CPI remark" };
 
             var response = await _client
                 .PutAsync(_baseUri + "CorrectActiveNAturalGasSellingPrice", new StringContent(JsonConvert.SerializeObject(updateCommand), Encoding.UTF8, "application/json"));

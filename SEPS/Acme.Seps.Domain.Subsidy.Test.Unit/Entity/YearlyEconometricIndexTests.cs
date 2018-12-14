@@ -22,19 +22,6 @@ namespace Acme.Seps.Domain.Subsidy.Test.Unit.Entity
             _identityFactory = Substitute.For<IIdentityFactory<Guid>>();
         }
 
-        public void DateCannotBeBeforeInitialDate()
-        {
-            var yearBeforeInitialDate = SepsVersion.InitialDate().AddYears(-1);
-
-            Action action = () => new DummyYearlyEconometricIndex(
-                _amount, _remark, yearBeforeInitialDate, _identityFactory);
-
-            action
-                .Should()
-                .ThrowExactly<DomainException>()
-                .WithMessage(SubsidyMessages.YearlyParameterException);
-        }
-
         public void DateCannotBeFromCurrentYear()
         {
             var currentYear = DateTime.Now.Date;

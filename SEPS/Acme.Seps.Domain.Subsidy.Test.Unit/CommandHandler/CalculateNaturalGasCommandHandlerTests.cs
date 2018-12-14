@@ -33,7 +33,7 @@ namespace Acme.Seps.Domain.Subsidy.Test.Unit.CommandHandler
                 .GetSingle(Arg.Any<ActiveSpecification<NaturalGasSellingPrice>>())
                 .Returns(activeNgsp);
             repository
-                .GetAll(Arg.Any<NgspCogenerationTariffSpecification>())
+                .GetAll(Arg.Any<ActiveSpecification<CogenerationTariff>>())
                 .Returns(new List<CogenerationTariff> { activeCogenerationTariff });
             repository
                 .GetAll(Arg.Any<NaturalGasSellingPricesInAYearSpecification>())
@@ -66,7 +66,9 @@ namespace Acme.Seps.Domain.Subsidy.Test.Unit.CommandHandler
             {
                 _calculateNaturalGas.Handle(calculateNaturalGasCommand);
 
+                _unitOfWork.Received().Update(Arg.Any<NaturalGasSellingPrice>());
                 _unitOfWork.Received().Insert(Arg.Any<NaturalGasSellingPrice>());
+                _unitOfWork.Received().Update(Arg.Any<CogenerationTariff>());
                 _unitOfWork.Received().Insert(Arg.Any<CogenerationTariff>());
                 _unitOfWork.Received().Commit();
                 monitoredEvent.Should().Raise("UseCaseExecutionProcessing");

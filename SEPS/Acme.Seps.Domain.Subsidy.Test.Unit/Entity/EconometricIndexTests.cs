@@ -44,15 +44,6 @@ namespace Acme.Seps.Domain.Subsidy.Test.Unit.Entity
                 .WithMessage(SubsidyMessages.ParameterAmountBelowOrZeroException);
         }
 
-        public void AmountIsRoundedAtHigherValueWithDefinedPrecisionDigits()
-        {
-            const decimal amount = 1.2578M;
-
-            var result = new DummyEconometricIndex(amount, _remark, _activeFrom, _identityFactory);
-
-            result.Amount.Should().Be(Math.Round(amount, 2, MidpointRounding.AwayFromZero));
-        }
-
         public void RemarkMustExist()
         {
             Action action = () => new DummyEconometricIndex(_amount, string.Empty, _activeFrom, _identityFactory);
@@ -63,10 +54,22 @@ namespace Acme.Seps.Domain.Subsidy.Test.Unit.Entity
                 .WithMessage(SubsidyMessages.RemarkNotSetException);
         }
 
-        public void InitialValuesMustNotBeChanged()
+        public void CreatesProperly()
         {
-            Action action = () => new DummyEconometricIndex(
+            const decimal amount = 1.2578M;
+
+            var econometricIndex = new DummyEconometricIndex(amount, _remark, _activeFrom, _identityFactory);
+
+            econometricIndex.Remark.Should().Be(_remark);
+            econometricIndex.Amount.Should().Be(Math.Round(amount, 2, MidpointRounding.AwayFromZero));
+        }
+
+        public void AmountCorrectionCannotBeDoneOnInitialValues()
+        {
+            var econometricIndex = new DummyEconometricIndex(
                 _amount, _remark, SepsVersion.InitialDate(), _identityFactory);
+
+            Action action = () => econometricIndex.AmountCorrection(1, "Test");
 
             action
                 .Should()
@@ -74,11 +77,52 @@ namespace Acme.Seps.Domain.Subsidy.Test.Unit.Entity
                 .WithMessage(SubsidyMessages.InitialValuesMustNotBeChanged);
         }
 
-        public void CreatesProperly()
+        public void AmountCorrectionCannotBeANegativeValue()
         {
             var econometricIndex = new DummyEconometricIndex(_amount, _remark, _activeFrom, _identityFactory);
 
+            Action action = () => econometricIndex.AmountCorrection(-1, "Test");
+
+            action
+                .Should()
+                .ThrowExactly<DomainException>()
+                .WithMessage(SubsidyMessages.ParameterAmountBelowOrZeroException);
+        }
+
+        public void AmountCorrectionCannotBeZeroBased()
+        {
+            var econometricIndex = new DummyEconometricIndex(_amount, _remark, _activeFrom, _identityFactory);
+
+            Action action = () => econometricIndex.AmountCorrection(0, "Test");
+
+            action
+                .Should()
+                .ThrowExactly<DomainException>()
+                .WithMessage(SubsidyMessages.ParameterAmountBelowOrZeroException);
+        }
+
+        public void AmountCorrectionRemarkMustExist()
+        {
+            var econometricIndex = new DummyEconometricIndex(_amount, _remark, _activeFrom, _identityFactory);
+
+            Action action = () => econometricIndex.AmountCorrection(1, null);
+
+            action
+                .Should()
+                .ThrowExactly<DomainException>()
+                .WithMessage(SubsidyMessages.RemarkNotSetException);
+        }
+
+        public void AmountCorrectionIsCorrect()
+        {
+            const decimal amount = 1.2578M;
+
+            var econometricIndex = new DummyEconometricIndex(1, "Test", _activeFrom, _identityFactory);
+
+            econometricIndex.AmountCorrection(amount, _remark);
+
             econometricIndex.Remark.Should().Be(_remark);
+            econometricIndex.Amount.Should().Be(Math.Round(amount, 2, MidpointRounding.AwayFromZero));
         }
 
         private class DummyEconometricIndex : EconometricIndex
@@ -89,6 +133,11 @@ namespace Acme.Seps.Domain.Subsidy.Test.Unit.Entity
                 decimal amount, string remark, DateTimeOffset activeFrom, IIdentityFactory<Guid> identityFactory)
                 : base(amount, remark, activeFrom, identityFactory)
             {
+            }
+
+            internal new void AmountCorrection(decimal amount, string remark)
+            {
+                base.AmountCorrection(amount, remark);
             }
         }
     }

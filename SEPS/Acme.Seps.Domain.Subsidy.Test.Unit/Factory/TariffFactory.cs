@@ -23,8 +23,8 @@ namespace Acme.Seps.Domain.Subsidy.Test.Unit.Factory
                 new object[]
                 {
                     _econometricIndex,
-                    100,
-                    500,
+                    100M,
+                    500M,
                     10M,
                     10M,
                     Guid.NewGuid(),

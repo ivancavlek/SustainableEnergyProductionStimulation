@@ -46,10 +46,10 @@ namespace Acme.Seps.Domain.Subsidy.Test.Unit.CommandHandler
                 .GetSingle(Arg.Any<ActiveSpecification<ConsumerPriceIndex>>())
                 .Returns(activeCpi);
             repository
-                .GetAll(Arg.Any<BaseSpecification<RenewableEnergySourceTariff>>())
+                .GetAll(Arg.Any<PreviousActiveSpecification<RenewableEnergySourceTariff>>())
                 .Returns(previousActiveResTariffs);
             repository
-                .GetAll(Arg.Any<CpiRenewableEnergySourceTariffSpecification>())
+                .GetAll(Arg.Any<ActiveSpecification<RenewableEnergySourceTariff>>())
                 .Returns(activeResTariffs);
 
             _unitOfWork = Substitute.For<IUnitOfWork>();

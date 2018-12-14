@@ -9,6 +9,7 @@ using FluentAssertions;
 using NSubstitute;
 using System;
 using System.Collections.Generic;
+using System.Reflection;
 
 namespace Acme.Seps.Domain.Subsidy.Test.Unit.Entity
 {
@@ -62,9 +63,10 @@ namespace Acme.Seps.Domain.Subsidy.Test.Unit.Entity
 
         public void NaturalGasSellingPriceMustBeActive()
         {
-            //_newNaturalGasSellingPrice.Archive(DateTime.Now);
-
-            typeof(NaturalGasSellingPrice).GetMethod("Archive").Invoke(_newNaturalGasSellingPrice, new object[] { DateTime.Now });
+            typeof(NaturalGasSellingPrice)
+                .BaseType.BaseType.BaseType
+                .GetMethod("Archive", BindingFlags.NonPublic | BindingFlags.Instance)
+                .Invoke(_newNaturalGasSellingPrice, new object[] { DateTimeOffset.Now });
 
             Action action = () => _activeCgn.CreateNewWith(
                 _yearsNaturalGasSellingPrices,

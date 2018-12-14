@@ -50,7 +50,7 @@ namespace Acme.Seps.Domain.Subsidy.CommandHandler
             {
                 var previousRes = GetPreviousActiveRenewableEnergySourceTariffsFor(correctedCpi.Period.ActiveFrom);
 
-                GetActiveRenewableEnergySourceTariffsFor(correctedCpi).ToList().ForEach(res =>
+                GetActiveRenewableEnergySourceTariffsFor().ToList().ForEach(res =>
                 {
                     res.CpiCorrection(
                         correctedCpi, PreviousRenewableEnergySourceBy(res.ProjectTypeId, res.LowerProductionLimit));
@@ -82,9 +82,8 @@ namespace Acme.Seps.Domain.Subsidy.CommandHandler
             DateTimeOffset activeTill) =>
             _repository.GetAll(new PreviousActiveSpecification<RenewableEnergySourceTariff>(activeTill));
 
-        private IReadOnlyList<RenewableEnergySourceTariff> GetActiveRenewableEnergySourceTariffsFor(
-            ConsumerPriceIndex cpi) =>
-            _repository.GetAll(new CpiRenewableEnergySourceTariffSpecification(cpi.Id));
+        private IReadOnlyList<RenewableEnergySourceTariff> GetActiveRenewableEnergySourceTariffsFor() =>
+            _repository.GetAll(new ActiveSpecification<RenewableEnergySourceTariff>());
 
         private void LogRenewableEnergySourceTariffCorrection(RenewableEnergySourceTariff resTariff) =>
             Log(new EntityExecutionLoggingEventArgs

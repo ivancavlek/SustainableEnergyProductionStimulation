@@ -22,19 +22,6 @@ namespace Acme.Seps.Domain.Subsidy.Test.Unit.Entity
             _identityFactory = Substitute.For<IIdentityFactory<Guid>>();
         }
 
-        public void DateCannotBeBeforeInitialDate()
-        {
-            var monthBeforeInitialDate = SepsVersion.InitialDate().AddMonths(-1);
-
-            Action action = () => new DummyMonthlyEconometricIndex(
-                _amount, _remark, monthBeforeInitialDate, _identityFactory);
-
-            action
-                .Should()
-                .ThrowExactly<DomainException>()
-                .WithMessage(SubsidyMessages.MonthlyParameterException);
-        }
-
         public void DateCannotBeFromCurrentMonth()
         {
             var currentMonth = DateTime.Now.Date;

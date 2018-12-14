@@ -6,6 +6,7 @@ using Acme.Seps.Domain.Subsidy.Test.Unit.Factory;
 using FluentAssertions;
 using NSubstitute;
 using System;
+using System.Reflection;
 
 namespace Acme.Seps.Domain.Subsidy.Test.Unit.Entity
 {
@@ -35,8 +36,10 @@ namespace Acme.Seps.Domain.Subsidy.Test.Unit.Entity
         public void ConsumerPriceIndexMustBeActive()
         {
             var cpi = _cpiFactory.Create();
-            typeof(ConsumerPriceIndex).GetMethod("Archive").Invoke(cpi, new object[] { DateTime.Now });
-            //cpi.Archive(DateTime.Now);
+            typeof(ConsumerPriceIndex)
+                .BaseType.BaseType.BaseType
+                .GetMethod("Archive", BindingFlags.NonPublic | BindingFlags.Instance)
+                .Invoke(cpi, new object[] { DateTimeOffset.Now });
 
             Action action = () => _resFactory.Create().CreateNewWith(cpi, _identityFactory);
 

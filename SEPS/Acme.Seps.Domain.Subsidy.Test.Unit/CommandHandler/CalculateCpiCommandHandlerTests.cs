@@ -33,7 +33,7 @@ namespace Acme.Seps.Domain.Subsidy.Test.Unit.CommandHandler
                 .GetSingle(Arg.Any<ActiveSpecification<ConsumerPriceIndex>>())
                 .Returns(activeCpi);
             repository
-                .GetAll(Arg.Any<CpiRenewableEnergySourceTariffSpecification>())
+                .GetAll(Arg.Any<ActiveSpecification<RenewableEnergySourceTariff>>())
                 .Returns(new List<RenewableEnergySourceTariff> { activeRenewableEnergySourceTariff });
 
             _unitOfWork = Substitute.For<IUnitOfWork>();
@@ -54,7 +54,9 @@ namespace Acme.Seps.Domain.Subsidy.Test.Unit.CommandHandler
             {
                 _calculateCpi.Handle(calculateCommand);
 
+                _unitOfWork.Received().Update(Arg.Any<ConsumerPriceIndex>());
                 _unitOfWork.Received().Insert(Arg.Any<ConsumerPriceIndex>());
+                _unitOfWork.Received().Update(Arg.Any<RenewableEnergySourceTariff>());
                 _unitOfWork.Received().Insert(Arg.Any<RenewableEnergySourceTariff>());
                 _unitOfWork.Received().Commit();
                 monitoredEvent.Should().Raise("UseCaseExecutionProcessing");

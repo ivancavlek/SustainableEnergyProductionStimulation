@@ -18,7 +18,7 @@ namespace Acme.Seps.Domain.Base.Test.Unit.Entity
         {
             _identityFactory = Substitute.For<IIdentityFactory<Guid>>();
             _identityFactory.CreateIdentity().Returns(Guid.NewGuid());
-            _activeFrom = new DateTime(2000, 1, 1);
+            _activeFrom = SepsVersion.InitialDate();
         }
 
         public void CreatesProperly()
@@ -41,6 +41,16 @@ namespace Acme.Seps.Domain.Base.Test.Unit.Entity
             result.Period.ActiveTill.Should().Be(activeTill);
         }
 
+        public void OnlyDatesAfterInitialDateAreValid()
+        {
+            Action action = () => new DummySepsBaseAggregate(_activeFrom.AddYears(-1), _identityFactory);
+
+            action
+                .Should()
+                .ThrowExactly<ArgumentOutOfRangeException>()
+                .WithMessage(SepsBaseMessage.DateMustBeGreaterThanInitialDate);
+        }
+
         public void OnlyActiveEntityCanBeArchived()
         {
             var activeTill = _activeFrom.AddYears(1);
@@ -56,21 +66,42 @@ namespace Acme.Seps.Domain.Base.Test.Unit.Entity
                 .WithMessage(SepsBaseMessage.ArchivingArchivedEntityException);
         }
 
+        public void ActiveFromIsCorrected()
+        {
+            var result = new DummySepsBaseAggregate(_activeFrom, _identityFactory);
+            var period = result.Period;
+            var oldActiveTill = period.ActiveTill;
+
+            var newDate = _activeFrom.AddYears(1);
+
+            result.CorrectActiveFrom(newDate);
+
+            result.Period.Should().NotBe(period);
+            result.Period.ActiveFrom.Should().Be(newDate);
+            result.Period.ActiveTill.Should().Be(oldActiveTill);
+        }
+
+        public void ActiveTillIsCorrected()
+        {
+            var result = new DummySepsBaseAggregate(_activeFrom, _identityFactory);
+            var period = result.Period;
+            var oldActiveFrom = period.ActiveFrom;
+
+            var newDate = _activeFrom.AddYears(1);
+
+            result.CorrectActiveTill(newDate);
+
+            result.Period.Should().NotBe(period);
+            result.Period.ActiveTill.Should().Be(newDate);
+            result.Period.ActiveFrom.Should().Be(oldActiveFrom);
+        }
+
         public void EntityWithActiveTillDateIsInActive()
         {
             var dateAfterInitialDate = SepsVersion.InitialDate().AddYears(1);
 
             var result = new DummySepsBaseAggregate(dateAfterInitialDate, _identityFactory);
             result.Archive(new DateTime(2019, 01, 01));
-
-            result.IsActive().Should().BeFalse();
-        }
-
-        public void EntityWithActiveFromDateBefore20170101IsInactive()
-        {
-            var dateBeforeInitialDate = SepsVersion.InitialDate().AddYears(-1);
-
-            var result = new DummySepsBaseAggregate(dateBeforeInitialDate, _identityFactory);
 
             result.IsActive().Should().BeFalse();
         }
@@ -94,6 +125,16 @@ namespace Acme.Seps.Domain.Base.Test.Unit.Entity
             internal new void Archive(DateTimeOffset activeTill)
             {
                 base.Archive(activeTill);
+            }
+
+            internal new void CorrectActiveFrom(DateTimeOffset activeFrom)
+            {
+                base.CorrectActiveFrom(activeFrom);
+            }
+
+            internal new void CorrectActiveTill(DateTimeOffset activeTill)
+            {
+                base.CorrectActiveTill(activeTill);
             }
         }
     }

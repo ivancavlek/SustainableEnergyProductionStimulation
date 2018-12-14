@@ -42,6 +42,6 @@ namespace Acme.Seps.Domain.Base.Entity
         }
 
         public bool IsActive() =>
-            !Period.ActiveTill.HasValue && Period.ActiveFrom >= SepsVersion.InitialDate();
+            !Period.ActiveTill.HasValue;
     }
 }

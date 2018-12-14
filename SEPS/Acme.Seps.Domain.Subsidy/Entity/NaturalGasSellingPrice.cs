@@ -5,10 +5,12 @@ namespace Acme.Seps.Domain.Subsidy.Entity
 {
     public class NaturalGasSellingPrice : MonthlyEconometricIndex<NaturalGasSellingPrice>
     {
+        protected override int DecimalPlaces => 2;
+
         protected NaturalGasSellingPrice() { }
 
         internal protected NaturalGasSellingPrice(
             decimal amount, string remark, DateTimeOffset activeFrom, IIdentityFactory<Guid> identityFactory)
-            : base(amount, 2, remark, activeFrom, identityFactory) { }
+            : base(amount, remark, activeFrom, identityFactory) { }
     }
 }

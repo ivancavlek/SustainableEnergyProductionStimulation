@@ -18,58 +18,56 @@ namespace Acme.Seps.Presentation.Web.Controllers
         private readonly ISepsCommandHandler<CalculateNaturalGasCommand> _calculateNaturalGas;
         private readonly ISepsCommandHandler<CorrectActiveCpiCommand> _correctActiveCpi;
         private readonly ISepsCommandHandler<CorrectActiveNaturalGasCommand> _correctActiveNaturalGas;
-        private readonly IQueryHandler<GetActiveEconometricIndexesQuery, IReadOnlyList<ActiveEconometricIndexesQueryResult>> _activeEconometricIndexesQuery;
-        private readonly IQueryHandler<GetActiveTariffsQuery, IReadOnlyList<ActiveTariffsQueryResult>> _activeTariffsQuery;
+        private readonly IQueryHandler<GetEconometricIndexQuery, IReadOnlyList<EconometricIndexQueryResult>> _econometricIndexesQuery;
+        private readonly IQueryHandler<GetRenewableEnergySourceTariffQuery, IReadOnlyList<RenewableEnergySourceTariffQueryResult>> _renewableEnergySourceTariffsQuery;
+        private readonly IQueryHandler<GetCogenerationTariffQuery, IReadOnlyList<CogenerationTariffQueryResult>> _cogenerationTariffsQuery;
 
         public ParameterController(
             ISepsCommandHandler<CalculateCpiCommand> calculateCpi,
             ISepsCommandHandler<CalculateNaturalGasCommand> calculateNaturalGas,
             ISepsCommandHandler<CorrectActiveCpiCommand> correctActiveCpi,
             ISepsCommandHandler<CorrectActiveNaturalGasCommand> correctActiveNaturalGas,
-            IQueryHandler<GetActiveEconometricIndexesQuery, IReadOnlyList<ActiveEconometricIndexesQueryResult>> activeEconometricIndexesQuery,
-            IQueryHandler<GetActiveTariffsQuery, IReadOnlyList<ActiveTariffsQueryResult>> activeTariffsQuery)
+            IQueryHandler<GetEconometricIndexQuery, IReadOnlyList<EconometricIndexQueryResult>> econometricIndexesQuery,
+            IQueryHandler<GetRenewableEnergySourceTariffQuery, IReadOnlyList<RenewableEnergySourceTariffQueryResult>> renewableEnergySourceTariffsQuery,
+            IQueryHandler<GetCogenerationTariffQuery, IReadOnlyList<CogenerationTariffQueryResult>> cogenerationTariffsQuery)
         {
             _calculateCpi = calculateCpi ?? throw new ArgumentNullException(nameof(calculateCpi));
             _calculateNaturalGas = calculateNaturalGas ?? throw new ArgumentNullException(nameof(calculateNaturalGas));
             _correctActiveCpi = correctActiveCpi ?? throw new ArgumentNullException(nameof(correctActiveCpi));
             _correctActiveNaturalGas = correctActiveNaturalGas ?? throw new ArgumentNullException(nameof(correctActiveNaturalGas));
-            _activeEconometricIndexesQuery = activeEconometricIndexesQuery ?? throw new ArgumentNullException(nameof(activeEconometricIndexesQuery));
-            _activeTariffsQuery = activeTariffsQuery ?? throw new ArgumentNullException(nameof(activeTariffsQuery));
+            _econometricIndexesQuery = econometricIndexesQuery ?? throw new ArgumentNullException(nameof(econometricIndexesQuery));
+            _renewableEnergySourceTariffsQuery = renewableEnergySourceTariffsQuery ?? throw new ArgumentNullException(nameof(renewableEnergySourceTariffsQuery));
+            _cogenerationTariffsQuery = cogenerationTariffsQuery ?? throw new ArgumentNullException(nameof(cogenerationTariffsQuery));
         }
 
         [HttpGet]
-        [Route("GetActiveConsumerPriceIndexes")]
-        public IActionResult GetActiveConsumerPriceIndexes() =>
-            Ok(_activeEconometricIndexesQuery.Handle(new GetActiveEconometricIndexesQuery
+        [Route("GetConsumerPriceIndexes")]
+        public IActionResult GetConsumerPriceIndexes() =>
+            Ok(_econometricIndexesQuery.Handle(new GetEconometricIndexQuery
             {
                 EconometricIndexType = typeof(ConsumerPriceIndex)
             }));
 
         [HttpGet]
-        [Route("GetActiveNaturalGasSellingPrices")]
-        public IActionResult GetActiveNaturalGasSellingPrices() =>
-            Ok(_activeEconometricIndexesQuery.Handle(new GetActiveEconometricIndexesQuery
+        [Route("GetNaturalGasSellingPrices")]
+        public IActionResult GetNaturalGasSellingPrices() =>
+            Ok(_econometricIndexesQuery.Handle(new GetEconometricIndexQuery
             {
                 EconometricIndexType = typeof(NaturalGasSellingPrice)
             }));
 
         [HttpGet]
-        [Route("GetActiveRenewableEnergySourceTariffs")]
-        public IActionResult GetActiveRenewableEnergySourceTariffs() =>
-            Ok(_activeTariffsQuery.Handle(new GetActiveTariffsQuery
-            {
-                TariffType = typeof(RenewableEnergySourceTariff)
-            }));
+        [Route("GetRenewableEnergySourceTariffs")]
+        public IActionResult GetRenewableEnergySourceTariffs() =>
+            Ok(_renewableEnergySourceTariffsQuery.Handle(new GetRenewableEnergySourceTariffQuery()));
 
         [HttpGet]
-        [Route("GetActiveCogenerationTariffs")]
-        public IActionResult GetActiveCogenerationTariffs() =>
-            Ok(_activeTariffsQuery.Handle(new GetActiveTariffsQuery
-            {
-                TariffType = typeof(CogenerationTariff)
-            }));
+        [Route("GetCogenerationTariffs")]
+        public IActionResult GetCogenerationTariffs() =>
+            Ok(_cogenerationTariffsQuery.Handle(new GetCogenerationTariffQuery()));
 
         // GET api/<controller>/5
+        // questionable do we need this
         [HttpGet("{id}")]
         public string Get(int id)
         {

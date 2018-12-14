@@ -35,7 +35,8 @@ namespace Acme.Seps.Domain.Subsidy.Test.Unit.Entity
         public void ConsumerPriceIndexMustBeActive()
         {
             var cpi = _cpiFactory.Create();
-            cpi.Archive(DateTime.Now);
+            typeof(ConsumerPriceIndex).GetMethod("Archive").Invoke(cpi, new object[] { DateTime.Now });
+            //cpi.Archive(DateTime.Now);
 
             Action action = () => _resFactory.Create().CreateNewWith(cpi, _identityFactory);
 

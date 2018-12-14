@@ -16,8 +16,8 @@ namespace Acme.Seps.Domain.Subsidy.Entity
 
         protected CogenerationTariff(
             NaturalGasSellingPrice naturalGasSellingPrice,
-            int? lowerProductionLimit,
-            int? upperProductionLimit,
+            decimal? lowerProductionLimit,
+            decimal? upperProductionLimit,
             decimal lowerRate,
             decimal higherRate,
             Guid projectTypeId,
@@ -61,15 +61,16 @@ namespace Acme.Seps.Domain.Subsidy.Entity
         public void NgspCorrection(
             IEnumerable<NaturalGasSellingPrice> yearsNaturalGasSellingPrices,
             ICogenerationParameterService cogenerationParameterService,
-            NaturalGasSellingPrice gsp,
+            NaturalGasSellingPrice correctedNgsp,
             CogenerationTariff previousCgn)
         {
             var cogenerationParameter = CalculateCogenerationParameter(
-                cogenerationParameterService, yearsNaturalGasSellingPrices, gsp);
+                cogenerationParameterService, yearsNaturalGasSellingPrices, correctedNgsp);
 
             LowerRate = cogenerationParameter * previousCgn.LowerRate;
             HigherRate = cogenerationParameter * previousCgn.HigherRate;
-            Archive(gsp.Period.ActiveFrom);
+            CorrectActiveFrom(correctedNgsp.Period.ActiveFrom);
+            previousCgn.CorrectActiveTill(correctedNgsp.Period.ActiveFrom);
         }
 
         private decimal CalculateCogenerationParameter(

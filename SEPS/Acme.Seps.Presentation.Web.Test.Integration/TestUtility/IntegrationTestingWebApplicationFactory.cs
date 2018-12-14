@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 
-namespace Acme.Seps.Presentation.Web.Test.Integration
+namespace Acme.Seps.Presentation.Web.Test.Integration.TestUtility
 {
     public class IntegrationTestingWebApplicationFactory<TStartup> : WebApplicationFactory<TStartup>
         where TStartup : class

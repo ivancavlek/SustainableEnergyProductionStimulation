@@ -40,7 +40,7 @@ namespace Acme.Seps.Domain.Subsidy.CommandHandler
             ConsumerPriceIndex CorrectActiveCpi()
             {
                 var activeCpi = GetActiveConsumerPriceIndex();
-                activeCpi.AmountCorrection(command.Amount, command.Remark);
+                activeCpi.Correct(command.Amount, command.Remark);
                 LogConsumerPriceIndexCorrection(activeCpi);
 
                 return activeCpi;
@@ -48,17 +48,20 @@ namespace Acme.Seps.Domain.Subsidy.CommandHandler
 
             void CorrectRenewableEnergySourceTariffs()
             {
-                var previousRes = GetPreviousActiveRenewableEnergySourceTariffsFor();
+                var previousRes = GetPreviousActiveRenewableEnergySourceTariffsFor(correctedCpi.Period.ActiveFrom);
 
                 GetActiveRenewableEnergySourceTariffsFor(correctedCpi).ToList().ForEach(res =>
                 {
-                    res.CpiCorrection(correctedCpi, PreviousRenewableEnergySourceBy(res.ProjectTypeId));
+                    res.CpiCorrection(
+                        correctedCpi, PreviousRenewableEnergySourceBy(res.ProjectTypeId, res.LowerProductionLimit));
                     _unitOfWork.Update(res);
                     LogRenewableEnergySourceTariffCorrection(res);
                 });
 
-                RenewableEnergySourceTariff PreviousRenewableEnergySourceBy(Guid projectTypeId) =>
-                    previousRes.Single(res => res.ProjectTypeId.Equals(projectTypeId));
+                RenewableEnergySourceTariff PreviousRenewableEnergySourceBy(
+                    Guid projectTypeId, decimal? lowerProductionLimit) =>
+                    previousRes.Single(res =>
+                        res.ProjectTypeId.Equals(projectTypeId) && res.LowerProductionLimit.Equals(lowerProductionLimit));
             }
         }
 
@@ -75,8 +78,9 @@ namespace Acme.Seps.Domain.Subsidy.CommandHandler
                     cpi.Amount)
             });
 
-        private IReadOnlyList<RenewableEnergySourceTariff> GetPreviousActiveRenewableEnergySourceTariffsFor() =>
-            _repository.GetAll(new ActiveSpecification<RenewableEnergySourceTariff>());
+        private IReadOnlyList<RenewableEnergySourceTariff> GetPreviousActiveRenewableEnergySourceTariffsFor(
+            DateTimeOffset activeTill) =>
+            _repository.GetAll(new PreviousActiveSpecification<RenewableEnergySourceTariff>(activeTill));
 
         private IReadOnlyList<RenewableEnergySourceTariff> GetActiveRenewableEnergySourceTariffsFor(
             ConsumerPriceIndex cpi) =>

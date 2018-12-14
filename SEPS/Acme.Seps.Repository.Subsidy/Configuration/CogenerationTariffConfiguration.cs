@@ -37,8 +37,10 @@ namespace Acme.Seps.Repository.Subsidy.Configuration
             builder.HasData(new
             {
                 Id = id,
-                LowerRate = 0M,
-                HigherRate = 0.36M,
+                LowerProductionLimit = 0M,
+                UpperProductionLimit = 0.26M,
+                LowerRate = 0.51M,
+                HigherRate = 1M,
                 TarrifType = nameof(CogenerationTariff),
                 ProjectTypeId = _projectIds.ElementAt(10),
                 NaturalGasSellingPriceId = _naturalGasSellingPriceId
@@ -57,8 +59,10 @@ namespace Acme.Seps.Repository.Subsidy.Configuration
             builder.HasData(new
             {
                 Id = id,
-                LowerRate = 0M,
-                HigherRate = 0.50M,
+                LowerProductionLimit = 0M,
+                UpperProductionLimit = 0.15M,
+                LowerRate = 0.30M,
+                HigherRate = 1M,
                 TarrifType = nameof(CogenerationTariff),
                 ProjectTypeId = _projectIds.ElementAt(11),
                 NaturalGasSellingPriceId = _naturalGasSellingPriceId

@@ -79,6 +79,15 @@ namespace Acme.Seps.Domain.Base.Infrastructure {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Date must be greater than initial date.
+        /// </summary>
+        public static string DateMustBeGreaterThanInitialDate {
+            get {
+                return ResourceManager.GetString("DateMustBeGreaterThanInitialDate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Entity must be active.
         /// </summary>
         public static string InactiveException {

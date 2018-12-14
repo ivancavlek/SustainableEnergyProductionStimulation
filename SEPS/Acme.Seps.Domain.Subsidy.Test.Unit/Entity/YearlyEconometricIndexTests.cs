@@ -12,14 +12,12 @@ namespace Acme.Seps.Domain.Subsidy.Test.Unit.Entity
     public class YearlyEconometricIndexTests
     {
         private readonly decimal _amount;
-        private readonly int _decimalPlaces;
         private readonly string _remark;
         private readonly IIdentityFactory<Guid> _identityFactory;
 
         public YearlyEconometricIndexTests()
         {
             _amount = 1M;
-            _decimalPlaces = 2;
             _remark = nameof(_remark);
             _identityFactory = Substitute.For<IIdentityFactory<Guid>>();
         }
@@ -29,7 +27,7 @@ namespace Acme.Seps.Domain.Subsidy.Test.Unit.Entity
             var yearBeforeInitialDate = SepsVersion.InitialDate().AddYears(-1);
 
             Action action = () => new DummyYearlyEconometricIndex(
-                _amount, _decimalPlaces, _remark, yearBeforeInitialDate, _identityFactory);
+                _amount, _remark, yearBeforeInitialDate, _identityFactory);
 
             action
                 .Should()
@@ -42,7 +40,7 @@ namespace Acme.Seps.Domain.Subsidy.Test.Unit.Entity
             var currentYear = DateTime.Now.Date;
 
             Action action = () => new DummyYearlyEconometricIndex(
-                _amount, _decimalPlaces, _remark, currentYear, _identityFactory);
+                _amount, _remark, currentYear, _identityFactory);
 
             action
                 .Should()
@@ -55,20 +53,18 @@ namespace Acme.Seps.Domain.Subsidy.Test.Unit.Entity
             DateTimeOffset yearBeforeCurrentYear = DateTime.Now.Date.AddYears(-1);
 
             var econometricIndex = new DummyYearlyEconometricIndex(
-                _amount, _decimalPlaces, _remark, yearBeforeCurrentYear, _identityFactory);
+                _amount, _remark, yearBeforeCurrentYear, _identityFactory);
 
             econometricIndex.Period.ActiveFrom.Should().Be(yearBeforeCurrentYear.ToFirstMonthOfTheYear());
         }
 
         private class DummyYearlyEconometricIndex : YearlyEconometricIndex<DummyYearlyEconometricIndex>
         {
+            protected override int DecimalPlaces => 2;
+
             public DummyYearlyEconometricIndex(
-                decimal amount,
-                int decimalPlaces,
-                string remark,
-                DateTimeOffset activeFrom,
-                IIdentityFactory<Guid> identityFactory)
-                : base(amount, decimalPlaces, remark, activeFrom, identityFactory) { }
+                decimal amount, string remark, DateTimeOffset activeFrom, IIdentityFactory<Guid> identityFactory)
+                : base(amount, remark, activeFrom, identityFactory) { }
         }
     }
 }

@@ -37,9 +37,9 @@ namespace Acme.Seps.Domain.Subsidy.CommandHandler
             _repository = repository;
         }
 
-        void ICommandHandler<CorrectActiveNaturalGasCommand>.Handle(
-            CorrectActiveNaturalGasCommand command)
+        void ICommandHandler<CorrectActiveNaturalGasCommand>.Handle(CorrectActiveNaturalGasCommand command)
         {
+            DateTimeOffset oldActiveFrom;
             var correctedGsp = CorrectActiveGsp();
             CorrectCogenerationTariffs();
 
@@ -49,9 +49,15 @@ namespace Acme.Seps.Domain.Subsidy.CommandHandler
             NaturalGasSellingPrice CorrectActiveGsp()
             {
                 var activeNaturalGasSellingPrice = GetActiveNaturalGasSellingPrice();
-                activeNaturalGasSellingPrice.AmountCorrection(
-                    command.Amount, command.Remark, command.Year, command.Month);
+                oldActiveFrom = activeNaturalGasSellingPrice.Period.ActiveFrom;
+                var previousActiveNaturalGasSellingPrice = GetPreviousActiveNaturalGasSellingPrice(oldActiveFrom);
+
+                activeNaturalGasSellingPrice.Correct(
+                    command.Amount, command.Remark, command.Year, command.Month, previousActiveNaturalGasSellingPrice);
+
                 _unitOfWork.Update(activeNaturalGasSellingPrice);
+                _unitOfWork.Update(previousActiveNaturalGasSellingPrice);
+
                 LogNaturalGasSellingPriceCorrection(activeNaturalGasSellingPrice);
 
                 return activeNaturalGasSellingPrice;
@@ -59,16 +65,21 @@ namespace Acme.Seps.Domain.Subsidy.CommandHandler
 
             void CorrectCogenerationTariffs()
             {
-                var previousRes = GetPreviousActiveCogenerationTariffs(correctedGsp.Period.ActiveFrom);
+                var previousRes = GetPreviousActiveCogenerationTariffs(oldActiveFrom);
 
-                GetActiveCogenerationTariffsFor(correctedGsp).ToList().ForEach(act =>
+                GetActiveCogenerationTariffsFor().ToList().ForEach(act =>
                 {
+                    var previouRes = PreviousActiveCogenerationTariffBy(act.ProjectTypeId);
+
                     act.NgspCorrection(
                         GetNaturalGasPricesWithinYear(command.Year),
                         _cogenerationParameterService,
                         correctedGsp,
-                        PreviousActiveCogenerationTariffBy(act.ProjectTypeId));
+                        previouRes);
+
                     _unitOfWork.Update(act);
+                    _unitOfWork.Update(previouRes);
+
                     LogNewCogenerationTariffCorrection(act);
                 });
 
@@ -83,6 +94,9 @@ namespace Acme.Seps.Domain.Subsidy.CommandHandler
         private NaturalGasSellingPrice GetActiveNaturalGasSellingPrice() =>
             _repository.GetSingle(new ActiveSpecification<NaturalGasSellingPrice>());
 
+        private NaturalGasSellingPrice GetPreviousActiveNaturalGasSellingPrice(DateTimeOffset activeTill) =>
+            _repository.GetSingle(new PreviousActiveSpecification<NaturalGasSellingPrice>(activeTill));
+
         private void LogNaturalGasSellingPriceCorrection(NaturalGasSellingPrice naturalGasSellingPrice) =>
             Log(new EntityExecutionLoggingEventArgs
             {
@@ -96,8 +110,8 @@ namespace Acme.Seps.Domain.Subsidy.CommandHandler
         private IReadOnlyList<CogenerationTariff> GetPreviousActiveCogenerationTariffs(DateTimeOffset activeTill) =>
             _repository.GetAll(new PreviousActiveSpecification<CogenerationTariff>(activeTill));
 
-        private IReadOnlyList<CogenerationTariff> GetActiveCogenerationTariffsFor(NaturalGasSellingPrice gsp) =>
-            _repository.GetAll(new NgspCogenerationTariffSpecification(gsp.Id));
+        private IReadOnlyList<CogenerationTariff> GetActiveCogenerationTariffsFor() =>
+            _repository.GetAll(new ActiveSpecification<CogenerationTariff>());
 
         private void LogNewCogenerationTariffCorrection(CogenerationTariff cogenerationTariff) =>
             Log(new EntityExecutionLoggingEventArgs

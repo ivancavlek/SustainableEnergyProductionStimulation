@@ -47,6 +47,7 @@ namespace Acme.Seps.Domain.Subsidy.CommandHandler
             NaturalGasSellingPrice GetNewNaturalGasSellingPrice()
             {
                 var ngsp = CreateNewNaturalGasSellingPrice(activeNgsp, command);
+                _unitOfWork.Update(activeNgsp);
                 _unitOfWork.Insert(ngsp);
                 LogNewNaturalGasSellingPriceCreation(ngsp);
 
@@ -62,6 +63,7 @@ namespace Acme.Seps.Domain.Subsidy.CommandHandler
                     {
                         var newCogenerationTariff =
                             CreateNewCogenerationTariff(ctf, yearsNaturalGasSellingPrices, newNgsp);
+                        _unitOfWork.Update(ctf);
                         _unitOfWork.Insert(newCogenerationTariff);
                         LogNewCogenerationTariffCreation(newCogenerationTariff);
                     });

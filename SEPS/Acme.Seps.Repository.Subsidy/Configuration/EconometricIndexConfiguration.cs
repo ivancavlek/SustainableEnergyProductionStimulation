@@ -37,6 +37,7 @@ namespace Acme.Seps.Repository.Subsidy.Configuration
         {
             builder.Property<string>(_discriminator).HasMaxLength(50);
             builder.Property(ppy => ppy.Remark).HasMaxLength(250).IsRequired();
+            builder.Property(ppy => ppy.Amount).HasColumnType("decimal(18, 4)");
         }
     }
 }

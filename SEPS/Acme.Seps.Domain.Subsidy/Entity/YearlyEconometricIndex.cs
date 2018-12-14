@@ -14,12 +14,8 @@ namespace Acme.Seps.Domain.Subsidy.Entity
         protected YearlyEconometricIndex() { }
 
         protected YearlyEconometricIndex(
-            decimal amount,
-            int decimalPlaces,
-            string remark,
-            DateTimeOffset activeFrom,
-            IIdentityFactory<Guid> identityFactory)
-            : base(amount, decimalPlaces, remark, activeFrom.ToFirstMonthOfTheYear(), identityFactory)
+            decimal amount, string remark, DateTimeOffset activeFrom, IIdentityFactory<Guid> identityFactory)
+            : base(amount, remark, activeFrom.ToFirstMonthOfTheYear(), identityFactory)
         {
             Period.ActiveFrom.Year.MustBeGreaterThanOrEqualTo(SepsVersion.InitialDate().Year, (_, __) =>
                 new DomainException(SubsidyMessages.YearlyParameterException));
@@ -30,7 +26,7 @@ namespace Acme.Seps.Domain.Subsidy.Entity
         public TYearlyEconometricIndex CreateNew(
             decimal amount, string remark, IIdentityFactory<Guid> identityFactory)
         {
-            Archive(Period.ActiveFrom.AddYears(1));
+            Archive(Period.ActiveFrom.ToFirstMonthOfTheYear().AddYears(1));
 
             switch (this)
             {
@@ -40,6 +36,11 @@ namespace Acme.Seps.Domain.Subsidy.Entity
                 default:
                     throw new ArgumentException();
             }
+        }
+
+        public void Correct(decimal amount, string remark)
+        {
+            base.AmountCorrection(amount, remark);
         }
     }
 }

@@ -40,6 +40,7 @@ namespace Acme.Seps.Domain.Subsidy.CommandHandler
             ConsumerPriceIndex GetNewConsumerPriceIndex()
             {
                 var cpi = CreateNewConsumerPriceIndex(command, activeCpi);
+                _unitOfWork.Update(activeCpi);
                 _unitOfWork.Insert(cpi);
                 LogNewConsumerPriceIndex(cpi);
 
@@ -47,9 +48,10 @@ namespace Acme.Seps.Domain.Subsidy.CommandHandler
             }
 
             void CreateNewRenewableEnergySourceTariffs() =>
-                GetActiveRenewableEnergySourceTariffs(activeCpi).ToList().ForEach(art =>
+                GetActiveRenewableEnergySourceTariffs().ToList().ForEach(res =>
                 {
-                    var newRenewableEnergyTariff = CreateNewRenewableEnergySourceTariff(art, newCpi);
+                    var newRenewableEnergyTariff = CreateNewRenewableEnergySourceTariff(res, newCpi);
+                    _unitOfWork.Update(res);
                     _unitOfWork.Insert(newRenewableEnergyTariff);
                     LogNewRenewableEnergySourceTariff(newRenewableEnergyTariff);
                 });
@@ -71,8 +73,8 @@ namespace Acme.Seps.Domain.Subsidy.CommandHandler
                     cpi.Amount)
             });
 
-        private IReadOnlyList<RenewableEnergySourceTariff> GetActiveRenewableEnergySourceTariffs(ConsumerPriceIndex cpi) =>
-            _repository.GetAll(new CpiRenewableEnergySourceTariffSpecification(cpi.Id));
+        private IReadOnlyList<RenewableEnergySourceTariff> GetActiveRenewableEnergySourceTariffs() =>
+            _repository.GetAll(new ActiveSpecification<RenewableEnergySourceTariff>());
 
         private RenewableEnergySourceTariff CreateNewRenewableEnergySourceTariff(
             RenewableEnergySourceTariff resTariff, ConsumerPriceIndex cpi) =>

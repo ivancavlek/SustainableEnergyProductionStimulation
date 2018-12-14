@@ -15,14 +15,29 @@ namespace Acme.Seps.Domain.Base.Entity
         protected SepsAggregateRoot() { }
 
         protected SepsAggregateRoot(DateTimeOffset activeFrom, IIdentityFactory<Guid> identityFactory)
-            : base(identityFactory) =>
-            Period = new Period(activeFrom);
+            : base(identityFactory)
+        {
+            activeFrom.MustBeGreaterThanOrEqualTo(
+                SepsVersion.InitialDate(), message: SepsBaseMessage.DateMustBeGreaterThanInitialDate);
 
-        public void Archive(DateTimeOffset activeTill)
+            Period = new Period(activeFrom);
+        }
+
+        protected void Archive(DateTimeOffset activeTill)
         {
             Period.ActiveTill.HasValue.MustBe(false, (_, __) =>
                 new DomainException(SepsBaseMessage.ArchivingArchivedEntityException));
 
+            Period = Period.SetActiveTill(activeTill);
+        }
+
+        protected void CorrectActiveFrom(DateTimeOffset activeFrom)
+        {
+            Period = new Period(activeFrom);
+        }
+
+        protected void CorrectActiveTill(DateTimeOffset activeTill)
+        {
             Period = Period.SetActiveTill(activeTill);
         }
 

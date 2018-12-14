@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace Acme.Seps.Domain.Subsidy.Query
 {
-    public class GetActiveEconometricIndexesQuery : IQuery<IReadOnlyList<ActiveEconometricIndexesQueryResult>>
+    public class GetEconometricIndexQuery : IQuery<IReadOnlyList<EconometricIndexQueryResult>>
     {
         public Type EconometricIndexType { get; set; }
     }

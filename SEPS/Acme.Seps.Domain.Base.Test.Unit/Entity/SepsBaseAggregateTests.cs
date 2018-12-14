@@ -90,6 +90,11 @@ namespace Acme.Seps.Domain.Base.Test.Unit.Entity
                 : base(activeFrom, identityFactory)
             {
             }
+
+            internal new void Archive(DateTimeOffset activeTill)
+            {
+                base.Archive(activeTill);
+            }
         }
     }
 }

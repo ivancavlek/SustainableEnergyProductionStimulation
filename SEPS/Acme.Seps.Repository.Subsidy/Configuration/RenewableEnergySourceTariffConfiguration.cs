@@ -158,8 +158,8 @@ namespace Acme.Seps.Repository.Subsidy.Configuration
             builder.HasData(new
             {
                 Id = id,
-                LowerProductionLimit = 0,
-                UpperProductionLimit = 5000,
+                LowerProductionLimit = 0M,
+                UpperProductionLimit = 5000M,
                 LowerRate = 0M,
                 HigherRate = 0.69M,
                 ProjectTypeId = _projectIds.ElementAt(9),
@@ -180,8 +180,8 @@ namespace Acme.Seps.Repository.Subsidy.Configuration
             builder.HasData(new
             {
                 Id = id,
-                LowerProductionLimit = 5000,
-                UpperProductionLimit = 15000,
+                LowerProductionLimit = 5000M,
+                UpperProductionLimit = 15000M,
                 LowerRate = 0M,
                 HigherRate = 0.55M,
                 ProjectTypeId = _projectIds.ElementAt(9),
@@ -202,7 +202,7 @@ namespace Acme.Seps.Repository.Subsidy.Configuration
             builder.HasData(new
             {
                 Id = id,
-                LowerProductionLimit = 15000,
+                LowerProductionLimit = 15000M,
                 LowerRate = 0M,
                 HigherRate = 0.42M,
                 ProjectTypeId = _projectIds.ElementAt(9),

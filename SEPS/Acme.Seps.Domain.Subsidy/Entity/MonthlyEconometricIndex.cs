@@ -14,12 +14,8 @@ namespace Acme.Seps.Domain.Subsidy.Entity
         protected MonthlyEconometricIndex() { }
 
         protected MonthlyEconometricIndex(
-            decimal amount,
-            int decimalPlaces,
-            string remark,
-            DateTimeOffset activeFrom,
-            IIdentityFactory<Guid> identityFactory)
-            : base(amount, decimalPlaces, remark, activeFrom.ToFirstDayOfTheMonth(), identityFactory)
+            decimal amount, string remark, DateTimeOffset activeFrom, IIdentityFactory<Guid> identityFactory)
+            : base(amount, remark, activeFrom.ToFirstDayOfTheMonth(), identityFactory)
         {
             Period.ActiveFrom.MustBeGreaterThanOrEqualTo(SepsVersion.InitialDate(), (_, __) =>
                 new DomainException(SubsidyMessages.MonthlyParameterException));
@@ -48,10 +44,14 @@ namespace Acme.Seps.Domain.Subsidy.Entity
             }
         }
 
-        public void AmountCorrection(decimal amount, string remark, int year, int month)
+        public void Correct(
+            decimal amount, string remark, int year, int month, NaturalGasSellingPrice previousActiveNgsp)
         {
+            var correctedDate = new DateTime(year, month, 1);
+
             AmountCorrection(amount, remark);
-            Archive(new DateTime(year, month, 1));
+            CorrectActiveFrom(correctedDate);
+            previousActiveNgsp.CorrectActiveTill(correctedDate);
         }
     }
 }

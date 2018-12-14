@@ -62,7 +62,9 @@ namespace Acme.Seps.Domain.Subsidy.Test.Unit.Entity
 
         public void NaturalGasSellingPriceMustBeActive()
         {
-            _newNaturalGasSellingPrice.Archive(DateTime.Now);
+            //_newNaturalGasSellingPrice.Archive(DateTime.Now);
+
+            typeof(NaturalGasSellingPrice).GetMethod("Archive").Invoke(_newNaturalGasSellingPrice, new object[] { DateTime.Now });
 
             Action action = () => _activeCgn.CreateNewWith(
                 _yearsNaturalGasSellingPrices,

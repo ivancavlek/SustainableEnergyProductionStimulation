@@ -24,6 +24,10 @@ namespace Acme.Seps.Repository.Subsidy.Configuration
         private void ConfigureProperties(EntityTypeBuilder<Tariff> builder)
         {
             builder.Property<string>(_discriminator).HasMaxLength(50);
+            builder.Property(ppy => ppy.LowerProductionLimit).HasColumnType("decimal(18, 4)");
+            builder.Property(ppy => ppy.UpperProductionLimit).HasColumnType("decimal(18, 4)");
+            builder.Property(ppy => ppy.LowerRate).HasColumnType("decimal(18, 4)");
+            builder.Property(ppy => ppy.HigherRate).HasColumnType("decimal(18, 4)");
         }
 
         private void ConfigureTables(EntityTypeBuilder<Tariff> builder)

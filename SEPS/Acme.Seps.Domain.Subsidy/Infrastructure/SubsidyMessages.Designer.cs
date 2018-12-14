@@ -115,6 +115,15 @@ namespace Acme.Seps.Domain.Subsidy.Infrastructure {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Initial values must not be changed.
+        /// </summary>
+        public static string InitialValuesMustNotBeChanged {
+            get {
+                return ResourceManager.GetString("InitialValuesMustNotBeChanged", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Created {0} for period {1} with amount {2:C}..
         /// </summary>
         public static string InsertParameterLog {
@@ -183,15 +192,6 @@ namespace Acme.Seps.Domain.Subsidy.Infrastructure {
         public static string ParameterCorrectionLog {
             get {
                 return ResourceManager.GetString("ParameterCorrectionLog", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Decimal places must be a positive number..
-        /// </summary>
-        public static string ParameterDecimalPlacesBelowZeroException {
-            get {
-                return ResourceManager.GetString("ParameterDecimalPlacesBelowZeroException", resourceCulture);
             }
         }
         

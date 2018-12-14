@@ -109,4 +109,7 @@
   <data name="InactiveException" xml:space="preserve">
     <value>Entity must be active</value>
   </data>
+  <data name="DateMustBeGreaterThanInitialDate" xml:space="preserve">
+    <value>Date must be greater than initial date</value>
+  </data>
 </root>

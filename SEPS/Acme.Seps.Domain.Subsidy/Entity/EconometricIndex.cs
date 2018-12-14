@@ -1,6 +1,7 @@
 ﻿using Acme.Domain.Base.Entity;
 using Acme.Domain.Base.Factory;
 using Acme.Seps.Domain.Base.Entity;
+using Acme.Seps.Domain.Base.Utility;
 using Acme.Seps.Domain.Subsidy.Infrastructure;
 using Light.GuardClauses;
 using System;
@@ -9,7 +10,7 @@ namespace Acme.Seps.Domain.Subsidy.Entity
 {
     public abstract class EconometricIndex : SepsAggregateRoot
     {
-        protected readonly int DecimalPlaces;
+        protected abstract int DecimalPlaces { get; }
 
         public decimal Amount { get; private set; }
         public string Remark { get; private set; }
@@ -17,26 +18,22 @@ namespace Acme.Seps.Domain.Subsidy.Entity
         protected EconometricIndex() { }
 
         protected EconometricIndex(
-            decimal amount,
-            int decimalPlaces,
-            string remark,
-            DateTimeOffset activeFrom,
-            IIdentityFactory<Guid> identityFactory)
+            decimal amount, string remark, DateTimeOffset activeFrom, IIdentityFactory<Guid> identityFactory)
             : base(activeFrom, identityFactory)
         {
             amount.MustBeGreaterThan(0m, (_, __) =>
                 new DomainException(SubsidyMessages.ParameterAmountBelowOrZeroException));
-            decimalPlaces.MustBeGreaterThanOrEqualTo(0, (_, __) =>
-                new DomainException(SubsidyMessages.ParameterDecimalPlacesBelowZeroException));
             remark.MustNotBeNullOrWhiteSpace((_) => new DomainException(SubsidyMessages.RemarkNotSetException));
 
-            DecimalPlaces = decimalPlaces;
             Amount = RoundAmount(amount);
             Remark = remark;
         }
 
-        public void AmountCorrection(decimal amount, string remark)
+        protected void AmountCorrection(decimal amount, string remark)
         {
+            if (Period.ActiveFrom.Equals(SepsVersion.InitialDate()))
+                throw new DomainException(SubsidyMessages.InitialValuesMustNotBeChanged);
+
             Amount = RoundAmount(amount);
             Remark = remark;
         }

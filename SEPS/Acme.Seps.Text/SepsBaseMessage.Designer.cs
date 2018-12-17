@@ -99,9 +99,9 @@ namespace Acme.Seps.Text {
         /// <summary>
         ///   Looks up a localized string similar to Since must be after until in period.
         /// </summary>
-        public static string UnilGreaterThanSincePeriodException {
+        public static string UntilGreaterThanSincePeriodException {
             get {
-                return ResourceManager.GetString("UnilGreaterThanSincePeriodException", resourceCulture);
+                return ResourceManager.GetString("UntilGreaterThanSincePeriodException", resourceCulture);
             }
         }
     }

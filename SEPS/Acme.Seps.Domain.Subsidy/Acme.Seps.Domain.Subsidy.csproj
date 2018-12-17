@@ -27,7 +27,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Update="Infrastructure\SubsidyMessages.Designer.cs">
+    <Compile Update="Command\Infrastructure\SubsidyMessages.Designer.cs">
       <DependentUpon>SubsidyMessages.resx</DependentUpon>
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
@@ -35,7 +35,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Update="Infrastructure\SubsidyMessages.resx">
+    <EmbeddedResource Update="Command\Infrastructure\SubsidyMessages.resx">
       <LastGenOutput>SubsidyMessages.Designer.cs</LastGenOutput>
       <Generator>PublicResXFileCodeGenerator</Generator>
     </EmbeddedResource>

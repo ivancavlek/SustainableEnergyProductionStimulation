@@ -3,10 +3,9 @@ using Acme.Domain.Base.Repository;
 using Acme.Seps.Domain.Base.CommandHandler;
 using Acme.Seps.Domain.Base.Repository;
 using Acme.Seps.Domain.Subsidy.Command;
-using Acme.Seps.Domain.Subsidy.CommandHandler;
-using Acme.Seps.Domain.Subsidy.DomainService;
-using Acme.Seps.Domain.Subsidy.Entity;
-using Acme.Seps.Domain.Subsidy.Repository;
+using Acme.Seps.Domain.Subsidy.Command.DomainService;
+using Acme.Seps.Domain.Subsidy.Command.Entity;
+using Acme.Seps.Domain.Subsidy.Command.Repository;
 using Acme.Seps.Domain.Subsidy.Test.Unit.Factory;
 using FluentAssertions;
 using NSubstitute;
@@ -17,7 +16,7 @@ namespace Acme.Seps.Domain.Subsidy.Test.Unit.CommandHandler
 {
     public class CalculateNaturalGasCommandHandlerTests
     {
-        private readonly ISepsCommandHandler<CalculateNaturalGasCommand> _calculateNaturalGas;
+        private readonly ISepsCommandHandler<CalculateNaturalGasSellingPriceCommand> _calculateNaturalGas;
         private readonly IUnitOfWork _unitOfWork;
 
         public CalculateNaturalGasCommandHandlerTests()
@@ -47,7 +46,7 @@ namespace Acme.Seps.Domain.Subsidy.Test.Unit.CommandHandler
                 .GetFrom(Arg.Any<IEnumerable<NaturalGasSellingPrice>>(), Arg.Any<NaturalGasSellingPrice>())
                 .Returns(1M);
 
-            _calculateNaturalGas = new CalculateNaturalGasCommandHandler(
+            _calculateNaturalGas = new CalculateNaturalGasSellingPriceCommandHandler(
                 cogenerationParameterService, repository, _unitOfWork, Substitute.For<IIdentityFactory<Guid>>());
         }
 
@@ -55,11 +54,11 @@ namespace Acme.Seps.Domain.Subsidy.Test.Unit.CommandHandler
         {
             var lastPeriod = DateTime.Now.AddMonths(-3);
 
-            var calculateNaturalGasCommand = new CalculateNaturalGasCommand
+            var calculateNaturalGasCommand = new CalculateNaturalGasSellingPriceCommand
             {
                 Amount = 100M,
                 Month = lastPeriod.Month,
-                Remark = nameof(CalculateNaturalGasCommand),
+                Remark = nameof(CalculateNaturalGasSellingPriceCommand),
                 Year = lastPeriod.Year,
             };
 

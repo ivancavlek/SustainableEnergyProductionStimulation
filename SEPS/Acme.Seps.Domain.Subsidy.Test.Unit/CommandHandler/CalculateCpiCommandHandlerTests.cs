@@ -3,8 +3,7 @@ using Acme.Domain.Base.Repository;
 using Acme.Seps.Domain.Base.CommandHandler;
 using Acme.Seps.Domain.Base.Repository;
 using Acme.Seps.Domain.Subsidy.Command;
-using Acme.Seps.Domain.Subsidy.CommandHandler;
-using Acme.Seps.Domain.Subsidy.Entity;
+using Acme.Seps.Domain.Subsidy.Command.Entity;
 using Acme.Seps.Domain.Subsidy.Test.Unit.Factory;
 using FluentAssertions;
 using NSubstitute;
@@ -15,7 +14,7 @@ namespace Acme.Seps.Domain.Subsidy.Test.Unit.CommandHandler
 {
     public class CalculateCpiCommandHandlerTests
     {
-        private readonly ISepsCommandHandler<CalculateCpiCommand> _calculateCpi;
+        private readonly ISepsCommandHandler<CalculateConsumerPriceIndexCommand> _calculateCpi;
         private readonly IUnitOfWork _unitOfWork;
 
         public CalculateCpiCommandHandlerTests()
@@ -44,10 +43,10 @@ namespace Acme.Seps.Domain.Subsidy.Test.Unit.CommandHandler
 
         public void ExecutesProperly()
         {
-            var calculateCommand = new CalculateCpiCommand
+            var calculateCommand = new CalculateConsumerPriceIndexCommand
             {
                 Amount = 100M,
-                Remark = nameof(CalculateCpiCommand)
+                Remark = nameof(CalculateConsumerPriceIndexCommand)
             };
 
             using (var monitoredEvent = _calculateCpi.Monitor())

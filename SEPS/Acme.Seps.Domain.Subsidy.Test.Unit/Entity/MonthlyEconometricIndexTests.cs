@@ -1,8 +1,8 @@
 ﻿using Acme.Domain.Base.Entity;
 using Acme.Domain.Base.Factory;
 using Acme.Seps.Domain.Base.Utility;
-using Acme.Seps.Domain.Subsidy.Entity;
-using Acme.Seps.Domain.Subsidy.Infrastructure;
+using Acme.Seps.Domain.Subsidy.Command.Entity;
+using Acme.Seps.Domain.Subsidy.Command.Infrastructure;
 using FluentAssertions;
 using NSubstitute;
 using System;

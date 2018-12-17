@@ -3,10 +3,9 @@ using Acme.Domain.Base.Repository;
 using Acme.Seps.Domain.Base.CommandHandler;
 using Acme.Seps.Domain.Base.Repository;
 using Acme.Seps.Domain.Subsidy.Command;
-using Acme.Seps.Domain.Subsidy.CommandHandler;
-using Acme.Seps.Domain.Subsidy.DomainService;
-using Acme.Seps.Domain.Subsidy.Entity;
-using Acme.Seps.Domain.Subsidy.Repository;
+using Acme.Seps.Domain.Subsidy.Command.DomainService;
+using Acme.Seps.Domain.Subsidy.Command.Entity;
+using Acme.Seps.Domain.Subsidy.Command.Repository;
 using Acme.Seps.Domain.Subsidy.Test.Unit.Factory;
 using FluentAssertions;
 using NSubstitute;
@@ -17,7 +16,7 @@ namespace Acme.Seps.Domain.Subsidy.Test.Unit.CommandHandler
 {
     public class CorrectActiveNaturalGasCommandHandlerTests
     {
-        private readonly ISepsCommandHandler<CorrectActiveNaturalGasCommand> _calculateNaturalGas;
+        private readonly ISepsCommandHandler<CorrectActiveNaturalGasSellingPriceCommand> _calculateNaturalGas;
         private readonly IUnitOfWork _unitOfWork;
 
         public CorrectActiveNaturalGasCommandHandlerTests()
@@ -62,7 +61,7 @@ namespace Acme.Seps.Domain.Subsidy.Test.Unit.CommandHandler
 
             _unitOfWork = Substitute.For<IUnitOfWork>();
 
-            _calculateNaturalGas = new CorrectActiveNaturalGasCommandHandler(
+            _calculateNaturalGas = new CorrectActiveNaturalGasSellingPriceCommandHandler(
                 cogenerationParameterService, repository, _unitOfWork, Substitute.For<IIdentityFactory<Guid>>());
         }
 
@@ -70,11 +69,11 @@ namespace Acme.Seps.Domain.Subsidy.Test.Unit.CommandHandler
         {
             var lastPeriod = DateTime.Now.AddMonths(-3);
 
-            var correctActiveNaturalGasCommand = new CorrectActiveNaturalGasCommand
+            var correctActiveNaturalGasCommand = new CorrectActiveNaturalGasSellingPriceCommand
             {
                 Amount = 100M,
                 Month = lastPeriod.Month,
-                Remark = nameof(CalculateNaturalGasCommand),
+                Remark = nameof(CalculateNaturalGasSellingPriceCommand),
                 Year = lastPeriod.Year,
             };
 

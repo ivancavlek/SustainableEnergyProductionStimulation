@@ -2,9 +2,8 @@
 using Acme.Seps.Domain.Base.CommandHandler;
 using Acme.Seps.Domain.Base.Entity;
 using Acme.Seps.Domain.Subsidy.Command;
-using Acme.Seps.Domain.Subsidy.Entity;
+using Acme.Seps.Domain.Subsidy.Command.Entity;
 using Acme.Seps.Domain.Subsidy.Query;
-using Acme.Seps.Domain.Subsidy.QueryResult;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -14,19 +13,19 @@ namespace Acme.Seps.Presentation.Web.Controllers
     [Route("api/[controller]")]
     public sealed class ParameterController : Controller
     {
-        private readonly ISepsCommandHandler<CalculateCpiCommand> _calculateCpi;
-        private readonly ISepsCommandHandler<CalculateNaturalGasCommand> _calculateNaturalGas;
-        private readonly ISepsCommandHandler<CorrectActiveCpiCommand> _correctActiveCpi;
-        private readonly ISepsCommandHandler<CorrectActiveNaturalGasCommand> _correctActiveNaturalGas;
+        private readonly ISepsCommandHandler<CalculateConsumerPriceIndexCommand> _calculateCpi;
+        private readonly ISepsCommandHandler<CalculateNaturalGasSellingPriceCommand> _calculateNaturalGas;
+        private readonly ISepsCommandHandler<CorrectActiveConsumerPriceIndexCommand> _correctActiveCpi;
+        private readonly ISepsCommandHandler<CorrectActiveNaturalGasSellingPriceCommand> _correctActiveNaturalGas;
         private readonly IQueryHandler<GetEconometricIndexQuery, IReadOnlyList<EconometricIndexQueryResult>> _econometricIndexesQuery;
         private readonly IQueryHandler<GetRenewableEnergySourceTariffQuery, IReadOnlyList<RenewableEnergySourceTariffQueryResult>> _renewableEnergySourceTariffsQuery;
         private readonly IQueryHandler<GetCogenerationTariffQuery, IReadOnlyList<CogenerationTariffQueryResult>> _cogenerationTariffsQuery;
 
         public ParameterController(
-            ISepsCommandHandler<CalculateCpiCommand> calculateCpi,
-            ISepsCommandHandler<CalculateNaturalGasCommand> calculateNaturalGas,
-            ISepsCommandHandler<CorrectActiveCpiCommand> correctActiveCpi,
-            ISepsCommandHandler<CorrectActiveNaturalGasCommand> correctActiveNaturalGas,
+            ISepsCommandHandler<CalculateConsumerPriceIndexCommand> calculateCpi,
+            ISepsCommandHandler<CalculateNaturalGasSellingPriceCommand> calculateNaturalGas,
+            ISepsCommandHandler<CorrectActiveConsumerPriceIndexCommand> correctActiveCpi,
+            ISepsCommandHandler<CorrectActiveNaturalGasSellingPriceCommand> correctActiveNaturalGas,
             IQueryHandler<GetEconometricIndexQuery, IReadOnlyList<EconometricIndexQueryResult>> econometricIndexesQuery,
             IQueryHandler<GetRenewableEnergySourceTariffQuery, IReadOnlyList<RenewableEnergySourceTariffQueryResult>> renewableEnergySourceTariffsQuery,
             IQueryHandler<GetCogenerationTariffQuery, IReadOnlyList<CogenerationTariffQueryResult>> cogenerationTariffsQuery)
@@ -75,7 +74,7 @@ namespace Acme.Seps.Presentation.Web.Controllers
         }
 
         [HttpPost("CalculateCpi")]
-        public IActionResult CalculateCpi([FromBody]CalculateCpiCommand calculateCpiCommand)
+        public IActionResult CalculateCpi([FromBody]CalculateConsumerPriceIndexCommand calculateCpiCommand)
         {
             _calculateCpi.UseCaseExecutionProcessing += CalculateCpi_UseCaseExecutionProcessing;
             _calculateCpi.Handle(calculateCpiCommand);
@@ -84,7 +83,7 @@ namespace Acme.Seps.Presentation.Web.Controllers
 
         [HttpPost]
         [Route("CalculateNaturalGas")]
-        public IActionResult CalculateNaturalGas([FromBody]CalculateNaturalGasCommand calculateNaturalGas)
+        public IActionResult CalculateNaturalGas([FromBody]CalculateNaturalGasSellingPriceCommand calculateNaturalGas)
         {
             _calculateNaturalGas.UseCaseExecutionProcessing += CalculateNaturalGas_UseCaseExecutionProcessing;
             _calculateNaturalGas.Handle(calculateNaturalGas);
@@ -93,7 +92,7 @@ namespace Acme.Seps.Presentation.Web.Controllers
 
         [HttpPut]
         [Route("CorrectActiveCpi")]
-        public IActionResult CorrectActiveCpi([FromBody]CorrectActiveCpiCommand correctActiveCpi)
+        public IActionResult CorrectActiveCpi([FromBody]CorrectActiveConsumerPriceIndexCommand correctActiveCpi)
         {
             _correctActiveCpi.UseCaseExecutionProcessing += CorrectActiveCpi_UseCaseExecutionProcessing;
             _correctActiveCpi.Handle(correctActiveCpi);
@@ -102,7 +101,7 @@ namespace Acme.Seps.Presentation.Web.Controllers
 
         [HttpPut("{id}")] // not good, needs correction
         [Route("CorrectActiveNaturalGas")]
-        public void CorrectActiveNaturalGas(int id, [FromBody]CorrectActiveNaturalGasCommand correctActiveNaturalGas)
+        public void CorrectActiveNaturalGas(int id, [FromBody]CorrectActiveNaturalGasSellingPriceCommand correctActiveNaturalGas)
         {
             _correctActiveNaturalGas.Handle(correctActiveNaturalGas);
         }

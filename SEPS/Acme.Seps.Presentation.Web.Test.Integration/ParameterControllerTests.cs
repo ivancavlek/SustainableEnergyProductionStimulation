@@ -1,5 +1,5 @@
 using Acme.Seps.Domain.Subsidy.Command;
-using Acme.Seps.Domain.Subsidy.QueryResult;
+using Acme.Seps.Domain.Subsidy.Query;
 using Acme.Seps.Presentation.Web.DependencyInjection;
 using Acme.Seps.Presentation.Web.Test.Integration.TestUtility;
 using FluentAssertions;
@@ -42,7 +42,7 @@ namespace Acme.Seps.Presentation.Web.Test.Integration
         [Fact, TestPriority(2)]
         public async Task ModelValidationSendsBadRequestOnErroneousModel()
         {
-            var command = new CalculateCpiCommand { Amount = -2, Remark = null };
+            var command = new CalculateConsumerPriceIndexCommand { Amount = -2, Remark = null };
 
             var response = await _client
                 .PostAsync(
@@ -115,7 +115,7 @@ namespace Acme.Seps.Presentation.Web.Test.Integration
         [Fact, TestPriority(7)]
         public async Task CalculateCpi()
         {
-            var command = new CalculateCpiCommand
+            var command = new CalculateConsumerPriceIndexCommand
             {
                 Amount = 102.9M,
                 Remark = "Integration test calculate CPI remark"
@@ -137,7 +137,7 @@ namespace Acme.Seps.Presentation.Web.Test.Integration
         {
             var lastMonth = DateTime.Now.AddMonths(-3);
 
-            var command = new CalculateNaturalGasCommand
+            var command = new CalculateNaturalGasSellingPriceCommand
             {
                 Amount = 1.32M,
                 Month = lastMonth.Month,
@@ -164,7 +164,7 @@ namespace Acme.Seps.Presentation.Web.Test.Integration
 
             if (allCpis.Count.Equals(1))
             {
-                var command = new CalculateCpiCommand
+                var command = new CalculateConsumerPriceIndexCommand
                 {
                     Amount = 102.9M,
                     Remark = "Integration test correct CPI remark"
@@ -179,15 +179,17 @@ namespace Acme.Seps.Presentation.Web.Test.Integration
                 response.EnsureSuccessStatusCode();
             }
 
-            var correctCommand = new CorrectActiveCpiCommand
+            var correctCommand = new CorrectActiveConsumerPriceIndexCommand
             {
                 Amount = 106.9M,
                 Remark = "Integration test correct CPI remark"
             };
 
-            var correctResponse = await _client.PutAsync(
-                _baseUri + "CorrectActiveCpi",
-                new StringContent(JsonConvert.SerializeObject(correctCommand), _encoding, _contentType));
+            var correctResponse = await _client
+                .PutAsync(
+                    _baseUri + "CorrectActiveCpi",
+                    new StringContent(JsonConvert.SerializeObject(correctCommand), _encoding, _contentType))
+                .ConfigureAwait(false);
 
             correctResponse.EnsureSuccessStatusCode();
 
@@ -203,7 +205,7 @@ namespace Acme.Seps.Presentation.Web.Test.Integration
 
             if (allNgsps.Count.Equals(1))
             {
-                var command = new CalculateNaturalGasCommand
+                var command = new CalculateNaturalGasSellingPriceCommand
                 {
                     Amount = 1.32M,
                     Month = lastMonth.Month,
@@ -220,7 +222,7 @@ namespace Acme.Seps.Presentation.Web.Test.Integration
 
             lastMonth = DateTime.Now.AddMonths(-1);
 
-            var correctCommand = new CalculateNaturalGasCommand
+            var correctCommand = new CalculateNaturalGasSellingPriceCommand
             {
                 Amount = 1.32M,
                 Month = lastMonth.Month,

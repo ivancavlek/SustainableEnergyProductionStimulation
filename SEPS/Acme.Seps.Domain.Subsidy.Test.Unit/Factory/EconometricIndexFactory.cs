@@ -1,5 +1,5 @@
 ﻿using Acme.Domain.Base.Factory;
-using Acme.Seps.Domain.Subsidy.Entity;
+using Acme.Seps.Domain.Subsidy.Command.Entity;
 using NSubstitute;
 using System;
 using System.Reflection;

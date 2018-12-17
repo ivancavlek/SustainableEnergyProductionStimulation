@@ -1,15 +1,15 @@
-﻿using Acme.Seps.Domain.Subsidy.CommandValidation;
+﻿using Acme.Seps.Domain.Subsidy.Command.Validation;
 using FluentValidation.TestHelper;
 
 namespace Acme.Seps.Domain.Subsidy.Test.Unit.CommandValidation
 {
     public class CalculateCpiCommandValidatorTests
     {
-        private readonly CalculateCpiCommandValidator _validator;
+        private readonly CalculateConsumerPriceIndexCommandValidator _validator;
 
         public CalculateCpiCommandValidatorTests()
         {
-            _validator = new CalculateCpiCommandValidator();
+            _validator = new CalculateConsumerPriceIndexCommandValidator();
         }
 
         public void ValidatorShouldHaveAnErrorOnAmount()

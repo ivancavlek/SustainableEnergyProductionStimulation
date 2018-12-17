@@ -3,9 +3,8 @@ using Acme.Domain.Base.Repository;
 using Acme.Seps.Domain.Base.CommandHandler;
 using Acme.Seps.Domain.Base.Repository;
 using Acme.Seps.Domain.Subsidy.Command;
-using Acme.Seps.Domain.Subsidy.CommandHandler;
-using Acme.Seps.Domain.Subsidy.Entity;
-using Acme.Seps.Domain.Subsidy.Repository;
+using Acme.Seps.Domain.Subsidy.Command.Entity;
+using Acme.Seps.Domain.Subsidy.Command.Repository;
 using Acme.Seps.Domain.Subsidy.Test.Unit.Factory;
 using FluentAssertions;
 using NSubstitute;
@@ -16,7 +15,7 @@ namespace Acme.Seps.Domain.Subsidy.Test.Unit.CommandHandler
 {
     public class CorrectActiveCpiCommandHandlerTests
     {
-        private readonly ISepsCommandHandler<CorrectActiveCpiCommand> _correctActiveCpi;
+        private readonly ISepsCommandHandler<CorrectActiveConsumerPriceIndexCommand> _correctActiveCpi;
         private readonly IUnitOfWork _unitOfWork;
 
         public CorrectActiveCpiCommandHandlerTests()
@@ -61,10 +60,10 @@ namespace Acme.Seps.Domain.Subsidy.Test.Unit.CommandHandler
 
         public void ExecutesProperly()
         {
-            var correctActiveCpi = new CorrectActiveCpiCommand
+            var correctActiveCpi = new CorrectActiveConsumerPriceIndexCommand
             {
                 Amount = 100M,
-                Remark = nameof(CalculateCpiCommand)
+                Remark = nameof(CalculateConsumerPriceIndexCommand)
             };
 
             using (var monitoredEvent = _correctActiveCpi.Monitor())

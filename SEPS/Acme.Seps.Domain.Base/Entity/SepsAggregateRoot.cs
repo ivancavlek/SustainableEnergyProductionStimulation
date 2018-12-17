@@ -11,20 +11,20 @@ namespace Acme.Seps.Domain.Base.Entity
 {
     public abstract class SepsAggregateRoot : SepsEntity, IAggregateRoot
     {
-        private readonly ActiveSpecification<SepsAggregateRoot> _isActive;
+        private readonly ActiveSpecification<SepsAggregateRoot> _isActive =
+            new ActiveSpecification<SepsAggregateRoot>();
 
         public ActivePeriod Active { get; private set; }
 
         protected SepsAggregateRoot() { }
 
-        protected SepsAggregateRoot(DateTimeOffset activeFrom, IIdentityFactory<Guid> identityFactory)
+        protected SepsAggregateRoot(DateTimeOffset since, IIdentityFactory<Guid> identityFactory)
             : base(identityFactory)
         {
-            activeFrom.MustBeGreaterThanOrEqualTo(
+            since.MustBeGreaterThanOrEqualTo(
                 SepsVersion.InitialDate(), message: SepsBaseMessage.DateMustBeGreaterThanInitialDate);
 
-            Active = new ActivePeriod(activeFrom);
-            _isActive = new ActiveSpecification<SepsAggregateRoot>();
+            Active = new ActivePeriod(since);
         }
 
         protected void SetInactive(DateTimeOffset inactiveFrom)

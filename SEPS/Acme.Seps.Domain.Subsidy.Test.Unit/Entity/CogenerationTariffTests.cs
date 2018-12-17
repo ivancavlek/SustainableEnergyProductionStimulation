@@ -27,15 +27,15 @@ namespace Acme.Seps.Domain.Subsidy.Test.Unit.Entity
             _cogenerationParameterService = Substitute.For<ICogenerationParameterService>();
             _yearsNaturalGasSellingPrices = new List<NaturalGasSellingPrice> { _newNaturalGasSellingPrice };
 
-            DateTimeOffset cgnActiveFrom = DateTimeOffset.Now.ToFirstDayOfTheMonth().AddMonths(-9);
+            DateTimeOffset cgnSince = DateTimeOffset.Now.ToFirstDayOfTheMonth().AddMonths(-9);
             IEconometricIndexFactory<NaturalGasSellingPrice> ngspFactory =
-                new EconometricIndexFactory<NaturalGasSellingPrice>(cgnActiveFrom);
+                new EconometricIndexFactory<NaturalGasSellingPrice>(cgnSince);
             ITariffFactory<CogenerationTariff> cogenerationFactory =
                 new TariffFactory<CogenerationTariff>(ngspFactory.Create());
             _activeCgn = cogenerationFactory.Create();
 
-            DateTimeOffset ngspActiveFrom = DateTimeOffset.Now.ToFirstDayOfTheMonth().AddMonths(-4);
-            ngspFactory = new EconometricIndexFactory<NaturalGasSellingPrice>(ngspActiveFrom);
+            DateTimeOffset ngspSince = DateTimeOffset.Now.ToFirstDayOfTheMonth().AddMonths(-4);
+            ngspFactory = new EconometricIndexFactory<NaturalGasSellingPrice>(ngspSince);
             _newNaturalGasSellingPrice = ngspFactory.Create();
         }
 

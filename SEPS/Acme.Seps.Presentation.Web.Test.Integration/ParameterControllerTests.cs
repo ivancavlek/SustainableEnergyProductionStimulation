@@ -44,9 +44,11 @@ namespace Acme.Seps.Presentation.Web.Test.Integration
         {
             var command = new CalculateCpiCommand { Amount = -2, Remark = null };
 
-            var response = await _client.PostAsync(
-                _baseUri + "CalculateCpi",
-                new StringContent(JsonConvert.SerializeObject(command), _encoding, _contentType));
+            var response = await _client
+                .PostAsync(
+                    _baseUri + "CalculateCpi",
+                    new StringContent(JsonConvert.SerializeObject(command), _encoding, _contentType))
+                .ConfigureAwait(false);
 
             response.IsSuccessStatusCode.Should().BeFalse();
             response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
@@ -62,8 +64,8 @@ namespace Acme.Seps.Presentation.Web.Test.Integration
             {
                 cpi.Amount.Should().Be(105.8M);
                 cpi.Remark.Should().Be("Initial value");
-                cpi.ActiveFrom.Should().Be(new DateTime(2007, 7, 1));
-                cpi.ActiveTill.Should().BeNull();
+                cpi.Since.Should().Be(new DateTime(2007, 7, 1));
+                cpi.Until.Should().BeNull();
             }
         }
 
@@ -77,8 +79,8 @@ namespace Acme.Seps.Presentation.Web.Test.Integration
             {
                 cpi.Amount.Should().Be(1.07M);
                 cpi.Remark.Should().Be("Initial value");
-                cpi.ActiveFrom.Should().Be(new DateTime(2007, 7, 1));
-                cpi.ActiveTill.Should().BeNull();
+                cpi.Since.Should().Be(new DateTime(2007, 7, 1));
+                cpi.Until.Should().BeNull();
             }
         }
 
@@ -91,8 +93,8 @@ namespace Acme.Seps.Presentation.Web.Test.Integration
             foreach (var res in allRess)
             {
                 res.ConsumerPriceIndexAmount.Should().Be(105.8M);
-                res.ActiveFrom.Should().Be(new DateTime(2007, 7, 1));
-                res.ActiveTill.Should().BeNull();
+                res.Since.Should().Be(new DateTime(2007, 7, 1));
+                res.Until.Should().BeNull();
             }
         }
 
@@ -105,8 +107,8 @@ namespace Acme.Seps.Presentation.Web.Test.Integration
             foreach (var cgn in allCgns)
             {
                 cgn.NaturalGasSellingPriceAmount.Should().Be(1.07M);
-                cgn.ActiveFrom.Should().Be(new DateTime(2007, 7, 1));
-                cgn.ActiveTill.Should().BeNull();
+                cgn.Since.Should().Be(new DateTime(2007, 7, 1));
+                cgn.Until.Should().BeNull();
             }
         }
 
@@ -119,13 +121,15 @@ namespace Acme.Seps.Presentation.Web.Test.Integration
                 Remark = "Integration test calculate CPI remark"
             };
 
-            var response = await _client.PostAsync(
-                _baseUri + "CalculateCpi",
-                new StringContent(JsonConvert.SerializeObject(command), _encoding, _contentType));
+            var response = await _client
+                .PostAsync(
+                    _baseUri + "CalculateCpi",
+                    new StringContent(JsonConvert.SerializeObject(command), _encoding, _contentType))
+                .ConfigureAwait(false);
 
             response.EnsureSuccessStatusCode();
 
-            await CheckNewAndOldCpiAndResValues(command.Amount, command.Remark);
+            await CheckNewAndOldCpiAndResValues(command.Amount, command.Remark).ConfigureAwait(false);
         }
 
         [Fact, TestPriority(8)]
@@ -141,9 +145,11 @@ namespace Acme.Seps.Presentation.Web.Test.Integration
                 Remark = "Integration test calculate NGSP remark"
             };
 
-            var response = await _client.PostAsync(
-                _baseUri + "CalculateNaturalGas",
-                new StringContent(JsonConvert.SerializeObject(command), Encoding.UTF8, "application/json"));
+            var response = await _client
+                .PostAsync(
+                    _baseUri + "CalculateNaturalGas",
+                    new StringContent(JsonConvert.SerializeObject(command), Encoding.UTF8, "application/json"))
+                .ConfigureAwait(false);
 
             response.EnsureSuccessStatusCode();
 
@@ -164,9 +170,11 @@ namespace Acme.Seps.Presentation.Web.Test.Integration
                     Remark = "Integration test correct CPI remark"
                 };
 
-                var response = await _client.PostAsync(
-                    _baseUri + "CalculateCpi",
-                    new StringContent(JsonConvert.SerializeObject(command), _encoding, _contentType));
+                var response = await _client
+                    .PostAsync(
+                        _baseUri + "CalculateCpi",
+                        new StringContent(JsonConvert.SerializeObject(command), _encoding, _contentType))
+                    .ConfigureAwait(false);
 
                 response.EnsureSuccessStatusCode();
             }
@@ -183,7 +191,7 @@ namespace Acme.Seps.Presentation.Web.Test.Integration
 
             correctResponse.EnsureSuccessStatusCode();
 
-            await CheckNewAndOldCpiAndResValues(correctCommand.Amount, correctCommand.Remark);
+            await CheckNewAndOldCpiAndResValues(correctCommand.Amount, correctCommand.Remark).ConfigureAwait(false);
         }
 
         [Fact, TestPriority(10)]
@@ -203,9 +211,11 @@ namespace Acme.Seps.Presentation.Web.Test.Integration
                     Remark = "Integration test correct NGSP remark"
                 };
 
-                var response = await _client.PostAsync(
-                    _baseUri + "CalculateNaturalGas",
-                    new StringContent(JsonConvert.SerializeObject(command), Encoding.UTF8, "application/json"));
+                var response = await _client
+                    .PostAsync(
+                        _baseUri + "CalculateNaturalGas",
+                        new StringContent(JsonConvert.SerializeObject(command), Encoding.UTF8, "application/json"))
+                    .ConfigureAwait(false);
             }
 
             lastMonth = DateTime.Now.AddMonths(-1);
@@ -218,9 +228,11 @@ namespace Acme.Seps.Presentation.Web.Test.Integration
                 Remark = "Integration test correct NGSP remark"
             };
 
-            var correctResponse = await _client.PutAsync(
-                _baseUri + "CorrectActiveNaturalGas",
-                new StringContent(JsonConvert.SerializeObject(correctCommand), Encoding.UTF8, "application/json"));
+            var correctResponse = await _client
+                .PutAsync(
+                    _baseUri + "CorrectActiveNaturalGas",
+                    new StringContent(JsonConvert.SerializeObject(correctCommand), Encoding.UTF8, "application/json"))
+                .ConfigureAwait(false);
 
             correctResponse.EnsureSuccessStatusCode();
 
@@ -230,29 +242,31 @@ namespace Acme.Seps.Presentation.Web.Test.Integration
 
         private async Task<List<EconometricIndexQueryResult>> GetAllConsumerPriceIndexes()
         {
-            var cpiQueryResponse = await _client.GetAsync(_baseUri + "GetConsumerPriceIndexes");
-            var cpiJsonResponse = await cpiQueryResponse.Content.ReadAsStringAsync();
+            var cpiQueryResponse = await _client.GetAsync(_baseUri + "GetConsumerPriceIndexes").ConfigureAwait(false);
+            var cpiJsonResponse = await cpiQueryResponse.Content.ReadAsStringAsync().ConfigureAwait(false);
             return JsonConvert.DeserializeObject<List<EconometricIndexQueryResult>>(cpiJsonResponse);
         }
 
         private async Task<List<EconometricIndexQueryResult>> GetAllNaturalGasSellingPrices()
         {
-            var ngspQueryResponse = await _client.GetAsync(_baseUri + "GetNaturalGasSellingPrices");
-            var ngspJsonResponse = await ngspQueryResponse.Content.ReadAsStringAsync();
+            var ngspQueryResponse = await _client
+                .GetAsync(_baseUri + "GetNaturalGasSellingPrices").ConfigureAwait(false);
+            var ngspJsonResponse = await ngspQueryResponse.Content.ReadAsStringAsync().ConfigureAwait(false);
             return JsonConvert.DeserializeObject<List<EconometricIndexQueryResult>>(ngspJsonResponse);
         }
 
         private async Task<List<RenewableEnergySourceTariffQueryResult>> GetAllResTariffs()
         {
-            var resQueryResponse = await _client.GetAsync(_baseUri + "GetRenewableEnergySourceTariffs");
-            var resJsonResponse = await resQueryResponse.Content.ReadAsStringAsync();
+            var resQueryResponse = await _client
+                .GetAsync(_baseUri + "GetRenewableEnergySourceTariffs").ConfigureAwait(false);
+            var resJsonResponse = await resQueryResponse.Content.ReadAsStringAsync().ConfigureAwait(false);
             return JsonConvert.DeserializeObject<List<RenewableEnergySourceTariffQueryResult>>(resJsonResponse);
         }
 
         private async Task<List<CogenerationTariffQueryResult>> GetAllCogenerationTariffs()
         {
-            var cgnQueryResponse = await _client.GetAsync(_baseUri + "GetCogenerationTariffs");
-            var cgnJsonResponse = await cgnQueryResponse.Content.ReadAsStringAsync();
+            var cgnQueryResponse = await _client.GetAsync(_baseUri + "GetCogenerationTariffs").ConfigureAwait(false);
+            var cgnJsonResponse = await cgnQueryResponse.Content.ReadAsStringAsync().ConfigureAwait(false);
             return JsonConvert.DeserializeObject<List<CogenerationTariffQueryResult>>(
                 cgnJsonResponse);
         }
@@ -261,40 +275,40 @@ namespace Acme.Seps.Presentation.Web.Test.Integration
         {
             var allNgsps = await GetAllNaturalGasSellingPrices().ConfigureAwait(false);
 
-            var oldNgsp = allNgsps.Single(ngs => ngs.ActiveTill.HasValue);
-            var newNgsp = allNgsps.Single(ngs => !ngs.ActiveTill.HasValue);
+            var oldNgsp = allNgsps.Single(ngs => ngs.Until.HasValue);
+            var newNgsp = allNgsps.Single(ngs => !ngs.Until.HasValue);
             const decimal oldAmount = 1.07M;
             var oldDate = new DateTime(2007, 7, 1);
             var newDate = new DateTime(year, month, 1);
 
             oldNgsp.Amount.Should().Be(oldAmount);
             oldNgsp.Remark.Should().Be("Initial value");
-            oldNgsp.ActiveFrom.Should().Be(oldDate);
-            oldNgsp.ActiveTill.Should().Be(newDate);
+            oldNgsp.Since.Should().Be(oldDate);
+            oldNgsp.Until.Should().Be(newDate);
             newNgsp.Amount.Should().Be(newAmount);
             newNgsp.Remark.Should().Be(newRemark);
-            newNgsp.ActiveFrom.Should().Be(newDate);
-            newNgsp.ActiveTill.Should().BeNull();
+            newNgsp.Since.Should().Be(newDate);
+            newNgsp.Until.Should().BeNull();
 
             var allCgns = await GetAllCogenerationTariffs().ConfigureAwait(false);
 
-            var oldRes = allCgns.Where(cgn => cgn.ActiveTill.HasValue).ToList();
-            var newRes = allCgns.Where(cgn => !cgn.ActiveTill.HasValue).ToList();
+            var oldRes = allCgns.Where(cgn => cgn.Until.HasValue).ToList();
+            var newRes = allCgns.Where(cgn => !cgn.Until.HasValue).ToList();
 
             oldRes.Count.Should().Be(2);
             newRes.Count.Should().Be(2);
 
             foreach (var res in oldRes)
             {
-                res.ActiveFrom.Should().Be(oldDate);
-                res.ActiveTill.Should().Be(newDate);
+                res.Since.Should().Be(oldDate);
+                res.Until.Should().Be(newDate);
                 res.NaturalGasSellingPriceAmount.Should().Be(oldAmount);
             }
 
             foreach (var res in newRes)
             {
-                res.ActiveFrom.Should().Be(newDate);
-                res.ActiveTill.Should().BeNull();
+                res.Since.Should().Be(newDate);
+                res.Until.Should().BeNull();
                 res.NaturalGasSellingPriceAmount.Should().Be(newAmount);
             }
         }
@@ -303,40 +317,40 @@ namespace Acme.Seps.Presentation.Web.Test.Integration
         {
             var allCpis = await GetAllConsumerPriceIndexes().ConfigureAwait(false);
 
-            var oldCpi = allCpis.Single(cpi => cpi.ActiveTill.HasValue);
-            var newCpi = allCpis.Single(cpi => !cpi.ActiveTill.HasValue);
+            var oldCpi = allCpis.Single(cpi => cpi.Until.HasValue);
+            var newCpi = allCpis.Single(cpi => !cpi.Until.HasValue);
             const decimal oldAmount = 105.8M;
             var oldDate = new DateTime(2007, 7, 1);
             var newDate = new DateTime(2008, 1, 1);
 
             oldCpi.Amount.Should().Be(oldAmount);
             oldCpi.Remark.Should().Be("Initial value");
-            oldCpi.ActiveFrom.Should().Be(oldDate);
-            oldCpi.ActiveTill.Should().Be(newDate);
+            oldCpi.Since.Should().Be(oldDate);
+            oldCpi.Until.Should().Be(newDate);
             newCpi.Amount.Should().Be(newAmount);
             newCpi.Remark.Should().Be(newRemark);
-            newCpi.ActiveFrom.Should().Be(newDate);
-            newCpi.ActiveTill.Should().BeNull();
+            newCpi.Since.Should().Be(newDate);
+            newCpi.Until.Should().BeNull();
 
             var allRes = await GetAllResTariffs().ConfigureAwait(false);
 
-            var oldRes = allRes.Where(res => res.ActiveTill.HasValue).ToList();
-            var newRes = allRes.Where(res => !res.ActiveTill.HasValue).ToList();
+            var oldRes = allRes.Where(res => res.Until.HasValue).ToList();
+            var newRes = allRes.Where(res => !res.Until.HasValue).ToList();
 
             oldRes.Count.Should().Be(9);
             newRes.Count.Should().Be(9);
 
             foreach (var res in oldRes)
             {
-                res.ActiveFrom.Should().Be(oldDate);
-                res.ActiveTill.Should().Be(newDate);
+                res.Since.Should().Be(oldDate);
+                res.Until.Should().Be(newDate);
                 res.ConsumerPriceIndexAmount.Should().Be(oldAmount);
             }
 
             foreach (var res in newRes)
             {
-                res.ActiveFrom.Should().Be(newDate);
-                res.ActiveTill.Should().BeNull();
+                res.Since.Should().Be(newDate);
+                res.Until.Should().BeNull();
                 res.ConsumerPriceIndexAmount.Should().Be(newAmount);
             }
         }

@@ -25,13 +25,13 @@ namespace Acme.Seps.Domain.Subsidy.QueryHandler
             _connection
                 .Query<EconometricIndexQueryResult>(new StringBuilder()
                     .AppendLine("SELECT ")
-                    .AppendLine("eix.ActiveFrom,")
-                    .AppendLine("eix.ActiveTill,")
+                    .AppendLine("eix.Since,")
+                    .AppendLine("eix.Until,")
                     .AppendLine("eix.Amount,")
                     .AppendLine("eix.Remark")
                     .AppendLine("FROM parameter.EconometricIndexes AS eix")
                     .AppendLine("WHERE eix.EconometricIndexType = @Type")
-                    .AppendLine("ORDER BY eix.ActiveFrom DESC")
+                    .AppendLine("ORDER BY eix.Since DESC")
                     .ToString(),
                     new { Type = query.EconometricIndexType.Name }).AsList();
     }

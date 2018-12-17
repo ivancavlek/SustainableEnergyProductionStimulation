@@ -69,7 +69,7 @@ namespace Acme.Seps.Repository.Subsidy.Configuration
                 vte.HasData(new
                 {
                     ProjectTypeId = _ids.ElementAt(0),
-                    ActiveFrom = SepsVersion.InitialDate()
+                    Since = SepsVersion.InitialDate()
                 });
             });
 
@@ -88,7 +88,7 @@ namespace Acme.Seps.Repository.Subsidy.Configuration
                 vte.HasData(new
                 {
                     ProjectTypeId = _ids.ElementAt(1),
-                    ActiveFrom = SepsVersion.InitialDate()
+                    Since = SepsVersion.InitialDate()
                 });
             });
 
@@ -107,7 +107,7 @@ namespace Acme.Seps.Repository.Subsidy.Configuration
                 vte.HasData(new
                 {
                     ProjectTypeId = _ids.ElementAt(2),
-                    ActiveFrom = SepsVersion.InitialDate()
+                    Since = SepsVersion.InitialDate()
                 });
             });
 
@@ -126,7 +126,7 @@ namespace Acme.Seps.Repository.Subsidy.Configuration
                 vte.HasData(new
                 {
                     ProjectTypeId = _ids.ElementAt(3),
-                    ActiveFrom = SepsVersion.InitialDate()
+                    Since = SepsVersion.InitialDate()
                 });
             });
 
@@ -144,7 +144,7 @@ namespace Acme.Seps.Repository.Subsidy.Configuration
                 vte.HasData(new
                 {
                     ProjectTypeId = _ids.ElementAt(4),
-                    ActiveFrom = SepsVersion.InitialDate()
+                    Since = SepsVersion.InitialDate()
                 });
             });
 
@@ -162,7 +162,7 @@ namespace Acme.Seps.Repository.Subsidy.Configuration
                 vte.HasData(new
                 {
                     ProjectTypeId = _ids.ElementAt(5),
-                    ActiveFrom = SepsVersion.InitialDate()
+                    Since = SepsVersion.InitialDate()
                 });
             });
 
@@ -180,7 +180,7 @@ namespace Acme.Seps.Repository.Subsidy.Configuration
                 vte.HasData(new
                 {
                     ProjectTypeId = _ids.ElementAt(6),
-                    ActiveFrom = SepsVersion.InitialDate()
+                    Since = SepsVersion.InitialDate()
                 });
             });
 
@@ -199,7 +199,7 @@ namespace Acme.Seps.Repository.Subsidy.Configuration
                 vte.HasData(new
                 {
                     ProjectTypeId = _ids.ElementAt(7),
-                    ActiveFrom = SepsVersion.InitialDate()
+                    Since = SepsVersion.InitialDate()
                 });
             });
 
@@ -218,7 +218,7 @@ namespace Acme.Seps.Repository.Subsidy.Configuration
                 vte.HasData(new
                 {
                     ProjectTypeId = _ids.ElementAt(8),
-                    ActiveFrom = SepsVersion.InitialDate()
+                    Since = SepsVersion.InitialDate()
                 });
             });
 
@@ -236,7 +236,7 @@ namespace Acme.Seps.Repository.Subsidy.Configuration
                 vte.HasData(new
                 {
                     ProjectTypeId = _ids.ElementAt(9),
-                    ActiveFrom = SepsVersion.InitialDate()
+                    Since = SepsVersion.InitialDate()
                 });
             });
 
@@ -254,7 +254,7 @@ namespace Acme.Seps.Repository.Subsidy.Configuration
                 vte.HasData(new
                 {
                     ProjectTypeId = _ids.ElementAt(10),
-                    ActiveFrom = SepsVersion.InitialDate()
+                    Since = SepsVersion.InitialDate()
                 });
             });
 
@@ -272,7 +272,7 @@ namespace Acme.Seps.Repository.Subsidy.Configuration
                 vte.HasData(new
                 {
                     ProjectTypeId = _ids.ElementAt(11),
-                    ActiveFrom = SepsVersion.InitialDate()
+                    Since = SepsVersion.InitialDate()
                 });
             });
         }

@@ -1,7 +1,6 @@
 ﻿using Acme.Domain.Base.Entity;
 using Acme.Domain.Base.Factory;
 using Acme.Seps.Domain.Base.Utility;
-using Acme.Seps.Domain.Base.ValueType;
 using Acme.Seps.Domain.Subsidy.Infrastructure;
 using Light.GuardClauses;
 using System;
@@ -14,8 +13,8 @@ namespace Acme.Seps.Domain.Subsidy.Entity
         protected YearlyEconometricIndex() { }
 
         protected YearlyEconometricIndex(
-            decimal amount, string remark, DateTimeOffset activeFrom, IIdentityFactory<Guid> identityFactory)
-            : base(amount, remark, activeFrom.ToFirstMonthOfTheYear(), identityFactory)
+            decimal amount, string remark, DateTimeOffset since, IIdentityFactory<Guid> identityFactory)
+            : base(amount, remark, since.ToFirstMonthOfTheYear(), identityFactory)
         {
             Active.Since.Year.MustBeGreaterThanOrEqualTo(SepsVersion.InitialDate().Year, (_, __) =>
                 new DomainException(SubsidyMessages.YearlyParameterException));

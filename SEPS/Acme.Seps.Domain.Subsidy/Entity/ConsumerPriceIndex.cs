@@ -10,7 +10,7 @@ namespace Acme.Seps.Domain.Subsidy.Entity
         protected ConsumerPriceIndex() { }
 
         internal protected ConsumerPriceIndex(
-            decimal amount, string remark, DateTimeOffset activeFrom, IIdentityFactory<Guid> identityFactory)
-            : base(amount, remark, activeFrom, identityFactory) { }
+            decimal amount, string remark, DateTimeOffset since, IIdentityFactory<Guid> identityFactory)
+            : base(amount, remark, since, identityFactory) { }
     }
 }

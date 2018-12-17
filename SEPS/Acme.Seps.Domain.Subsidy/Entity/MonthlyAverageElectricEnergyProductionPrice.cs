@@ -11,7 +11,7 @@ namespace Acme.Seps.Domain.Subsidy.Entity
         protected MonthlyAverageElectricEnergyProductionPrice() { }
 
         internal protected MonthlyAverageElectricEnergyProductionPrice(
-            decimal amount, string remark, DateTimeOffset activeFrom, IIdentityFactory<Guid> guidIdentityFactory)
-            : base(amount, remark, activeFrom, guidIdentityFactory) { }
+            decimal amount, string remark, DateTimeOffset since, IIdentityFactory<Guid> guidIdentityFactory)
+            : base(amount, remark, since, guidIdentityFactory) { }
     }
 }

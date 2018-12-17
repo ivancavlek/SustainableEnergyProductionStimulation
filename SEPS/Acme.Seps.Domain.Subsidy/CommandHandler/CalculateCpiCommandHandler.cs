@@ -41,8 +41,6 @@ namespace Acme.Seps.Domain.Subsidy.CommandHandler
 
             LogNewConsumerPriceIndex(newCpi);
             LogSuccessfulCommit();
-
-
         }
 
         private ConsumerPriceIndex GetActiveConsumerPriceIndex() =>

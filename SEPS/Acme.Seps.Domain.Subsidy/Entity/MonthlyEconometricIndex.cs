@@ -1,7 +1,6 @@
 ﻿using Acme.Domain.Base.Entity;
 using Acme.Domain.Base.Factory;
 using Acme.Seps.Domain.Base.Utility;
-using Acme.Seps.Domain.Base.ValueType;
 using Acme.Seps.Domain.Subsidy.Infrastructure;
 using Light.GuardClauses;
 using System;
@@ -14,8 +13,8 @@ namespace Acme.Seps.Domain.Subsidy.Entity
         protected MonthlyEconometricIndex() { }
 
         protected MonthlyEconometricIndex(
-            decimal amount, string remark, DateTimeOffset activeFrom, IIdentityFactory<Guid> identityFactory)
-            : base(amount, remark, activeFrom.ToFirstDayOfTheMonth(), identityFactory)
+            decimal amount, string remark, DateTimeOffset since, IIdentityFactory<Guid> identityFactory)
+            : base(amount, remark, since.ToFirstDayOfTheMonth(), identityFactory)
         {
             Active.Since.MustBeGreaterThanOrEqualTo(SepsVersion.InitialDate(), (_, __) =>
                 new DomainException(SubsidyMessages.MonthlyParameterException));
@@ -27,17 +26,17 @@ namespace Acme.Seps.Domain.Subsidy.Entity
             decimal amount, string remark, int month, int year, IIdentityFactory<Guid> identityFactory)
 
         {
-            var activeTill = new DateTime(year, month, 1);
+            var until = new DateTime(year, month, 1);
 
-            SetInactive(activeTill);
+            SetInactive(until);
 
             switch (this)
             {
                 case MonthlyAverageElectricEnergyProductionPrice _:
-                    return new MonthlyAverageElectricEnergyProductionPrice(amount, remark, activeTill, identityFactory)
+                    return new MonthlyAverageElectricEnergyProductionPrice(amount, remark, until, identityFactory)
                         as TMonthlyEconometricIndex;
                 case NaturalGasSellingPrice _:
-                    return new NaturalGasSellingPrice(amount, remark, activeTill, identityFactory)
+                    return new NaturalGasSellingPrice(amount, remark, until, identityFactory)
                         as TMonthlyEconometricIndex;
                 default:
                     throw new ArgumentException();

@@ -27,8 +27,8 @@ namespace Acme.Seps.Domain.Subsidy.QueryHandler
                 .AppendLine("pte.ContractLabel,")
                 .AppendLine("pte.Name,")
                 .AppendLine("pte.Code,")
-                .AppendLine("trf.ActiveFrom,")
-                .AppendLine("trf.ActiveTill,")
+                .AppendLine("trf.Since,")
+                .AppendLine("trf.Until,")
                 .AppendLine("trf.LowerProductionLimit,")
                 .AppendLine("trf.UpperProductionLimit,")
                 .AppendLine("trf.LowerRate,")
@@ -42,7 +42,7 @@ namespace Acme.Seps.Domain.Subsidy.QueryHandler
                 .AppendLine("INNER JOIN parameter.EconometricIndexes AS eix")
                 .AppendLine("ON trf.NaturalGasSellingPriceId = eix.Id")
                 .AppendLine("WHERE trf.TariffType = 'CogenerationTariff'")
-                .AppendLine("ORDER BY trf.ActiveFrom DESC, pte.Code, trf.LowerProductionLimit")
+                .AppendLine("ORDER BY trf.Since DESC, pte.Code, trf.LowerProductionLimit")
                 .ToString()).AsList();
     }
 }

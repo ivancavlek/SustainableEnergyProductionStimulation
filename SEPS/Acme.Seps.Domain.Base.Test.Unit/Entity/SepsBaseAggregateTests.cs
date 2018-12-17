@@ -117,8 +117,8 @@ namespace Acme.Seps.Domain.Base.Test.Unit.Entity
 
         private class DummySepsBaseAggregate : SepsAggregateRoot
         {
-            public DummySepsBaseAggregate(DateTimeOffset activeFrom, IIdentityFactory<Guid> identityFactory)
-                : base(activeFrom, identityFactory)
+            public DummySepsBaseAggregate(DateTimeOffset since, IIdentityFactory<Guid> identityFactory)
+                : base(since, identityFactory)
             {
             }
 

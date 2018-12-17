@@ -188,14 +188,14 @@ namespace Acme.Seps.Domain.Subsidy.Test.Unit.Entity
                 decimal lowerRate,
                 decimal higherRate,
                 Guid projectTypeId,
-                DateTimeOffset activeFrom,
+                DateTimeOffset since,
                 IIdentityFactory<Guid> identityFactory)
                 : base(lowerProductionLimit,
                       higherProductionLimit,
                       lowerRate,
                       higherRate,
                       projectTypeId,
-                      activeFrom,
+                      since,
                       identityFactory)
             {
             }

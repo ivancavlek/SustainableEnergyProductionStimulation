@@ -18,8 +18,8 @@ namespace Acme.Seps.Domain.Subsidy.Entity
         protected EconometricIndex() { }
 
         protected EconometricIndex(
-            decimal amount, string remark, DateTimeOffset activeFrom, IIdentityFactory<Guid> identityFactory)
-            : base(activeFrom, identityFactory)
+            decimal amount, string remark, DateTimeOffset since, IIdentityFactory<Guid> identityFactory)
+            : base(since, identityFactory)
         {
             amount.MustBeGreaterThan(0m, (_, __) =>
                 new DomainException(SubsidyMessages.ParameterAmountBelowOrZeroException));

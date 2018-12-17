@@ -13,18 +13,18 @@ namespace Acme.Seps.Domain.Subsidy.Test.Unit.Entity
         public void CreatesProperly()
         {
             const decimal amount = 1.123456M;
-            DateTimeOffset activeFrom = DateTimeOffset.Now.Date.AddMonths(-6);
-            var activeTill = DateTimeOffset.Now.ToFirstDayOfTheMonth().AddMonths(-5);
+            DateTimeOffset since = DateTimeOffset.Now.Date.AddMonths(-6);
+            var until = DateTimeOffset.Now.ToFirstDayOfTheMonth().AddMonths(-5);
             IEconometricIndexFactory<MonthlyAverageElectricEnergyProductionPrice> maepFactory =
-                new EconometricIndexFactory<MonthlyAverageElectricEnergyProductionPrice>(activeFrom);
+                new EconometricIndexFactory<MonthlyAverageElectricEnergyProductionPrice>(since);
             var activeMaep = maepFactory.Create();
 
             var newMaep = activeMaep.CreateNew(
-                amount, "Remark", activeTill.Month, activeTill.Year, Substitute.For<IIdentityFactory<Guid>>());
+                amount, "Remark", until.Month, until.Year, Substitute.For<IIdentityFactory<Guid>>());
 
-            activeMaep.Active.Since.Should().Be(activeFrom.ToFirstDayOfTheMonth());
-            activeMaep.Active.Until.Should().Be(activeTill.ToFirstDayOfTheMonth());
-            newMaep.Active.Since.Should().Be(activeTill.ToFirstDayOfTheMonth());
+            activeMaep.Active.Since.Should().Be(since.ToFirstDayOfTheMonth());
+            activeMaep.Active.Until.Should().Be(until.ToFirstDayOfTheMonth());
+            newMaep.Active.Since.Should().Be(until.ToFirstDayOfTheMonth());
             newMaep.Active.Until.Should().BeNull();
             newMaep.Amount.Should().Be(Math.Round(amount, 4, MidpointRounding.AwayFromZero));
         }

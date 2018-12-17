@@ -23,8 +23,8 @@ namespace Acme.Seps.Domain.Subsidy.Entity
             decimal lowerRate,
             decimal higherRate,
             Guid projectTypeId,
-            DateTimeOffset activeFrom,
-            IIdentityFactory<Guid> identityFactory) : base(activeFrom, identityFactory)
+            DateTimeOffset since,
+            IIdentityFactory<Guid> identityFactory) : base(since, identityFactory)
         {
             if (lowerProductionLimit.HasValue)
                 lowerProductionLimit.Value.MustBeGreaterThanOrEqualTo(0, (_, __) =>

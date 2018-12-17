@@ -50,8 +50,8 @@ namespace Acme.Seps.Domain.Subsidy.Test.Unit.Entity
             protected override int DecimalPlaces => 2;
 
             public DummyYearlyEconometricIndex(
-                decimal amount, string remark, DateTimeOffset activeFrom, IIdentityFactory<Guid> identityFactory)
-                : base(amount, remark, activeFrom, identityFactory) { }
+                decimal amount, string remark, DateTimeOffset since, IIdentityFactory<Guid> identityFactory)
+                : base(amount, remark, since, identityFactory) { }
         }
     }
 }

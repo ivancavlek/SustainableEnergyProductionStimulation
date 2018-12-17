@@ -7,8 +7,8 @@ namespace Acme.Seps.Domain.Subsidy.QueryResult
         public string ContractLabel { get; set; }
         public string Name { get; set; }
         public string Code { get; set; }
-        public DateTimeOffset ActiveFrom { get; set; }
-        public DateTimeOffset? ActiveTill { get; set; }
+        public DateTimeOffset Since { get; set; }
+        public DateTimeOffset? Until { get; set; }
         public int? LowerProductionLimit { get; set; }
         public int? UpperProductionLimit { get; set; }
         public decimal LowerRate { get; set; }

@@ -12,9 +12,9 @@ namespace Acme.Seps.Domain.Subsidy.Test.Unit.Factory
         private readonly DateTimeOffset _activeFrom;
         private readonly IIdentityFactory<Guid> _identityFactory;
 
-        public EconometricIndexFactory(DateTimeOffset activeFrom)
+        public EconometricIndexFactory(DateTimeOffset since)
         {
-            _activeFrom = activeFrom;
+            _activeFrom = since;
             _identityFactory = Substitute.For<IIdentityFactory<Guid>>();
             _identityFactory.CreateIdentity().Returns(Guid.NewGuid());
         }

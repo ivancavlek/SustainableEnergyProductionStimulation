@@ -49,7 +49,7 @@ namespace Acme.Seps.Repository.Subsidy.Configuration
                 vte.HasData(new
                 {
                     TariffId = id,
-                    ActiveFrom = SepsVersion.InitialDate()
+                    Since = SepsVersion.InitialDate()
                 });
             });
 
@@ -69,7 +69,7 @@ namespace Acme.Seps.Repository.Subsidy.Configuration
                 vte.HasData(new
                 {
                     TariffId = id,
-                    ActiveFrom = SepsVersion.InitialDate()
+                    Since = SepsVersion.InitialDate()
                 });
             });
 
@@ -89,7 +89,7 @@ namespace Acme.Seps.Repository.Subsidy.Configuration
                 vte.HasData(new
                 {
                     TariffId = id,
-                    ActiveFrom = SepsVersion.InitialDate()
+                    Since = SepsVersion.InitialDate()
                 });
             });
 
@@ -109,7 +109,7 @@ namespace Acme.Seps.Repository.Subsidy.Configuration
                 vte.HasData(new
                 {
                     TariffId = id,
-                    ActiveFrom = SepsVersion.InitialDate()
+                    Since = SepsVersion.InitialDate()
                 });
             });
 
@@ -129,7 +129,7 @@ namespace Acme.Seps.Repository.Subsidy.Configuration
                 vte.HasData(new
                 {
                     TariffId = id,
-                    ActiveFrom = SepsVersion.InitialDate()
+                    Since = SepsVersion.InitialDate()
                 });
             });
 
@@ -149,7 +149,7 @@ namespace Acme.Seps.Repository.Subsidy.Configuration
                 vte.HasData(new
                 {
                     TariffId = id,
-                    ActiveFrom = SepsVersion.InitialDate()
+                    Since = SepsVersion.InitialDate()
                 });
             });
 
@@ -171,7 +171,7 @@ namespace Acme.Seps.Repository.Subsidy.Configuration
                 vte.HasData(new
                 {
                     TariffId = id,
-                    ActiveFrom = SepsVersion.InitialDate()
+                    Since = SepsVersion.InitialDate()
                 });
             });
 
@@ -193,7 +193,7 @@ namespace Acme.Seps.Repository.Subsidy.Configuration
                 vte.HasData(new
                 {
                     TariffId = id,
-                    ActiveFrom = SepsVersion.InitialDate()
+                    Since = SepsVersion.InitialDate()
                 });
             });
 
@@ -214,7 +214,7 @@ namespace Acme.Seps.Repository.Subsidy.Configuration
                 vte.HasData(new
                 {
                     TariffId = id,
-                    ActiveFrom = SepsVersion.InitialDate()
+                    Since = SepsVersion.InitialDate()
                 });
             });
         }

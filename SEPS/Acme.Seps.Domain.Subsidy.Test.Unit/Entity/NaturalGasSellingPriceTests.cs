@@ -13,18 +13,18 @@ namespace Acme.Seps.Domain.Subsidy.Test.Unit.Entity
         public void CreatesProperly()
         {
             const decimal amount = 1.123456M;
-            DateTimeOffset activeFrom = DateTimeOffset.Now.Date.AddMonths(-6);
-            var activeTill = DateTimeOffset.Now.ToFirstDayOfTheMonth().AddMonths(-5);
+            DateTimeOffset since = DateTimeOffset.Now.Date.AddMonths(-6);
+            var until = DateTimeOffset.Now.ToFirstDayOfTheMonth().AddMonths(-5);
             IEconometricIndexFactory<NaturalGasSellingPrice> ngspFactory =
-                new EconometricIndexFactory<NaturalGasSellingPrice>(activeFrom);
+                new EconometricIndexFactory<NaturalGasSellingPrice>(since);
             var activeNgsp = ngspFactory.Create();
 
             var newMaep = activeNgsp.CreateNew(
-                amount, "Remark", activeTill.Month, activeTill.Year, Substitute.For<IIdentityFactory<Guid>>());
+                amount, "Remark", until.Month, until.Year, Substitute.For<IIdentityFactory<Guid>>());
 
-            activeNgsp.Active.Since.Should().Be(activeFrom.ToFirstDayOfTheMonth());
-            activeNgsp.Active.Until.Should().Be(activeTill.ToFirstDayOfTheMonth());
-            newMaep.Active.Since.Should().Be(activeTill.ToFirstDayOfTheMonth());
+            activeNgsp.Active.Since.Should().Be(since.ToFirstDayOfTheMonth());
+            activeNgsp.Active.Until.Should().Be(until.ToFirstDayOfTheMonth());
+            newMaep.Active.Since.Should().Be(until.ToFirstDayOfTheMonth());
             newMaep.Active.Until.Should().BeNull();
             newMaep.Amount.Should().Be(Math.Round(amount, 2, MidpointRounding.AwayFromZero));
         }

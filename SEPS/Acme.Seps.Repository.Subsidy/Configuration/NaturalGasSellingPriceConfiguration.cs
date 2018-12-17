@@ -38,7 +38,7 @@ namespace Acme.Seps.Repository.Subsidy.Configuration
                 vte.HasData(new
                 {
                     EconometricIndexId = _id,
-                    ActiveFrom = SepsVersion.InitialDate(),
+                    Since = SepsVersion.InitialDate(),
                 });
             });
         }

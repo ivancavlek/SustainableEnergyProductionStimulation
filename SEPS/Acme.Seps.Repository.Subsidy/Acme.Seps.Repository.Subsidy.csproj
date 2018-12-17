@@ -11,7 +11,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Acme.Repository.Base\Acme.Repository.Base.csproj" />
-    <ProjectReference Include="..\Acme.Seps.Domain.Subsidy\Acme.Seps.Domain.Subsidy.csproj" />
+    <ProjectReference Include="..\Acme.Seps.UseCases.Subsidy\Acme.Seps.UseCases.Subsidy.csproj" />
   </ItemGroup>
 
 </Project>

@@ -1,9 +1,9 @@
 ﻿using Acme.Domain.Base.QueryHandler;
 using Acme.Seps.Domain.Base.CommandHandler;
 using Acme.Seps.Domain.Base.Entity;
-using Acme.Seps.Domain.Subsidy.Command;
-using Acme.Seps.Domain.Subsidy.Command.Entity;
-using Acme.Seps.Domain.Subsidy.Query;
+using Acme.Seps.UseCases.Subsidy.Command;
+using Acme.Seps.UseCases.Subsidy.Command.Entity;
+using Acme.Seps.UseCases.Subsidy.Query;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;

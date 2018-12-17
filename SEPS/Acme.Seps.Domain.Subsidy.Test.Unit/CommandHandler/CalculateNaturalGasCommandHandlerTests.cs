@@ -2,11 +2,11 @@
 using Acme.Domain.Base.Repository;
 using Acme.Seps.Domain.Base.CommandHandler;
 using Acme.Seps.Domain.Base.Repository;
-using Acme.Seps.Domain.Subsidy.Command;
-using Acme.Seps.Domain.Subsidy.Command.DomainService;
-using Acme.Seps.Domain.Subsidy.Command.Entity;
-using Acme.Seps.Domain.Subsidy.Command.Repository;
 using Acme.Seps.Domain.Subsidy.Test.Unit.Factory;
+using Acme.Seps.UseCases.Subsidy.Command;
+using Acme.Seps.UseCases.Subsidy.Command.DomainService;
+using Acme.Seps.UseCases.Subsidy.Command.Entity;
+using Acme.Seps.UseCases.Subsidy.Command.Repository;
 using FluentAssertions;
 using NSubstitute;
 using System;

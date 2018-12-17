@@ -1,7 +1,7 @@
-using Acme.Seps.Domain.Subsidy.Command;
-using Acme.Seps.Domain.Subsidy.Query;
 using Acme.Seps.Presentation.Web.DependencyInjection;
 using Acme.Seps.Presentation.Web.Test.Integration.TestUtility;
+using Acme.Seps.UseCases.Subsidy.Command;
+using Acme.Seps.UseCases.Subsidy.Query;
 using FluentAssertions;
 using Newtonsoft.Json;
 using System;

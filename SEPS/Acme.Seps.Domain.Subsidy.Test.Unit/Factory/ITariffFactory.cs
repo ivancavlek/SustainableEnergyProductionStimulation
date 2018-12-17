@@ -1,4 +1,4 @@
-﻿using Acme.Seps.Domain.Subsidy.Command.Entity;
+﻿using Acme.Seps.UseCases.Subsidy.Command.Entity;
 
 namespace Acme.Seps.Domain.Subsidy.Test.Unit.Factory
 {

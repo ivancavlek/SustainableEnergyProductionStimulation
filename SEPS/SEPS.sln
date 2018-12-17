@@ -15,7 +15,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Acme.Domain.Base", "Acme.Do
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Acme.Seps.Domain.Base", "Acme.Seps.Domain.Base\Acme.Seps.Domain.Base.csproj", "{807B8D8D-79A3-4B6E-8A9F-879389F83B63}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Acme.Seps.Domain.Subsidy", "Acme.Seps.Domain.Subsidy\Acme.Seps.Domain.Subsidy.csproj", "{5ED8525E-E456-4B73-9393-D4C189294C00}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Acme.Seps.UseCases.Subsidy", "Acme.Seps.UseCases.Subsidy\Acme.Seps.UseCases.Subsidy.csproj", "{5ED8525E-E456-4B73-9393-D4C189294C00}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Acme.Repository.Base", "Acme.Repository.Base\Acme.Repository.Base.csproj", "{E60CBB89-7E47-425C-8305-513F8356ACAF}"
 EndProject

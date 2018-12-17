@@ -1,4 +1,4 @@
-﻿using Acme.Seps.Domain.Subsidy.Command.Validation;
+﻿using Acme.Seps.UseCases.Subsidy.Command.Validation;
 using FluentValidation.TestHelper;
 
 namespace Acme.Seps.Domain.Subsidy.Test.Unit.CommandValidation

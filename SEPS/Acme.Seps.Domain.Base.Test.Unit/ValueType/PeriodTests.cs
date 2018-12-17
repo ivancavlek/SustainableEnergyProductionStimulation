@@ -1,6 +1,6 @@
 ﻿using Acme.Domain.Base.Entity;
-using Acme.Seps.Domain.Base.Infrastructure;
 using Acme.Seps.Domain.Base.ValueType;
+using Acme.Seps.Text;
 using FluentAssertions;
 using System;
 

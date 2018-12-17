@@ -1,6 +1,6 @@
 ﻿using Acme.Domain.Base.Entity;
 using Acme.Domain.Base.ValueType;
-using Acme.Seps.Domain.Base.Infrastructure;
+using Acme.Seps.Text;
 using Light.GuardClauses;
 using System;
 using System.Runtime.CompilerServices;

@@ -24,21 +24,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Acme.Domain.Base\Acme.Domain.Base.csproj" />
     <ProjectReference Include="..\Acme.Seps.Domain.Base\Acme.Seps.Domain.Base.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Compile Update="Command\Infrastructure\SubsidyMessages.Designer.cs">
-      <DependentUpon>SubsidyMessages.resx</DependentUpon>
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-    </Compile>
-  </ItemGroup>
-
-  <ItemGroup>
-    <EmbeddedResource Update="Command\Infrastructure\SubsidyMessages.resx">
-      <LastGenOutput>SubsidyMessages.Designer.cs</LastGenOutput>
-      <Generator>PublicResXFileCodeGenerator</Generator>
-    </EmbeddedResource>
+    <ProjectReference Include="..\Acme.Seps.Domain.Subsidy\Acme.Seps.Domain.Subsidy.csproj" />
   </ItemGroup>
 
 </Project>

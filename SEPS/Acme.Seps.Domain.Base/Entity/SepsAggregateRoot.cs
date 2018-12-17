@@ -1,9 +1,9 @@
 ﻿using Acme.Domain.Base.Entity;
 using Acme.Domain.Base.Factory;
-using Acme.Seps.Domain.Base.Infrastructure;
 using Acme.Seps.Domain.Base.Repository;
 using Acme.Seps.Domain.Base.Utility;
 using Acme.Seps.Domain.Base.ValueType;
+using Acme.Seps.Text;
 using Light.GuardClauses;
 using System;
 

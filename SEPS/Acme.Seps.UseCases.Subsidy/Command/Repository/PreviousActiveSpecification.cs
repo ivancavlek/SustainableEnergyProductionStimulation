@@ -1,6 +1,6 @@
 ﻿using Acme.Domain.Base.Repository;
 using Acme.Seps.Domain.Base.Entity;
-using Acme.Seps.Domain.Base.Infrastructure;
+using Acme.Seps.Text;
 using Light.GuardClauses;
 using System;
 using System.Linq.Expressions;

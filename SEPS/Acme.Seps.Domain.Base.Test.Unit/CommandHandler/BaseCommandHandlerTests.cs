@@ -1,6 +1,6 @@
 ﻿using Acme.Seps.Domain.Base.CommandHandler;
 using Acme.Seps.Domain.Base.Entity;
-using Acme.Seps.Domain.Base.Infrastructure;
+using Acme.Seps.Text;
 using FluentAssertions;
 using System.Collections.Generic;
 using System.Linq;

@@ -17,9 +17,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Acme.Domain.Base\Acme.Domain.Base.csproj" />
-    <ProjectReference Include="..\Acme.Seps.Domain.Base\Acme.Seps.Domain.Base.csproj" />
-    <ProjectReference Include="..\Acme.Seps.UseCases.Subsidy\Acme.Seps.UseCases.Subsidy.csproj" />
+    <ProjectReference Include="..\Acme.Seps.Text\Acme.Seps.Text.csproj" />
+    <ProjectReference Include="..\Acme.Seps.Utility.Test.Unit\Acme.Seps.Utility.Test.Unit.csproj" />
   </ItemGroup>
 
 </Project>

@@ -1,6 +1,5 @@
-﻿using Acme.Domain.Base.Entity;
-using Acme.Seps.Domain.Base.Entity;
-using Acme.Seps.Domain.Base.Infrastructure;
+﻿using Acme.Seps.Domain.Base.Entity;
+using Acme.Seps.Text;
 using System;
 
 namespace Acme.Seps.Domain.Base.CommandHandler

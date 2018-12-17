@@ -11,21 +11,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Acme.Domain.Base\Acme.Domain.Base.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Compile Update="Infrastructure\SepsBaseMessage.Designer.cs">
-      <DependentUpon>SepsBaseMessage.resx</DependentUpon>
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-    </Compile>
-  </ItemGroup>
-
-  <ItemGroup>
-    <EmbeddedResource Update="Infrastructure\SepsBaseMessage.resx">
-      <LastGenOutput>SepsBaseMessage.Designer.cs</LastGenOutput>
-      <Generator>PublicResXFileCodeGenerator</Generator>
-    </EmbeddedResource>
+    <ProjectReference Include="..\Acme.Seps.Text\Acme.Seps.Text.csproj" />
   </ItemGroup>
 
 </Project>

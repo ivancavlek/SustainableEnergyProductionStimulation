@@ -1,6 +1,6 @@
 ﻿using Acme.Domain.Base.Factory;
 using Acme.Seps.Domain.Base.Utility;
-using Acme.Seps.UseCases.Subsidy.Command.Entity;
+using Acme.Seps.Domain.Subsidy.Entity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using System;

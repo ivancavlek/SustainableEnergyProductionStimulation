@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.1</TargetFramework>
+
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Fixie" Version="2.0.3" />
+    <PackageReference Include="FluentAssertions" Version="5.5.3" />
+    <PackageReference Include="NSubstitute" Version="3.1.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Acme.Seps.Text\Acme.Seps.Text.csproj" />
+    <ProjectReference Include="..\Acme.Seps.UseCases.Subsidy\Acme.Seps.UseCases.Subsidy.csproj" />
+    <ProjectReference Include="..\Acme.Seps.Utility.Test.Unit\Acme.Seps.Utility.Test.Unit.csproj" />
+  </ItemGroup>
+
+</Project>

@@ -1,6 +1,6 @@
-﻿using Acme.Seps.Domain.Subsidy.Test.Unit.Factory;
-using Acme.Seps.UseCases.Subsidy.Command.DomainService;
-using Acme.Seps.UseCases.Subsidy.Command.Entity;
+﻿using Acme.Seps.Domain.Subsidy.DomainService;
+using Acme.Seps.Domain.Subsidy.Entity;
+using Acme.Seps.Utility.Test.Unit.Factory;
 using FluentAssertions;
 using System;
 using System.Collections.Generic;

@@ -1,5 +1,5 @@
 ﻿using Acme.Seps.Domain.Base.Utility;
-using Acme.Seps.UseCases.Subsidy.Command.Infrastructure;
+using Acme.Seps.Text;
 using FluentValidation;
 
 namespace Acme.Seps.UseCases.Subsidy.Command.Validation

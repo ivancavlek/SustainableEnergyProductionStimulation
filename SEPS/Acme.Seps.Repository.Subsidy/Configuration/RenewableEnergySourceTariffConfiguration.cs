@@ -44,7 +44,7 @@ namespace Acme.Seps.Repository.Subsidy.Configuration
                 TarrifType = nameof(RenewableEnergySourceTariff),
                 ConsumerPriceIndexId = _cpiId
             });
-            builder.OwnsOne(vte => vte.Period, vte =>
+            builder.OwnsOne(vte => vte.Active, vte =>
             {
                 vte.HasData(new
                 {
@@ -64,7 +64,7 @@ namespace Acme.Seps.Repository.Subsidy.Configuration
                 TarrifType = nameof(RenewableEnergySourceTariff),
                 ConsumerPriceIndexId = _cpiId
             });
-            builder.OwnsOne(vte => vte.Period, vte =>
+            builder.OwnsOne(vte => vte.Active, vte =>
             {
                 vte.HasData(new
                 {
@@ -84,7 +84,7 @@ namespace Acme.Seps.Repository.Subsidy.Configuration
                 TarrifType = nameof(RenewableEnergySourceTariff),
                 ConsumerPriceIndexId = _cpiId
             });
-            builder.OwnsOne(vte => vte.Period, vte =>
+            builder.OwnsOne(vte => vte.Active, vte =>
             {
                 vte.HasData(new
                 {
@@ -104,7 +104,7 @@ namespace Acme.Seps.Repository.Subsidy.Configuration
                 TarrifType = nameof(RenewableEnergySourceTariff),
                 ConsumerPriceIndexId = _cpiId
             });
-            builder.OwnsOne(vte => vte.Period, vte =>
+            builder.OwnsOne(vte => vte.Active, vte =>
             {
                 vte.HasData(new
                 {
@@ -124,7 +124,7 @@ namespace Acme.Seps.Repository.Subsidy.Configuration
                 TarrifType = nameof(RenewableEnergySourceTariff),
                 ConsumerPriceIndexId = _cpiId
             });
-            builder.OwnsOne(vte => vte.Period, vte =>
+            builder.OwnsOne(vte => vte.Active, vte =>
             {
                 vte.HasData(new
                 {
@@ -144,7 +144,7 @@ namespace Acme.Seps.Repository.Subsidy.Configuration
                 TarrifType = nameof(RenewableEnergySourceTariff),
                 ConsumerPriceIndexId = _cpiId
             });
-            builder.OwnsOne(vte => vte.Period, vte =>
+            builder.OwnsOne(vte => vte.Active, vte =>
             {
                 vte.HasData(new
                 {
@@ -166,7 +166,7 @@ namespace Acme.Seps.Repository.Subsidy.Configuration
                 TarrifType = nameof(RenewableEnergySourceTariff),
                 ConsumerPriceIndexId = _cpiId
             });
-            builder.OwnsOne(vte => vte.Period, vte =>
+            builder.OwnsOne(vte => vte.Active, vte =>
             {
                 vte.HasData(new
                 {
@@ -188,7 +188,7 @@ namespace Acme.Seps.Repository.Subsidy.Configuration
                 TarrifType = nameof(RenewableEnergySourceTariff),
                 ConsumerPriceIndexId = _cpiId
             });
-            builder.OwnsOne(vte => vte.Period, vte =>
+            builder.OwnsOne(vte => vte.Active, vte =>
             {
                 vte.HasData(new
                 {
@@ -209,7 +209,7 @@ namespace Acme.Seps.Repository.Subsidy.Configuration
                 TarrifType = nameof(RenewableEnergySourceTariff),
                 ConsumerPriceIndexId = _cpiId
             });
-            builder.OwnsOne(vte => vte.Period, vte =>
+            builder.OwnsOne(vte => vte.Active, vte =>
             {
                 vte.HasData(new
                 {

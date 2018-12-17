@@ -42,7 +42,7 @@ namespace Acme.Seps.Domain.Subsidy.Test.Unit.Entity
             var econometricIndex = new DummyMonthlyEconometricIndex(
                 _amount, _remark, monthBeforeCurrentMonth, _identityFactory);
 
-            econometricIndex.Period.ActiveFrom.Should().Be(monthBeforeCurrentMonth.ToFirstDayOfTheMonth());
+            econometricIndex.Active.Since.Should().Be(monthBeforeCurrentMonth.ToFirstDayOfTheMonth());
         }
 
         private class DummyMonthlyEconometricIndex : MonthlyEconometricIndex<DummyMonthlyEconometricIndex>

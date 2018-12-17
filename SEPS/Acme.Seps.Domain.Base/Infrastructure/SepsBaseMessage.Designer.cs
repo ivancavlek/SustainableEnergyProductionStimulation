@@ -61,15 +61,6 @@ namespace Acme.Seps.Domain.Base.Infrastructure {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Active till must be after active from.
-        /// </summary>
-        public static string ActiveTillGreaterThanActiveFromException {
-            get {
-                return ResourceManager.GetString("ActiveTillGreaterThanActiveFromException", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Only active entities can be archived.
         /// </summary>
         public static string ArchivingArchivedEntityException {
@@ -102,6 +93,15 @@ namespace Acme.Seps.Domain.Base.Infrastructure {
         public static string SuccessfulSave {
             get {
                 return ResourceManager.GetString("SuccessfulSave", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Since must be after until in period.
+        /// </summary>
+        public static string UnilGreaterThanSincePeriodException {
+            get {
+                return ResourceManager.GetString("UnilGreaterThanSincePeriodException", resourceCulture);
             }
         }
     }

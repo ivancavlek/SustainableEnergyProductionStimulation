@@ -21,10 +21,10 @@ namespace Acme.Seps.Domain.Subsidy.Test.Unit.Entity
 
             var newCpi = activeCpi.CreateNew(amount, "Remark", Substitute.For<IIdentityFactory<Guid>>());
 
-            activeCpi.Period.ActiveFrom.Should().Be(activeFrom.ToFirstMonthOfTheYear());
-            activeCpi.Period.ActiveTill.Should().Be(activeTill);
-            newCpi.Period.ActiveFrom.Should().Be(activeTill);
-            newCpi.Period.ActiveTill.Should().BeNull();
+            activeCpi.Active.Since.Should().Be(activeFrom.ToFirstMonthOfTheYear());
+            activeCpi.Active.Until.Should().Be(activeTill);
+            newCpi.Active.Since.Should().Be(activeTill);
+            newCpi.Active.Until.Should().BeNull();
             newCpi.Amount.Should().Be(Math.Round(amount, 4, MidpointRounding.AwayFromZero));
         }
     }

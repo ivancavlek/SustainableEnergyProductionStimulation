@@ -90,7 +90,7 @@ namespace Acme.Seps.Domain.Subsidy.CommandHandler
                 Message = string.Format(
                     SubsidyMessages.InsertParameterLog,
                     nameof(NaturalGasSellingPrice).Humanize(LetterCasing.LowerCase),
-                    naturalGasSellingPrice.Period,
+                    naturalGasSellingPrice.Active,
                     naturalGasSellingPrice.Amount)
             });
 
@@ -110,7 +110,7 @@ namespace Acme.Seps.Domain.Subsidy.CommandHandler
                 Message = string.Format(
                     SubsidyMessages.InsertTariffLog,
                     nameof(CogenerationTariff).Humanize(LetterCasing.LowerCase),
-                    cogenerationTariff.Period,
+                    cogenerationTariff.Active,
                     cogenerationTariff.LowerRate,
                     cogenerationTariff.HigherRate)
             });

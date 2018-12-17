@@ -25,7 +25,7 @@ namespace Acme.Seps.Domain.Subsidy.Entity
                   lowerRate,
                   higherRate,
                   projectTypeId,
-                  consumerPriceIndex.Period.ActiveFrom,
+                  consumerPriceIndex.Active.Since,
                   identityFactory) =>
             ConsumerPriceIndex = consumerPriceIndex;
 
@@ -35,7 +35,7 @@ namespace Acme.Seps.Domain.Subsidy.Entity
             consumerPriceIndex.MustNotBeNull(message: SubsidyMessages.ConsumerPriceIndexNotSetException);
             consumerPriceIndex.IsActive().MustBe(true, message: SepsBaseMessage.InactiveException);
 
-            Archive(consumerPriceIndex.Period.ActiveFrom);
+            SetInactive(consumerPriceIndex.Active.Since);
 
             return new RenewableEnergySourceTariff
             (

@@ -12,38 +12,38 @@ namespace Acme.Seps.Domain.Base.Test.Unit.Entity
     public class SepsBaseAggregateTests
     {
         private readonly IIdentityFactory<Guid> _identityFactory;
-        private readonly DateTimeOffset _activeFrom;
+        private readonly DateTimeOffset _activeSince;
 
         public SepsBaseAggregateTests()
         {
             _identityFactory = Substitute.For<IIdentityFactory<Guid>>();
             _identityFactory.CreateIdentity().Returns(Guid.NewGuid());
-            _activeFrom = SepsVersion.InitialDate();
+            _activeSince = SepsVersion.InitialDate();
         }
 
         public void CreatesProperly()
         {
-            var result = new DummySepsBaseAggregate(_activeFrom, _identityFactory);
+            var result = new DummySepsBaseAggregate(_activeSince, _identityFactory);
 
-            result.Period.ActiveFrom.Should().Be(_activeFrom);
+            result.Active.Since.Should().Be(_activeSince);
         }
 
-        public void ArchivesEntity()
+        public void SetInactivesEntity()
         {
-            var activeTill = _activeFrom.AddYears(1);
+            var activeUntil = _activeSince.AddYears(1);
 
-            var result = new DummySepsBaseAggregate(_activeFrom, _identityFactory);
-            var oldPeriod = result.Period;
-            result.Archive(activeTill);
+            var result = new DummySepsBaseAggregate(_activeSince, _identityFactory);
+            var oldPeriod = result.Active;
+            result.SetInactive(activeUntil);
 
-            result.Period.Should().NotBe(oldPeriod);
-            result.Period.ActiveFrom.Should().Be(_activeFrom);
-            result.Period.ActiveTill.Should().Be(activeTill);
+            result.Active.Should().NotBe(oldPeriod);
+            result.Active.Since.Should().Be(_activeSince);
+            result.Active.Until.Should().Be(activeUntil);
         }
 
         public void OnlyDatesAfterInitialDateAreValid()
         {
-            Action action = () => new DummySepsBaseAggregate(_activeFrom.AddYears(-1), _identityFactory);
+            Action action = () => new DummySepsBaseAggregate(_activeSince.AddYears(-1), _identityFactory);
 
             action
                 .Should()
@@ -51,14 +51,14 @@ namespace Acme.Seps.Domain.Base.Test.Unit.Entity
                 .WithMessage(SepsBaseMessage.DateMustBeGreaterThanInitialDate);
         }
 
-        public void OnlyActiveEntityCanBeArchived()
+        public void OnlyActiveEntityCanBeSetInactived()
         {
-            var activeTill = _activeFrom.AddYears(1);
+            var activeUntil = _activeSince.AddYears(1);
 
-            var result = new DummySepsBaseAggregate(_activeFrom, _identityFactory);
-            result.Archive(activeTill);
+            var result = new DummySepsBaseAggregate(_activeSince, _identityFactory);
+            result.SetInactive(activeUntil);
 
-            Action action = () => result.Archive(activeTill);
+            Action action = () => result.SetInactive(activeUntil);
 
             action
                 .Should()
@@ -66,42 +66,42 @@ namespace Acme.Seps.Domain.Base.Test.Unit.Entity
                 .WithMessage(SepsBaseMessage.ArchivingArchivedEntityException);
         }
 
-        public void ActiveFromIsCorrected()
+        public void ActiveSinceIsCorrected()
         {
-            var result = new DummySepsBaseAggregate(_activeFrom, _identityFactory);
-            var period = result.Period;
-            var oldActiveTill = period.ActiveTill;
+            var result = new DummySepsBaseAggregate(_activeSince, _identityFactory);
+            var activePeriod = result.Active;
+            var oldActiveUntil = activePeriod.Until;
 
-            var newDate = _activeFrom.AddYears(1);
+            var newDate = _activeSince.AddYears(1);
 
-            result.CorrectActiveFrom(newDate);
+            result.CorrectActiveSince(newDate);
 
-            result.Period.Should().NotBe(period);
-            result.Period.ActiveFrom.Should().Be(newDate);
-            result.Period.ActiveTill.Should().Be(oldActiveTill);
+            result.Active.Should().NotBe(activePeriod);
+            result.Active.Since.Should().Be(newDate);
+            result.Active.Until.Should().Be(oldActiveUntil);
         }
 
-        public void ActiveTillIsCorrected()
+        public void ActiveUntilIsCorrected()
         {
-            var result = new DummySepsBaseAggregate(_activeFrom, _identityFactory);
-            var period = result.Period;
-            var oldActiveFrom = period.ActiveFrom;
+            var result = new DummySepsBaseAggregate(_activeSince, _identityFactory);
+            var activePeriod = result.Active;
+            var oldActiveSince = activePeriod.Since;
 
-            var newDate = _activeFrom.AddYears(1);
+            var newDate = _activeSince.AddYears(1);
 
-            result.CorrectActiveTill(newDate);
+            result.CorrectActiveUntil(newDate);
 
-            result.Period.Should().NotBe(period);
-            result.Period.ActiveTill.Should().Be(newDate);
-            result.Period.ActiveFrom.Should().Be(oldActiveFrom);
+            result.Active.Should().NotBe(activePeriod);
+            result.Active.Until.Should().Be(newDate);
+            result.Active.Since.Should().Be(oldActiveSince);
         }
 
-        public void EntityWithActiveTillDateIsInActive()
+        public void EntityWithActiveUntilDateIsInactive()
         {
             var dateAfterInitialDate = SepsVersion.InitialDate().AddYears(1);
 
             var result = new DummySepsBaseAggregate(dateAfterInitialDate, _identityFactory);
-            result.Archive(new DateTime(2019, 01, 01));
+            result.SetInactive(new DateTime(2019, 01, 01));
 
             result.IsActive().Should().BeFalse();
         }
@@ -122,19 +122,19 @@ namespace Acme.Seps.Domain.Base.Test.Unit.Entity
             {
             }
 
-            internal new void Archive(DateTimeOffset activeTill)
+            internal new void SetInactive(DateTimeOffset inactiveFrom)
             {
-                base.Archive(activeTill);
+                base.SetInactive(inactiveFrom);
             }
 
-            internal new void CorrectActiveFrom(DateTimeOffset activeFrom)
+            internal new void CorrectActiveSince(DateTimeOffset activeSince)
             {
-                base.CorrectActiveFrom(activeFrom);
+                base.CorrectActiveSince(activeSince);
             }
 
-            internal new void CorrectActiveTill(DateTimeOffset activeTill)
+            internal new void CorrectActiveUntil(DateTimeOffset activeUntil)
             {
-                base.CorrectActiveTill(activeTill);
+                base.CorrectActiveUntil(activeUntil);
             }
         }
     }

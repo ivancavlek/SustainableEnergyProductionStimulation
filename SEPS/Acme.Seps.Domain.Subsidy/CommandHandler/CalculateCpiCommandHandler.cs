@@ -69,7 +69,7 @@ namespace Acme.Seps.Domain.Subsidy.CommandHandler
                 Message = string.Format(
                     SubsidyMessages.InsertParameterLog,
                     nameof(ConsumerPriceIndex).Humanize(LetterCasing.LowerCase),
-                    cpi.Period,
+                    cpi.Active,
                     cpi.Amount)
             });
 
@@ -86,7 +86,7 @@ namespace Acme.Seps.Domain.Subsidy.CommandHandler
                 Message = string.Format(
                     SubsidyMessages.InsertTariffLog,
                     nameof(RenewableEnergySourceTariff).Humanize(LetterCasing.LowerCase),
-                    resTariff.Period,
+                    resTariff.Active,
                     resTariff.LowerRate,
                     resTariff.HigherRate)
             });

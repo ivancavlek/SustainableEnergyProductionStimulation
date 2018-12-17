@@ -17,21 +17,21 @@ namespace Acme.Seps.Domain.Subsidy.Entity
             decimal amount, string remark, DateTimeOffset activeFrom, IIdentityFactory<Guid> identityFactory)
             : base(amount, remark, activeFrom.ToFirstMonthOfTheYear(), identityFactory)
         {
-            Period.ActiveFrom.Year.MustBeGreaterThanOrEqualTo(SepsVersion.InitialDate().Year, (_, __) =>
+            Active.Since.Year.MustBeGreaterThanOrEqualTo(SepsVersion.InitialDate().Year, (_, __) =>
                 new DomainException(SubsidyMessages.YearlyParameterException));
-            Period.ActiveFrom.MustBeLessThan(SystemTime.CurrentYear(), (_, __) =>
+            Active.Since.MustBeLessThan(SystemTime.CurrentYear(), (_, __) =>
                 new DomainException(SubsidyMessages.YearlyParameterException));
         }
 
         public TYearlyEconometricIndex CreateNew(
             decimal amount, string remark, IIdentityFactory<Guid> identityFactory)
         {
-            Archive(Period.ActiveFrom.ToFirstMonthOfTheYear().AddYears(1));
+            SetInactive(Active.Since.ToFirstMonthOfTheYear().AddYears(1));
 
             switch (this)
             {
                 case ConsumerPriceIndex cpi:
-                    return new ConsumerPriceIndex(amount, remark, Period.ActiveTill.Value, identityFactory)
+                    return new ConsumerPriceIndex(amount, remark, Active.Until.Value, identityFactory)
                         as TYearlyEconometricIndex;
                 default:
                     throw new ArgumentException();

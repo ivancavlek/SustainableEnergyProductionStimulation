@@ -64,7 +64,7 @@ namespace Acme.Seps.Repository.Subsidy.Configuration
                 ConsumesFuel = false,
                 ProjectTypeGroup = ProjectTypeGroup.RenewableEnergy
             });
-            builder.OwnsOne(vte => vte.Period, vte =>
+            builder.OwnsOne(vte => vte.Active, vte =>
             {
                 vte.HasData(new
                 {
@@ -83,7 +83,7 @@ namespace Acme.Seps.Repository.Subsidy.Configuration
                 ProjectTypeGroup = ProjectTypeGroup.RenewableEnergy,
                 SuperiorProjectTypeId = _ids.ElementAt(0)
             });
-            builder.OwnsOne(vte => vte.Period, vte =>
+            builder.OwnsOne(vte => vte.Active, vte =>
             {
                 vte.HasData(new
                 {
@@ -102,7 +102,7 @@ namespace Acme.Seps.Repository.Subsidy.Configuration
                 ProjectTypeGroup = ProjectTypeGroup.RenewableEnergy,
                 SuperiorProjectTypeId = _ids.ElementAt(0)
             });
-            builder.OwnsOne(vte => vte.Period, vte =>
+            builder.OwnsOne(vte => vte.Active, vte =>
             {
                 vte.HasData(new
                 {
@@ -121,7 +121,7 @@ namespace Acme.Seps.Repository.Subsidy.Configuration
                 ProjectTypeGroup = ProjectTypeGroup.RenewableEnergy,
                 SuperiorProjectTypeId = _ids.ElementAt(0)
             });
-            builder.OwnsOne(vte => vte.Period, vte =>
+            builder.OwnsOne(vte => vte.Active, vte =>
             {
                 vte.HasData(new
                 {
@@ -139,7 +139,7 @@ namespace Acme.Seps.Repository.Subsidy.Configuration
                 ConsumesFuel = false,
                 ProjectTypeGroup = ProjectTypeGroup.RenewableEnergy
             });
-            builder.OwnsOne(vte => vte.Period, vte =>
+            builder.OwnsOne(vte => vte.Active, vte =>
             {
                 vte.HasData(new
                 {
@@ -157,7 +157,7 @@ namespace Acme.Seps.Repository.Subsidy.Configuration
                 ConsumesFuel = false,
                 ProjectTypeGroup = ProjectTypeGroup.RenewableEnergy
             });
-            builder.OwnsOne(vte => vte.Period, vte =>
+            builder.OwnsOne(vte => vte.Active, vte =>
             {
                 vte.HasData(new
                 {
@@ -175,7 +175,7 @@ namespace Acme.Seps.Repository.Subsidy.Configuration
                 ConsumesFuel = true,
                 ProjectTypeGroup = ProjectTypeGroup.RenewableEnergy
             });
-            builder.OwnsOne(vte => vte.Period, vte =>
+            builder.OwnsOne(vte => vte.Active, vte =>
             {
                 vte.HasData(new
                 {
@@ -194,7 +194,7 @@ namespace Acme.Seps.Repository.Subsidy.Configuration
                 ProjectTypeGroup = ProjectTypeGroup.RenewableEnergy,
                 SuperiorProjectTypeId = _ids.ElementAt(6)
             });
-            builder.OwnsOne(vte => vte.Period, vte =>
+            builder.OwnsOne(vte => vte.Active, vte =>
             {
                 vte.HasData(new
                 {
@@ -213,7 +213,7 @@ namespace Acme.Seps.Repository.Subsidy.Configuration
                 ProjectTypeGroup = ProjectTypeGroup.RenewableEnergy,
                 SuperiorProjectTypeId = _ids.ElementAt(6)
             });
-            builder.OwnsOne(vte => vte.Period, vte =>
+            builder.OwnsOne(vte => vte.Active, vte =>
             {
                 vte.HasData(new
                 {
@@ -231,7 +231,7 @@ namespace Acme.Seps.Repository.Subsidy.Configuration
                 ConsumesFuel = false,
                 ProjectTypeGroup = ProjectTypeGroup.RenewableEnergy
             });
-            builder.OwnsOne(vte => vte.Period, vte =>
+            builder.OwnsOne(vte => vte.Active, vte =>
             {
                 vte.HasData(new
                 {
@@ -249,7 +249,7 @@ namespace Acme.Seps.Repository.Subsidy.Configuration
                 ConsumesFuel = false,
                 ProjectTypeGroup = ProjectTypeGroup.Cogeneration
             });
-            builder.OwnsOne(vte => vte.Period, vte =>
+            builder.OwnsOne(vte => vte.Active, vte =>
             {
                 vte.HasData(new
                 {
@@ -267,7 +267,7 @@ namespace Acme.Seps.Repository.Subsidy.Configuration
                 ConsumesFuel = false,
                 ProjectTypeGroup = ProjectTypeGroup.Cogeneration
             });
-            builder.OwnsOne(vte => vte.Period, vte =>
+            builder.OwnsOne(vte => vte.Active, vte =>
             {
                 vte.HasData(new
                 {

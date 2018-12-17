@@ -38,7 +38,7 @@ namespace Acme.Seps.Domain.Subsidy.Test.Unit.Entity
             var cpi = _cpiFactory.Create();
             typeof(ConsumerPriceIndex)
                 .BaseType.BaseType.BaseType
-                .GetMethod("Archive", BindingFlags.NonPublic | BindingFlags.Instance)
+                .GetMethod("SetInactive", BindingFlags.NonPublic | BindingFlags.Instance)
                 .Invoke(cpi, new object[] { DateTimeOffset.Now });
 
             Action action = () => _resFactory.Create().CreateNewWith(cpi, _identityFactory);
@@ -59,12 +59,12 @@ namespace Acme.Seps.Domain.Subsidy.Test.Unit.Entity
             var newRenewableEnergySourceTariff =
                 activeRenewableEnergySourceTariff.CreateNewWith(newConsumerPriceIndex, _identityFactory);
 
-            activeRenewableEnergySourceTariff.Period.ActiveTill.Should().Be(newConsumerPriceIndex.Period.ActiveFrom);
+            activeRenewableEnergySourceTariff.Active.Until.Should().Be(newConsumerPriceIndex.Active.Since);
             newRenewableEnergySourceTariff.LowerRate.Should().Be(activeRenewableEnergySourceTariff.LowerRate);
             newRenewableEnergySourceTariff.HigherRate.Should().Be(
                 (newConsumerPriceIndex.Amount / 100M) * activeRenewableEnergySourceTariff.HigherRate);
             newRenewableEnergySourceTariff.ConsumerPriceIndex.Should().Be(newConsumerPriceIndex);
-            newRenewableEnergySourceTariff.Period.Should().Be(newConsumerPriceIndex.Period);
+            newRenewableEnergySourceTariff.Active.Should().Be(newConsumerPriceIndex.Active);
         }
     }
 }

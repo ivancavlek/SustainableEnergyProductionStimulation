@@ -10,7 +10,7 @@ namespace Acme.Seps.Domain.Base.Entity
 {
     public abstract class SepsAggregateRoot : SepsEntity, IAggregateRoot
     {
-        public Period Period { get; protected set; }
+        public ActivePeriod Active { get; private set; }
 
         protected SepsAggregateRoot() { }
 
@@ -20,28 +20,28 @@ namespace Acme.Seps.Domain.Base.Entity
             activeFrom.MustBeGreaterThanOrEqualTo(
                 SepsVersion.InitialDate(), message: SepsBaseMessage.DateMustBeGreaterThanInitialDate);
 
-            Period = new Period(activeFrom);
+            Active = new ActivePeriod(activeFrom);
         }
 
-        protected void Archive(DateTimeOffset activeTill)
+        protected void SetInactive(DateTimeOffset inactiveFrom)
         {
-            Period.ActiveTill.HasValue.MustBe(false, (_, __) =>
+            Active.Until.HasValue.MustBe(false, (_, __) =>
                 new DomainException(SepsBaseMessage.ArchivingArchivedEntityException));
 
-            Period = Period.SetActiveTill(activeTill);
+            Active = Active.SetActiveUntil(inactiveFrom);
         }
 
-        protected void CorrectActiveFrom(DateTimeOffset activeFrom)
+        protected void CorrectActiveSince(DateTimeOffset newActiveSince)
         {
-            Period = new Period(activeFrom);
+            Active = new ActivePeriod(newActiveSince);
         }
 
-        protected void CorrectActiveTill(DateTimeOffset activeTill)
+        protected void CorrectActiveUntil(DateTimeOffset newActiveUntil)
         {
-            Period = Period.SetActiveTill(activeTill);
+            Active = Active.SetActiveUntil(newActiveUntil);
         }
 
         public bool IsActive() =>
-            !Period.ActiveTill.HasValue;
+            !Active.Until.HasValue;
     }
 }

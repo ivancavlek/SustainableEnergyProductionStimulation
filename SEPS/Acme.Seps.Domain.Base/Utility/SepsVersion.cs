@@ -6,15 +6,15 @@ namespace Acme.Seps.Domain.Base.Utility
 {
     public static class SepsVersion
     {
-        private readonly static Dictionary<int, Period> _applicationVersions;
+        private readonly static Dictionary<int, ActivePeriod> _applicationVersions;
 
         static SepsVersion() =>
-            _applicationVersions = new Dictionary<int, Period>()
+            _applicationVersions = new Dictionary<int, ActivePeriod>()
             {
-                [1] = new Period(new DateTimeOffset(new DateTime(2007, 7, 1)))
+                [1] = new ActivePeriod(new DateTimeOffset(new DateTime(2007, 7, 1)))
             };
 
         public static DateTimeOffset InitialDate() =>
-            _applicationVersions[1].ActiveFrom;
+            _applicationVersions[1].Since;
     }
 }

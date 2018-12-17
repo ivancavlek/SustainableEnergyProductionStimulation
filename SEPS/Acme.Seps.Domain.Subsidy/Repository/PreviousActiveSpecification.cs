@@ -16,6 +16,6 @@ namespace Acme.Seps.Domain.Subsidy.Repository
         }
 
         public override Expression<Func<TAggregateRoot, bool>> ToExpression() =>
-            art => art.Period.ActiveTill == _activeTill;
+            art => art.Active.Until == _activeTill;
     }
 }

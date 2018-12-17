@@ -27,7 +27,7 @@ namespace Acme.Seps.Domain.Subsidy.Entity
                   lowerRate,
                   higherRate,
                   projectTypeId,
-                  naturalGasSellingPrice.Period.ActiveFrom,
+                  naturalGasSellingPrice.Active.Since,
                   identityFactory) =>
             NaturalGasSellingPrice = naturalGasSellingPrice;
 
@@ -44,7 +44,7 @@ namespace Acme.Seps.Domain.Subsidy.Entity
             var cogenerationParameter = CalculateCogenerationParameter(
                 cogenerationParameterService, yearsNaturalGasSellingPrices, naturalGasSellingPrice);
 
-            Archive(naturalGasSellingPrice.Period.ActiveFrom);
+            SetInactive(naturalGasSellingPrice.Active.Since);
 
             return new CogenerationTariff
             (
@@ -69,8 +69,8 @@ namespace Acme.Seps.Domain.Subsidy.Entity
 
             LowerRate = cogenerationParameter * previousCgn.LowerRate;
             HigherRate = cogenerationParameter * previousCgn.HigherRate;
-            CorrectActiveFrom(correctedNgsp.Period.ActiveFrom);
-            previousCgn.CorrectActiveTill(correctedNgsp.Period.ActiveFrom);
+            CorrectActiveSince(correctedNgsp.Active.Since);
+            previousCgn.CorrectActiveUntil(correctedNgsp.Active.Since);
         }
 
         private decimal CalculateCogenerationParameter(

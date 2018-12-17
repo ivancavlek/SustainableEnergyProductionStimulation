@@ -31,7 +31,7 @@ namespace Acme.Seps.Domain.Subsidy.Test.Unit.CommandHandler
                 .Returns(1M);
 
             ngspFactory =
-                new EconometricIndexFactory<NaturalGasSellingPrice>(activeNgsp.Period.ActiveFrom.AddMonths(-5));
+                new EconometricIndexFactory<NaturalGasSellingPrice>(activeNgsp.Active.Since.AddMonths(-5));
             var previousActiveNgsp = ngspFactory.Create();
 
             ITariffFactory<CogenerationTariff> cogenerationFactory = new TariffFactory<CogenerationTariff>(

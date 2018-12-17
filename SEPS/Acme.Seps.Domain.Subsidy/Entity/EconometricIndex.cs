@@ -31,7 +31,7 @@ namespace Acme.Seps.Domain.Subsidy.Entity
 
         protected void AmountCorrection(decimal amount, string remark)
         {
-            if (Period.ActiveFrom.Equals(SepsVersion.InitialDate()))
+            if (Active.Since.Equals(SepsVersion.InitialDate()))
                 throw new DomainException(SubsidyMessages.InitialValuesMustNotBeChanged);
             amount.MustBeGreaterThan(0m, (_, __) =>
                 new DomainException(SubsidyMessages.ParameterAmountBelowOrZeroException));

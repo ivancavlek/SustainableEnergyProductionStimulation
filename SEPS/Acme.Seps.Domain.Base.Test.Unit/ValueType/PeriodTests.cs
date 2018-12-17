@@ -8,41 +8,41 @@ namespace Acme.Seps.Domain.Base.Test.Unit.ValueType
 {
     public class PeriodTests
     {
-        private readonly DateTimeOffset _activeFrom;
-        private readonly DateTimeOffset _activeTill;
-        private readonly Period _period;
+        private readonly DateTimeOffset _activeSince;
+        private readonly DateTimeOffset _activeUntil;
+        private readonly ActivePeriod _activePeriod;
 
         public PeriodTests()
         {
-            _activeFrom = new DateTime(2000, 1, 1);
-            _activeTill = _activeFrom.AddYears(1);
-            _period = new Period(_activeFrom);
+            _activeSince = new DateTime(2000, 1, 1);
+            _activeUntil = _activeSince.AddYears(1);
+            _activePeriod = new ActivePeriod(_activeSince);
         }
 
-        public void CreatesProperlyWithActiveFrom()
+        public void CreatesProperlyWithActiveSince()
         {
-            _period.ActiveFrom.Should().Be(_activeFrom);
+            _activePeriod.Since.Should().Be(_activeSince);
         }
 
-        public void SetActiveTillArchivesThePeriod()
+        public void SetActiveUntilInactivatesThePeriod()
         {
-            var newPeriod = _period.SetActiveTill(_activeTill);
+            var newPeriod = _activePeriod.SetActiveUntil(_activeUntil);
 
-            _period.Should().NotBe(newPeriod);
-            _period.ActiveFrom.Should().Be(_activeFrom);
-            _period.ActiveTill.Should().BeNull();
-            newPeriod.ActiveFrom.Should().Be(_activeFrom);
-            newPeriod.ActiveTill.Should().Be(_activeTill);
+            _activePeriod.Should().NotBe(newPeriod);
+            _activePeriod.Since.Should().Be(_activeSince);
+            _activePeriod.Until.Should().BeNull();
+            newPeriod.Since.Should().Be(_activeSince);
+            newPeriod.Until.Should().Be(_activeUntil);
         }
 
-        public void ActiveFromMustNotBeLowerThanActiveTill()
+        public void ActiveSinceMustNotBeLowerThanActiveUntil()
         {
-            Action action = () => _period.SetActiveTill(_activeFrom.AddYears(-1));
+            Action action = () => _activePeriod.SetActiveUntil(_activeSince.AddYears(-1));
 
             action
                 .Should()
                 .ThrowExactly<DomainException>()
-                .WithMessage(SepsBaseMessage.ActiveTillGreaterThanActiveFromException);
+                .WithMessage(SepsBaseMessage.UnilGreaterThanSincePeriodException);
         }
     }
 }

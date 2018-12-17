@@ -45,7 +45,7 @@ namespace Acme.Seps.Repository.Subsidy.Configuration
                 ProjectTypeId = _projectIds.ElementAt(10),
                 NaturalGasSellingPriceId = _naturalGasSellingPriceId
             });
-            builder.OwnsOne(vte => vte.Period, vte =>
+            builder.OwnsOne(vte => vte.Active, vte =>
             {
                 vte.HasData(new
                 {
@@ -67,7 +67,7 @@ namespace Acme.Seps.Repository.Subsidy.Configuration
                 ProjectTypeId = _projectIds.ElementAt(11),
                 NaturalGasSellingPriceId = _naturalGasSellingPriceId
             });
-            builder.OwnsOne(vte => vte.Period, vte =>
+            builder.OwnsOne(vte => vte.Active, vte =>
             {
                 vte.HasData(new
                 {

@@ -48,7 +48,7 @@ namespace Acme.Seps.Domain.Subsidy.CommandHandler
 
             void CorrectRenewableEnergySourceTariffs()
             {
-                var previousRes = GetPreviousActiveRenewableEnergySourceTariffsFor(correctedCpi.Period.ActiveFrom);
+                var previousRes = GetPreviousActiveRenewableEnergySourceTariffsFor(correctedCpi.Active.Since);
 
                 GetActiveRenewableEnergySourceTariffsFor().ToList().ForEach(res =>
                 {
@@ -74,7 +74,7 @@ namespace Acme.Seps.Domain.Subsidy.CommandHandler
                 Message = string.Format(
                     SubsidyMessages.ParameterCorrectionLog,
                     nameof(ConsumerPriceIndex).Humanize(LetterCasing.LowerCase),
-                    cpi.Period,
+                    cpi.Active,
                     cpi.Amount)
             });
 
@@ -91,7 +91,7 @@ namespace Acme.Seps.Domain.Subsidy.CommandHandler
                 Message = string.Format(
                     SubsidyMessages.TariffCorrectionLog,
                     nameof(RenewableEnergySourceTariff).Humanize(LetterCasing.LowerCase),
-                    resTariff.Period,
+                    resTariff.Active,
                     resTariff.LowerRate,
                     resTariff.HigherRate)
             });

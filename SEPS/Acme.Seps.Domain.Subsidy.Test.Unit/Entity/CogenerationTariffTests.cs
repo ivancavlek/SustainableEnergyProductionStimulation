@@ -65,7 +65,7 @@ namespace Acme.Seps.Domain.Subsidy.Test.Unit.Entity
         {
             typeof(NaturalGasSellingPrice)
                 .BaseType.BaseType.BaseType
-                .GetMethod("Archive", BindingFlags.NonPublic | BindingFlags.Instance)
+                .GetMethod("SetInactive", BindingFlags.NonPublic | BindingFlags.Instance)
                 .Invoke(_newNaturalGasSellingPrice, new object[] { DateTimeOffset.Now });
 
             Action action = () => _activeCgn.CreateNewWith(
@@ -94,11 +94,11 @@ namespace Acme.Seps.Domain.Subsidy.Test.Unit.Entity
                 _newNaturalGasSellingPrice,
                 _identityFactory);
 
-            _activeCgn.Period.ActiveTill.Should().Be(_newNaturalGasSellingPrice.Period.ActiveFrom);
+            _activeCgn.Active.Until.Should().Be(_newNaturalGasSellingPrice.Active.Since);
             newChp.LowerRate.Should().Be(_activeCgn.LowerRate * cogenerationParameter);
             newChp.HigherRate.Should().Be(_activeCgn.HigherRate * cogenerationParameter);
             newChp.NaturalGasSellingPrice.Should().Be(_newNaturalGasSellingPrice);
-            newChp.Period.Should().Be(_newNaturalGasSellingPrice.Period);
+            newChp.Active.Should().Be(_newNaturalGasSellingPrice.Active);
         }
     }
 }

@@ -9,6 +9,6 @@ namespace Acme.Seps.Domain.Subsidy.Repository
         : BaseSpecification<TAggregateRoot> where TAggregateRoot : SepsAggregateRoot
     {
         public override Expression<Func<TAggregateRoot, bool>> ToExpression() =>
-            res => !res.Period.ActiveTill.HasValue;
+            res => !res.Active.Until.HasValue;
     }
 }

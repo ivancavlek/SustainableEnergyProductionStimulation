@@ -8,26 +8,26 @@ using System.Runtime.CompilerServices;
 [assembly: InternalsVisibleTo("Acme.Seps.Domain.Base.Test.Unit")]
 namespace Acme.Seps.Domain.Base.ValueType
 {
-    public sealed class Period : ValueObject
+    public sealed class ActivePeriod : ValueObject
     {
-        public DateTimeOffset ActiveFrom { get; private set; }
-        public DateTimeOffset? ActiveTill { get; private set; }
+        public DateTimeOffset Since { get; private set; }
+        public DateTimeOffset? Until { get; private set; }
 
-        private Period() { }
+        private ActivePeriod() { }
 
-        private Period(DateTimeOffset activeFrom, DateTimeOffset activeTill)
+        private ActivePeriod(DateTimeOffset since, DateTimeOffset until)
         {
-            activeTill.MustBeGreaterThanOrEqualTo(activeFrom, (_, __) =>
-                new DomainException(SepsBaseMessage.ActiveTillGreaterThanActiveFromException));
+            until.MustBeGreaterThanOrEqualTo(since, (_, __) =>
+                new DomainException(SepsBaseMessage.UnilGreaterThanSincePeriodException));
 
-            ActiveFrom = activeFrom;
-            ActiveTill = activeTill;
+            Since = since;
+            Until = until;
         }
 
-        internal Period(DateTimeOffset activeFrom) =>
-            ActiveFrom = activeFrom;
+        internal ActivePeriod(DateTimeOffset since) =>
+            Since = since;
 
-        internal Period SetActiveTill(DateTimeOffset activeTill) =>
-            new Period(ActiveFrom, activeTill);
+        internal ActivePeriod SetActiveUntil(DateTimeOffset until) =>
+            new ActivePeriod(Since, until);
     }
 }

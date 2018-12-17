@@ -49,7 +49,7 @@ namespace Acme.Seps.Domain.Subsidy.CommandHandler
             NaturalGasSellingPrice CorrectActiveGsp()
             {
                 var activeNaturalGasSellingPrice = GetActiveNaturalGasSellingPrice();
-                oldActiveFrom = activeNaturalGasSellingPrice.Period.ActiveFrom;
+                oldActiveFrom = activeNaturalGasSellingPrice.Active.Since;
                 var previousActiveNaturalGasSellingPrice = GetPreviousActiveNaturalGasSellingPrice(oldActiveFrom);
 
                 activeNaturalGasSellingPrice.Correct(
@@ -103,7 +103,7 @@ namespace Acme.Seps.Domain.Subsidy.CommandHandler
                 Message = string.Format(
                     SubsidyMessages.ParameterCorrectionLog,
                     nameof(NaturalGasSellingPrice).Humanize(LetterCasing.LowerCase),
-                    naturalGasSellingPrice.Period,
+                    naturalGasSellingPrice.Active,
                     naturalGasSellingPrice.Amount)
             });
 
@@ -119,7 +119,7 @@ namespace Acme.Seps.Domain.Subsidy.CommandHandler
                 Message = string.Format(
                     SubsidyMessages.TariffCorrectionLog,
                     nameof(CogenerationTariff).Humanize(LetterCasing.LowerCase),
-                    cogenerationTariff.Period,
+                    cogenerationTariff.Active,
                     cogenerationTariff.LowerRate,
                     cogenerationTariff.HigherRate)
             });

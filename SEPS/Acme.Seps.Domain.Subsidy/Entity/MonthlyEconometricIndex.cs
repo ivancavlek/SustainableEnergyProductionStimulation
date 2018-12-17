@@ -17,9 +17,9 @@ namespace Acme.Seps.Domain.Subsidy.Entity
             decimal amount, string remark, DateTimeOffset activeFrom, IIdentityFactory<Guid> identityFactory)
             : base(amount, remark, activeFrom.ToFirstDayOfTheMonth(), identityFactory)
         {
-            Period.ActiveFrom.MustBeGreaterThanOrEqualTo(SepsVersion.InitialDate(), (_, __) =>
+            Active.Since.MustBeGreaterThanOrEqualTo(SepsVersion.InitialDate(), (_, __) =>
                 new DomainException(SubsidyMessages.MonthlyParameterException));
-            Period.ActiveFrom.MustBeLessThan(SystemTime.CurrentMonth(), (_, __) =>
+            Active.Since.MustBeLessThan(SystemTime.CurrentMonth(), (_, __) =>
                 new DomainException(SubsidyMessages.MonthlyParameterException));
         }
 
@@ -29,7 +29,7 @@ namespace Acme.Seps.Domain.Subsidy.Entity
         {
             var activeTill = new DateTime(year, month, 1);
 
-            Archive(activeTill);
+            SetInactive(activeTill);
 
             switch (this)
             {
@@ -50,8 +50,8 @@ namespace Acme.Seps.Domain.Subsidy.Entity
             var correctedDate = new DateTime(year, month, 1);
 
             AmountCorrection(amount, remark);
-            CorrectActiveFrom(correctedDate);
-            previousActiveNgsp.CorrectActiveTill(correctedDate);
+            CorrectActiveSince(correctedDate);
+            previousActiveNgsp.CorrectActiveUntil(correctedDate);
         }
     }
 }

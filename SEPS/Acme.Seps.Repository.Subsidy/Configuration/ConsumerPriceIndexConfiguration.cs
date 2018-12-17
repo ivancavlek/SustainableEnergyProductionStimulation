@@ -32,7 +32,7 @@ namespace Acme.Seps.Repository.Subsidy.Configuration
                     Remark = "Initial value",
                     EconometricIndexType = nameof(ConsumerPriceIndex)
                 });
-            builder.OwnsOne(vte => vte.Period, vte =>
+            builder.OwnsOne(vte => vte.Active, vte =>
             {
                 vte.HasData(new
                 {

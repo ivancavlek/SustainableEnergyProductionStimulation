@@ -22,10 +22,10 @@ namespace Acme.Seps.Domain.Subsidy.Test.Unit.Entity
             var newMaep = activeNgsp.CreateNew(
                 amount, "Remark", activeTill.Month, activeTill.Year, Substitute.For<IIdentityFactory<Guid>>());
 
-            activeNgsp.Period.ActiveFrom.Should().Be(activeFrom.ToFirstDayOfTheMonth());
-            activeNgsp.Period.ActiveTill.Should().Be(activeTill.ToFirstDayOfTheMonth());
-            newMaep.Period.ActiveFrom.Should().Be(activeTill.ToFirstDayOfTheMonth());
-            newMaep.Period.ActiveTill.Should().BeNull();
+            activeNgsp.Active.Since.Should().Be(activeFrom.ToFirstDayOfTheMonth());
+            activeNgsp.Active.Until.Should().Be(activeTill.ToFirstDayOfTheMonth());
+            newMaep.Active.Since.Should().Be(activeTill.ToFirstDayOfTheMonth());
+            newMaep.Active.Until.Should().BeNull();
             newMaep.Amount.Should().Be(Math.Round(amount, 2, MidpointRounding.AwayFromZero));
         }
     }

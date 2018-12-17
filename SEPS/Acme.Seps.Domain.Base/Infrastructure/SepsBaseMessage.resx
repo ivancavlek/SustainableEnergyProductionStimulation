@@ -100,8 +100,8 @@
   <data name="ArchivingArchivedEntityException" xml:space="preserve">
     <value>Only active entities can be archived</value>
   </data>
-  <data name="ActiveTillGreaterThanActiveFromException" xml:space="preserve">
-    <value>Active till must be after active from</value>
+  <data name="UnilGreaterThanSincePeriodException" xml:space="preserve">
+    <value>Since must be after until in period</value>
   </data>
   <data name="SuccessfulSave" xml:space="preserve">
     <value>Successful save of entities to database</value>

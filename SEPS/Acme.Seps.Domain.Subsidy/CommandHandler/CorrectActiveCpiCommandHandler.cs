@@ -31,59 +31,46 @@ namespace Acme.Seps.Domain.Subsidy.CommandHandler
 
         void ICommandHandler<CorrectActiveCpiCommand>.Handle(CorrectActiveCpiCommand command)
         {
-            var correctedCpi = CorrectActiveCpi();
-            CorrectRenewableEnergySourceTariffs();
+            var activeCpi = GetActiveConsumerPriceIndex();
+            var previousRes = GetPreviousActiveRenewableEnergySourceTariffs(activeCpi);
+
+            activeCpi.Correct(command.Amount, command.Remark);
+            CorrectRenewableEnergySourceTariffs(activeCpi, previousRes);
 
             _unitOfWork.Commit();
+
+            LogConsumerPriceIndexCorrection(activeCpi);
             LogSuccessfulCommit();
-
-            ConsumerPriceIndex CorrectActiveCpi()
-            {
-                var activeCpi = GetActiveConsumerPriceIndex();
-                activeCpi.Correct(command.Amount, command.Remark);
-                LogConsumerPriceIndexCorrection(activeCpi);
-
-                return activeCpi;
-            }
-
-            void CorrectRenewableEnergySourceTariffs()
-            {
-                var previousRes = GetPreviousActiveRenewableEnergySourceTariffsFor(correctedCpi.Active.Since);
-
-                GetActiveRenewableEnergySourceTariffsFor().ToList().ForEach(res =>
-                {
-                    res.CpiCorrection(
-                        correctedCpi, PreviousRenewableEnergySourceBy(res.ProjectTypeId, res.LowerProductionLimit));
-                    _unitOfWork.Update(res);
-                    LogRenewableEnergySourceTariffCorrection(res);
-                });
-
-                RenewableEnergySourceTariff PreviousRenewableEnergySourceBy(
-                    Guid projectTypeId, decimal? lowerProductionLimit) =>
-                    previousRes.Single(res =>
-                        res.ProjectTypeId.Equals(projectTypeId) && res.LowerProductionLimit.Equals(lowerProductionLimit));
-            }
         }
 
         private ConsumerPriceIndex GetActiveConsumerPriceIndex() =>
             _repository.GetSingle(new ActiveSpecification<ConsumerPriceIndex>());
 
-        private void LogConsumerPriceIndexCorrection(ConsumerPriceIndex cpi) =>
-            Log(new EntityExecutionLoggingEventArgs
+        private IReadOnlyList<RenewableEnergySourceTariff> GetPreviousActiveRenewableEnergySourceTariffs(
+            ConsumerPriceIndex cpi) =>
+            _repository.GetAll(new PreviousActiveSpecification<RenewableEnergySourceTariff>(cpi));
+
+        private void CorrectRenewableEnergySourceTariffs(
+            ConsumerPriceIndex correctedCpi, IEnumerable<RenewableEnergySourceTariff> previousRes)
+        {
+            GetActiveRenewableEnergySourceTariffs().ForEach(res =>
             {
-                Message = string.Format(
-                    SubsidyMessages.ParameterCorrectionLog,
-                    nameof(ConsumerPriceIndex).Humanize(LetterCasing.LowerCase),
-                    cpi.Active,
-                    cpi.Amount)
+                res.CpiCorrection(
+                    correctedCpi, PreviousRenewableEnergySourceBy(res.ProjectTypeId, res.LowerProductionLimit));
+
+                _unitOfWork.Update(res);
+
+                LogRenewableEnergySourceTariffCorrection(res);
             });
 
-        private IReadOnlyList<RenewableEnergySourceTariff> GetPreviousActiveRenewableEnergySourceTariffsFor(
-            DateTimeOffset activeTill) =>
-            _repository.GetAll(new PreviousActiveSpecification<RenewableEnergySourceTariff>(activeTill));
+            RenewableEnergySourceTariff PreviousRenewableEnergySourceBy(
+                Guid projectTypeId, decimal? lowerProductionLimit) =>
+                previousRes.Single(res =>
+                    res.ProjectTypeId.Equals(projectTypeId) && res.LowerProductionLimit.Equals(lowerProductionLimit));
+        }
 
-        private IReadOnlyList<RenewableEnergySourceTariff> GetActiveRenewableEnergySourceTariffsFor() =>
-            _repository.GetAll(new ActiveSpecification<RenewableEnergySourceTariff>());
+        private List<RenewableEnergySourceTariff> GetActiveRenewableEnergySourceTariffs() =>
+            _repository.GetAll(new ActiveSpecification<RenewableEnergySourceTariff>()).ToList();
 
         private void LogRenewableEnergySourceTariffCorrection(RenewableEnergySourceTariff resTariff) =>
             Log(new EntityExecutionLoggingEventArgs
@@ -94,6 +81,16 @@ namespace Acme.Seps.Domain.Subsidy.CommandHandler
                     resTariff.Active,
                     resTariff.LowerRate,
                     resTariff.HigherRate)
+            });
+
+        private void LogConsumerPriceIndexCorrection(ConsumerPriceIndex cpi) =>
+            Log(new EntityExecutionLoggingEventArgs
+            {
+                Message = string.Format(
+                    SubsidyMessages.ParameterCorrectionLog,
+                    nameof(ConsumerPriceIndex).Humanize(LetterCasing.LowerCase),
+                    cpi.Active,
+                    cpi.Amount)
             });
     }
 }

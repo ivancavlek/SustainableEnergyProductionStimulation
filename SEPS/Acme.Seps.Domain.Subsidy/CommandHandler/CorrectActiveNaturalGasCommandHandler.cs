@@ -29,89 +29,69 @@ namespace Acme.Seps.Domain.Subsidy.CommandHandler
             IUnitOfWork unitOfWork,
             IIdentityFactory<Guid> identityFactory)
         {
-            _repository = repository ?? throw new ArgumentNullException(nameof(repository));
             _cogenerationParameterService =
                 cogenerationParameterService ?? throw new ArgumentNullException(nameof(cogenerationParameterService));
+            _repository = repository ?? throw new ArgumentNullException(nameof(repository));
             _unitOfWork = unitOfWork ?? throw new ArgumentNullException(nameof(unitOfWork));
             _identityFactory = identityFactory ?? throw new ArgumentNullException(nameof(identityFactory));
-            _repository = repository;
         }
 
         void ICommandHandler<CorrectActiveNaturalGasCommand>.Handle(CorrectActiveNaturalGasCommand command)
         {
-            DateTimeOffset oldActiveFrom;
-            var correctedGsp = CorrectActiveGsp();
-            CorrectCogenerationTariffs();
+            var activeNaturalGasSellingPrice = GetActiveNaturalGasSellingPrice();
+            var previousActiveNaturalGasSellingPrice =
+                GetPreviousActiveNaturalGasSellingPrice(activeNaturalGasSellingPrice);
+            var previousCogenerations = GetPreviousActiveCogenerationTariffs(activeNaturalGasSellingPrice);
 
+            activeNaturalGasSellingPrice.Correct(
+                command.Amount, command.Remark, command.Year, command.Month, previousActiveNaturalGasSellingPrice);
+            CorrectCogenerationTariffs(activeNaturalGasSellingPrice, previousCogenerations);
+
+            _unitOfWork.Update(activeNaturalGasSellingPrice);
+            _unitOfWork.Update(previousActiveNaturalGasSellingPrice);
             _unitOfWork.Commit();
+
+            LogNaturalGasSellingPriceCorrection(activeNaturalGasSellingPrice);
             LogSuccessfulCommit();
-
-            NaturalGasSellingPrice CorrectActiveGsp()
-            {
-                var activeNaturalGasSellingPrice = GetActiveNaturalGasSellingPrice();
-                oldActiveFrom = activeNaturalGasSellingPrice.Active.Since;
-                var previousActiveNaturalGasSellingPrice = GetPreviousActiveNaturalGasSellingPrice(oldActiveFrom);
-
-                activeNaturalGasSellingPrice.Correct(
-                    command.Amount, command.Remark, command.Year, command.Month, previousActiveNaturalGasSellingPrice);
-
-                _unitOfWork.Update(activeNaturalGasSellingPrice);
-                _unitOfWork.Update(previousActiveNaturalGasSellingPrice);
-
-                LogNaturalGasSellingPriceCorrection(activeNaturalGasSellingPrice);
-
-                return activeNaturalGasSellingPrice;
-            }
-
-            void CorrectCogenerationTariffs()
-            {
-                var previousRes = GetPreviousActiveCogenerationTariffs(oldActiveFrom);
-
-                GetActiveCogenerationTariffsFor().ToList().ForEach(act =>
-                {
-                    var previouRes = PreviousActiveCogenerationTariffBy(act.ProjectTypeId);
-
-                    act.NgspCorrection(
-                        GetNaturalGasPricesWithinYear(command.Year),
-                        _cogenerationParameterService,
-                        correctedGsp,
-                        previouRes);
-
-                    _unitOfWork.Update(act);
-                    _unitOfWork.Update(previouRes);
-
-                    LogNewCogenerationTariffCorrection(act);
-                });
-
-                CogenerationTariff PreviousActiveCogenerationTariffBy(Guid projectTypeId) =>
-                    previousRes.Single(res => res.ProjectTypeId.Equals(projectTypeId));
-
-                IReadOnlyList<NaturalGasSellingPrice> GetNaturalGasPricesWithinYear(int year) =>
-                    _repository.GetAll(new NaturalGasSellingPricesInAYearSpecification(year));
-            }
         }
 
         private NaturalGasSellingPrice GetActiveNaturalGasSellingPrice() =>
             _repository.GetSingle(new ActiveSpecification<NaturalGasSellingPrice>());
 
-        private NaturalGasSellingPrice GetPreviousActiveNaturalGasSellingPrice(DateTimeOffset activeTill) =>
-            _repository.GetSingle(new PreviousActiveSpecification<NaturalGasSellingPrice>(activeTill));
+        private NaturalGasSellingPrice GetPreviousActiveNaturalGasSellingPrice(NaturalGasSellingPrice ngsp) =>
+            _repository.GetSingle(new PreviousActiveSpecification<NaturalGasSellingPrice>(ngsp));
 
-        private void LogNaturalGasSellingPriceCorrection(NaturalGasSellingPrice naturalGasSellingPrice) =>
-            Log(new EntityExecutionLoggingEventArgs
+        private IReadOnlyList<CogenerationTariff> GetPreviousActiveCogenerationTariffs(NaturalGasSellingPrice ngsp) =>
+            _repository.GetAll(new PreviousActiveSpecification<CogenerationTariff>(ngsp));
+
+        private void CorrectCogenerationTariffs(
+            NaturalGasSellingPrice correctedNgsp, IEnumerable<CogenerationTariff> previousCogenerations)
+        {
+            GetActiveCogenerationTariffs().ForEach(ctf =>
             {
-                Message = string.Format(
-                    SubsidyMessages.ParameterCorrectionLog,
-                    nameof(NaturalGasSellingPrice).Humanize(LetterCasing.LowerCase),
-                    naturalGasSellingPrice.Active,
-                    naturalGasSellingPrice.Amount)
+                var previousCogeneration = CogenerationTariffByProjectType(ctf.ProjectTypeId);
+
+                ctf.NgspCorrection(
+                    GetNaturalGasPricesWithinYear(correctedNgsp.Active.Since.Year),
+                    _cogenerationParameterService,
+                    correctedNgsp,
+                    previousCogeneration);
+
+                _unitOfWork.Update(ctf);
+                _unitOfWork.Update(previousCogeneration);
+
+                LogNewCogenerationTariffCorrection(ctf);
             });
 
-        private IReadOnlyList<CogenerationTariff> GetPreviousActiveCogenerationTariffs(DateTimeOffset activeTill) =>
-            _repository.GetAll(new PreviousActiveSpecification<CogenerationTariff>(activeTill));
+            CogenerationTariff CogenerationTariffByProjectType(Guid projectTypeId) =>
+                previousCogenerations.Single(ctf => ctf.ProjectTypeId.Equals(projectTypeId));
+        }
 
-        private IReadOnlyList<CogenerationTariff> GetActiveCogenerationTariffsFor() =>
-            _repository.GetAll(new ActiveSpecification<CogenerationTariff>());
+        private List<CogenerationTariff> GetActiveCogenerationTariffs() =>
+            _repository.GetAll(new ActiveSpecification<CogenerationTariff>()).ToList();
+
+        private IReadOnlyList<NaturalGasSellingPrice> GetNaturalGasPricesWithinYear(int year) =>
+            _repository.GetAll(new NaturalGasSellingPricesInAYearSpecification(year));
 
         private void LogNewCogenerationTariffCorrection(CogenerationTariff cogenerationTariff) =>
             Log(new EntityExecutionLoggingEventArgs
@@ -122,6 +102,16 @@ namespace Acme.Seps.Domain.Subsidy.CommandHandler
                     cogenerationTariff.Active,
                     cogenerationTariff.LowerRate,
                     cogenerationTariff.HigherRate)
+            });
+
+        private void LogNaturalGasSellingPriceCorrection(NaturalGasSellingPrice naturalGasSellingPrice) =>
+            Log(new EntityExecutionLoggingEventArgs
+            {
+                Message = string.Format(
+                    SubsidyMessages.ParameterCorrectionLog,
+                    nameof(NaturalGasSellingPrice).Humanize(LetterCasing.LowerCase),
+                    naturalGasSellingPrice.Active,
+                    naturalGasSellingPrice.Amount)
             });
     }
 }

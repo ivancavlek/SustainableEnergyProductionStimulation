@@ -1,6 +1,7 @@
 ﻿using Acme.Domain.Base.Entity;
 using Acme.Domain.Base.Factory;
 using Acme.Seps.Domain.Base.Infrastructure;
+using Acme.Seps.Domain.Base.Repository;
 using Acme.Seps.Domain.Base.Utility;
 using Acme.Seps.Domain.Base.ValueType;
 using Light.GuardClauses;
@@ -10,6 +11,8 @@ namespace Acme.Seps.Domain.Base.Entity
 {
     public abstract class SepsAggregateRoot : SepsEntity, IAggregateRoot
     {
+        private readonly ActiveSpecification<SepsAggregateRoot> _isActive;
+
         public ActivePeriod Active { get; private set; }
 
         protected SepsAggregateRoot() { }
@@ -21,11 +24,12 @@ namespace Acme.Seps.Domain.Base.Entity
                 SepsVersion.InitialDate(), message: SepsBaseMessage.DateMustBeGreaterThanInitialDate);
 
             Active = new ActivePeriod(activeFrom);
+            _isActive = new ActiveSpecification<SepsAggregateRoot>();
         }
 
         protected void SetInactive(DateTimeOffset inactiveFrom)
         {
-            Active.Until.HasValue.MustBe(false, (_, __) =>
+            _isActive.IsSatisfiedBy(this).MustBe(true, (_, __) =>
                 new DomainException(SepsBaseMessage.ArchivingArchivedEntityException));
 
             Active = Active.SetActiveUntil(inactiveFrom);
@@ -42,6 +46,6 @@ namespace Acme.Seps.Domain.Base.Entity
         }
 
         public bool IsActive() =>
-            !Active.Until.HasValue;
+            _isActive.IsSatisfiedBy(this);
     }
 }

@@ -3,10 +3,10 @@ using Acme.Domain.Base.Factory;
 using Acme.Domain.Base.Repository;
 using Acme.Seps.Domain.Base.CommandHandler;
 using Acme.Seps.Domain.Base.Entity;
+using Acme.Seps.Domain.Base.Repository;
 using Acme.Seps.Domain.Subsidy.Command;
 using Acme.Seps.Domain.Subsidy.Entity;
 using Acme.Seps.Domain.Subsidy.Infrastructure;
-using Acme.Seps.Domain.Subsidy.Repository;
 using Humanizer;
 using System;
 using System.Collections.Generic;
@@ -31,30 +31,18 @@ namespace Acme.Seps.Domain.Subsidy.CommandHandler
         void ICommandHandler<CalculateCpiCommand>.Handle(CalculateCpiCommand command)
         {
             var activeCpi = GetActiveConsumerPriceIndex();
-            var newCpi = GetNewConsumerPriceIndex();
-            CreateNewRenewableEnergySourceTariffs();
+            var newCpi = CreateNewConsumerPriceIndex(command, activeCpi);
 
+            CreateNewRenewableEnergySourceTariffs(newCpi);
+
+            _unitOfWork.Update(activeCpi);
+            _unitOfWork.Insert(newCpi);
             _unitOfWork.Commit();
+
+            LogNewConsumerPriceIndex(newCpi);
             LogSuccessfulCommit();
 
-            ConsumerPriceIndex GetNewConsumerPriceIndex()
-            {
-                var cpi = CreateNewConsumerPriceIndex(command, activeCpi);
-                _unitOfWork.Update(activeCpi);
-                _unitOfWork.Insert(cpi);
-                LogNewConsumerPriceIndex(cpi);
 
-                return cpi;
-            }
-
-            void CreateNewRenewableEnergySourceTariffs() =>
-                GetActiveRenewableEnergySourceTariffs().ToList().ForEach(res =>
-                {
-                    var newRenewableEnergyTariff = CreateNewRenewableEnergySourceTariff(res, newCpi);
-                    _unitOfWork.Update(res);
-                    _unitOfWork.Insert(newRenewableEnergyTariff);
-                    LogNewRenewableEnergySourceTariff(newRenewableEnergyTariff);
-                });
         }
 
         private ConsumerPriceIndex GetActiveConsumerPriceIndex() =>
@@ -63,22 +51,24 @@ namespace Acme.Seps.Domain.Subsidy.CommandHandler
         private ConsumerPriceIndex CreateNewConsumerPriceIndex(CalculateCpiCommand command, ConsumerPriceIndex cpi) =>
             cpi.CreateNew(command.Amount, command.Remark, _identityFactory);
 
-        private void LogNewConsumerPriceIndex(ConsumerPriceIndex cpi) =>
-            Log(new EntityExecutionLoggingEventArgs
+        private void CreateNewRenewableEnergySourceTariffs(ConsumerPriceIndex newCpi)
+        {
+            GetActiveRenewableEnergySourceTariffs().ForEach(res =>
             {
-                Message = string.Format(
-                    SubsidyMessages.InsertParameterLog,
-                    nameof(ConsumerPriceIndex).Humanize(LetterCasing.LowerCase),
-                    cpi.Active,
-                    cpi.Amount)
+                var newRenewableEnergyTariff = CreateNewRenewableEnergySourceTariff(res);
+
+                _unitOfWork.Update(res);
+                _unitOfWork.Insert(newRenewableEnergyTariff);
+
+                LogNewRenewableEnergySourceTariff(newRenewableEnergyTariff);
             });
 
-        private IReadOnlyList<RenewableEnergySourceTariff> GetActiveRenewableEnergySourceTariffs() =>
-            _repository.GetAll(new ActiveSpecification<RenewableEnergySourceTariff>());
+            RenewableEnergySourceTariff CreateNewRenewableEnergySourceTariff(RenewableEnergySourceTariff res) =>
+                res.CreateNewWith(newCpi, _identityFactory);
+        }
 
-        private RenewableEnergySourceTariff CreateNewRenewableEnergySourceTariff(
-            RenewableEnergySourceTariff resTariff, ConsumerPriceIndex cpi) =>
-            resTariff.CreateNewWith(cpi, _identityFactory);
+        private List<RenewableEnergySourceTariff> GetActiveRenewableEnergySourceTariffs() =>
+            _repository.GetAll(new ActiveSpecification<RenewableEnergySourceTariff>()).ToList();
 
         private void LogNewRenewableEnergySourceTariff(RenewableEnergySourceTariff resTariff) =>
             Log(new EntityExecutionLoggingEventArgs
@@ -89,6 +79,16 @@ namespace Acme.Seps.Domain.Subsidy.CommandHandler
                     resTariff.Active,
                     resTariff.LowerRate,
                     resTariff.HigherRate)
+            });
+
+        private void LogNewConsumerPriceIndex(ConsumerPriceIndex cpi) =>
+            Log(new EntityExecutionLoggingEventArgs
+            {
+                Message = string.Format(
+                    SubsidyMessages.InsertParameterLog,
+                    nameof(ConsumerPriceIndex).Humanize(LetterCasing.LowerCase),
+                    cpi.Active,
+                    cpi.Amount)
             });
     }
 }

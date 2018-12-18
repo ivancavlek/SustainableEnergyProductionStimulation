@@ -65,5 +65,22 @@ namespace Acme.Seps.Domain.Subsidy.Test.Unit.Entity
             newRenewableEnergySourceTariff.ConsumerPriceIndex.Should().Be(newConsumerPriceIndex);
             newRenewableEnergySourceTariff.Active.Should().Be(newConsumerPriceIndex.Active);
         }
+
+        public void ConsumerPriceIndexIsCorrected()
+        {
+            var previousRes = _resFactory.Create();
+
+            _cpiFactory = new EconometricIndexFactory<ConsumerPriceIndex>(DateTime.Now.AddYears(-2));
+            _resFactory = new TariffFactory<RenewableEnergySourceTariff>(_cpiFactory.Create());
+            var activeRes = _resFactory.Create();
+            var correctedConsumerPriceIndex = _cpiFactory.Create();
+
+            activeRes.CpiCorrection(correctedConsumerPriceIndex, previousRes);
+
+            activeRes.Active.Since.Should().Be(correctedConsumerPriceIndex.Active.Since);
+            activeRes.LowerRate.Should().Be(previousRes.LowerRate);
+            activeRes.HigherRate.Should().Be(
+                (correctedConsumerPriceIndex.Amount / 100M) * previousRes.HigherRate);
+        }
     }
 }

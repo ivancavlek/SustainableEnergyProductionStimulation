@@ -45,6 +45,22 @@ namespace Acme.Seps.Domain.Subsidy.Test.Unit.Entity
             econometricIndex.Active.Since.Should().Be(yearBeforeCurrentYear.ToFirstMonthOfTheYear());
         }
 
+        public void YearlyEconometricIndexIsCorrected()
+        {
+            DateTimeOffset yearBeforeCurrentYear = DateTime.Now.Date.AddYears(-1);
+
+            var econometricIndex = new DummyYearlyEconometricIndex(
+                _amount, _remark, yearBeforeCurrentYear, _identityFactory);
+
+            const decimal amount = 20M;
+            const string remark = "Test";
+
+            econometricIndex.Correct(amount, remark);
+
+            econometricIndex.Amount.Should().Be(Math.Round(amount, 2, MidpointRounding.AwayFromZero));
+            econometricIndex.Remark.Should().Be(remark);
+        }
+
         private class DummyYearlyEconometricIndex : YearlyEconometricIndex<DummyYearlyEconometricIndex>
         {
             protected override int DecimalPlaces => 2;

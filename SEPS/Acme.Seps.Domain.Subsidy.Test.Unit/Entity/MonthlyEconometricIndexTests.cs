@@ -45,6 +45,29 @@ namespace Acme.Seps.Domain.Subsidy.Test.Unit.Entity
             econometricIndex.Active.Since.Should().Be(monthBeforeCurrentMonth.ToFirstDayOfTheMonth());
         }
 
+        public void MonthlyEconometricIndexIsCorrected()
+        {
+            DateTimeOffset fiveMonthsAgo = DateTime.Now.Date.AddMonths(-5);
+            var econometricIndex = new DummyMonthlyEconometricIndex(_amount, _remark, fiveMonthsAgo, _identityFactory);
+
+            const decimal amount = 20M;
+            const string remark = "Test";
+            DateTimeOffset twoMonthsAgo = DateTime.Now.Date.AddMonths(-2);
+            DateTimeOffset nineMonthsAgo = DateTime.Now.Date.AddMonths(-9);
+            var previouslyActiveEconometricIndex =
+                new DummyMonthlyEconometricIndex(_amount, _remark, nineMonthsAgo, _identityFactory);
+
+            econometricIndex.Correct(
+                amount, remark, twoMonthsAgo.Year, twoMonthsAgo.Month, previouslyActiveEconometricIndex);
+
+            previouslyActiveEconometricIndex.Active.Since.Should().Be(nineMonthsAgo.ToFirstDayOfTheMonth());
+            previouslyActiveEconometricIndex.Active.Until.Should().Be(twoMonthsAgo.ToFirstDayOfTheMonth());
+            econometricIndex.Active.Since.Should().Be(twoMonthsAgo.ToFirstDayOfTheMonth());
+            econometricIndex.Active.Until.Should().BeNull();
+            econometricIndex.Amount.Should().Be(Math.Round(amount, 2, MidpointRounding.AwayFromZero));
+            econometricIndex.Remark.Should().Be(remark);
+        }
+
         private class DummyMonthlyEconometricIndex : MonthlyEconometricIndex<DummyMonthlyEconometricIndex>
         {
             protected override int DecimalPlaces => 2;

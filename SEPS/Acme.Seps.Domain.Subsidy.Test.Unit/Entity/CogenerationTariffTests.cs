@@ -99,5 +99,31 @@ namespace Acme.Seps.Domain.Subsidy.Test.Unit.Entity
             newChp.NaturalGasSellingPrice.Should().Be(_newNaturalGasSellingPrice);
             newChp.Active.Should().Be(_newNaturalGasSellingPrice.Active);
         }
+
+        public void NaturalGasSellingPriceIsCorrected()
+        {
+            const decimal cogenerationParameter = 1M;
+
+            _cogenerationParameterService
+                .GetFrom(Arg.Any<IEnumerable<NaturalGasSellingPrice>>(), Arg.Any<NaturalGasSellingPrice>())
+                .Returns(cogenerationParameter);
+
+            DateTimeOffset cgnSince = DateTimeOffset.Now.ToFirstDayOfTheMonth().AddMonths(-9);
+            IEconometricIndexFactory<NaturalGasSellingPrice> ngspFactory =
+                new EconometricIndexFactory<NaturalGasSellingPrice>(cgnSince);
+            ITariffFactory<CogenerationTariff> cogenerationFactory =
+                new TariffFactory<CogenerationTariff>(ngspFactory.Create());
+            var previousCgn = cogenerationFactory.Create();
+            ngspFactory = new EconometricIndexFactory<NaturalGasSellingPrice>(cgnSince.AddMonths(6));
+            var correctedNgsp = ngspFactory.Create();
+
+            _activeCgn.NgspCorrection(
+                _yearsNaturalGasSellingPrices, _cogenerationParameterService, correctedNgsp, previousCgn);
+
+            _activeCgn.LowerRate.Should().Be(_activeCgn.LowerRate * cogenerationParameter);
+            _activeCgn.HigherRate.Should().Be(_activeCgn.HigherRate * cogenerationParameter);
+            _activeCgn.Active.Since.Should().Be(correctedNgsp.Active.Since);
+            previousCgn.Active.Until.Should().Be(correctedNgsp.Active.Since);
+        }
     }
 }

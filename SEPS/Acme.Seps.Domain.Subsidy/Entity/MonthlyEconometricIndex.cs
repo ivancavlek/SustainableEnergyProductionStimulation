@@ -44,13 +44,17 @@ namespace Acme.Seps.Domain.Subsidy.Entity
         }
 
         public void Correct(
-            decimal amount, string remark, int year, int month, NaturalGasSellingPrice previousActiveNgsp)
+            decimal amount,
+            string remark,
+            int year,
+            int month,
+            TMonthlyEconometricIndex previousActiveMonthlyEconometricIndex)
         {
             var correctedDate = new DateTime(year, month, 1);
 
             AmountCorrection(amount, remark);
             CorrectActiveSince(correctedDate);
-            previousActiveNgsp.CorrectActiveUntil(correctedDate);
+            previousActiveMonthlyEconometricIndex.CorrectActiveUntil(correctedDate);
         }
     }
 }

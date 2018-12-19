@@ -3,8 +3,8 @@ using Acme.Domain.Base.Repository;
 using Acme.Seps.Domain.Base.CommandHandler;
 using Acme.Seps.Domain.Base.Repository;
 using Acme.Seps.Domain.Subsidy.Entity;
+using Acme.Seps.Test.Unit.Utility.Factory;
 using Acme.Seps.UseCases.Subsidy.Command;
-using Acme.Seps.Utility.Test.Unit.Factory;
 using FluentAssertions;
 using NSubstitute;
 using System;
@@ -23,8 +23,7 @@ namespace Acme.Seps.UseCases.Subsidy.Test.Unit.CommandHandler
                 new EconometricIndexFactory<ConsumerPriceIndex>(DateTime.Now.AddYears(-4));
             var activeCpi = cpiFactory.Create();
 
-            ITariffFactory<RenewableEnergySourceTariff> resFactory =
-                new TariffFactory<RenewableEnergySourceTariff>(activeCpi);
+            ITariffFactory<RenewableEnergySourceTariff> resFactory = new ResTariffFactory(activeCpi);
             var activeRenewableEnergySourceTariff = resFactory.Create();
 
             var repository = Substitute.For<IRepository>();

@@ -1,7 +1,7 @@
 ﻿using Acme.Domain.Base.Factory;
 using Acme.Seps.Domain.Subsidy.Entity;
+using Acme.Seps.Test.Unit.Utility.Factory;
 using Acme.Seps.Text;
-using Acme.Seps.Utility.Test.Unit.Factory;
 using FluentAssertions;
 using NSubstitute;
 using System;
@@ -19,7 +19,7 @@ namespace Acme.Seps.Domain.Subsidy.Test.Unit.Entity
         {
             _identityFactory = Substitute.For<IIdentityFactory<Guid>>();
             _cpiFactory = new EconometricIndexFactory<ConsumerPriceIndex>(DateTime.Now.AddYears(-3));
-            _resFactory = new TariffFactory<RenewableEnergySourceTariff>(_cpiFactory.Create());
+            _resFactory = new ResTariffFactory(_cpiFactory.Create());
         }
 
         public void ConsumerPriceIndexMustBeSet()
@@ -71,7 +71,7 @@ namespace Acme.Seps.Domain.Subsidy.Test.Unit.Entity
             var previousRes = _resFactory.Create();
 
             _cpiFactory = new EconometricIndexFactory<ConsumerPriceIndex>(DateTime.Now.AddYears(-2));
-            _resFactory = new TariffFactory<RenewableEnergySourceTariff>(_cpiFactory.Create());
+            _resFactory = new ResTariffFactory(_cpiFactory.Create());
             var activeRes = _resFactory.Create();
             var correctedConsumerPriceIndex = _cpiFactory.Create();
 

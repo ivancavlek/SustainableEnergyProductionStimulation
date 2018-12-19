@@ -22,6 +22,7 @@ namespace Acme.Seps.Repository.Subsidy
             var cpiGuid = _identityFactory.CreateIdentity();
             var naturalGasSellingPriceGuid = _identityFactory.CreateIdentity();
             var monthlyAverageElectricEnergyProductionPriceGuid = _identityFactory.CreateIdentity();
+            var yearlyAverageElectricEnergyProductionPriceGuid = _identityFactory.CreateIdentity();
 
             var projectTypeIds = new List<Guid>();
 
@@ -33,11 +34,17 @@ namespace Acme.Seps.Repository.Subsidy
             modelBuilder.ApplyConfiguration(new ConsumerPriceIndexConfiguration(cpiGuid));
             modelBuilder.ApplyConfiguration(new MonthlyAverageElectricEnergyProductionPriceConfiguration(
                 monthlyAverageElectricEnergyProductionPriceGuid));
+            modelBuilder.ApplyConfiguration(new YearlyAverageElectricEnergyProductionPriceConfiguration(
+                yearlyAverageElectricEnergyProductionPriceGuid));
             modelBuilder.ApplyConfiguration(new NaturalGasSellingPriceConfiguration(naturalGasSellingPriceGuid));
             modelBuilder.ApplyConfiguration(new ProjectTypeConfiguration(projectTypeIds));
             modelBuilder.ApplyConfiguration(new TariffConfiguration());
             modelBuilder.ApplyConfiguration(new CogenerationTariffConfiguration(
-                naturalGasSellingPriceGuid, projectTypeIds, _identityFactory));
+                naturalGasSellingPriceGuid,
+                monthlyAverageElectricEnergyProductionPriceGuid,
+                yearlyAverageElectricEnergyProductionPriceGuid,
+                projectTypeIds,
+                _identityFactory));
             modelBuilder.ApplyConfiguration(new RenewableEnergySourceTariffConfiguration(
                 cpiGuid, projectTypeIds, _identityFactory));
         }

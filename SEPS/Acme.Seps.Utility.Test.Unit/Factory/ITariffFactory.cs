@@ -1,6 +1,6 @@
 ﻿using Acme.Seps.Domain.Subsidy.Entity;
 
-namespace Acme.Seps.Utility.Test.Unit.Factory
+namespace Acme.Seps.Test.Unit.Utility.Factory
 {
     public interface ITariffFactory<TTariff> where TTariff : Tariff
     {

@@ -39,9 +39,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Acme.Seps.Domain.Subsidy", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Acme.Seps.Text", "Acme.Seps.Text\Acme.Seps.Text.csproj", "{036712F5-6B09-426A-BD2C-CDE3724C2CB6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Acme.Seps.UseCases.Subsidy.Test.Unit", "Acme.Seps.UseCases.Subsidy.Test.Unit\Acme.Seps.UseCases.Subsidy.Test.Unit.csproj", "{CAB43267-82F0-4724-8461-2E1D20365C49}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Acme.Seps.UseCases.Subsidy.Test.Unit", "Acme.Seps.UseCases.Subsidy.Test.Unit\Acme.Seps.UseCases.Subsidy.Test.Unit.csproj", "{CAB43267-82F0-4724-8461-2E1D20365C49}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Acme.Seps.Utility.Test.Unit", "Acme.Seps.Utility.Test.Unit\Acme.Seps.Utility.Test.Unit.csproj", "{71D4CD30-7910-455A-87F3-D8C47825FE78}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Acme.Seps.Test.Unit.Utility", "Acme.Seps.Utility.Test.Unit\Acme.Seps.Test.Unit.Utility.csproj", "{71D4CD30-7910-455A-87F3-D8C47825FE78}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Data", "Data", "{C94B5AED-142C-4D9B-AC7C-FDF5C2C24507}"
 EndProject

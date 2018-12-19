@@ -2,12 +2,10 @@
 using Acme.Domain.Base.Factory;
 using Acme.Domain.Base.Repository;
 using Acme.Seps.Domain.Base.CommandHandler;
-using Acme.Seps.Domain.Base.Entity;
 using Acme.Seps.Domain.Base.Repository;
 using Acme.Seps.Domain.Subsidy.DomainService;
 using Acme.Seps.Domain.Subsidy.Entity;
 using Acme.Seps.Text;
-using Acme.Seps.UseCases.Subsidy.Command.Repository;
 using Humanizer;
 using System;
 using System.Collections.Generic;
@@ -61,7 +59,7 @@ namespace Acme.Seps.UseCases.Subsidy.Command
 
         private void CreateNewRenewableEnergySourceTariffs(NaturalGasSellingPrice newNgsp)
         {
-            var yearsNaturalGasSellingPrices = GetNaturalGasSellingPricesWithinYear(newNgsp.Active.Since.Year);
+            var yearlyAverageElectricEnergyProductionPrice = GetActiveYearlyAverageElectricEnergyProductionPrice();
 
             GetActiveCogenerationTariffs().ForEach(ctf =>
             {
@@ -75,11 +73,11 @@ namespace Acme.Seps.UseCases.Subsidy.Command
 
             CogenerationTariff CreateNewCogenerationTariff(CogenerationTariff cogenerationTariff) =>
                 cogenerationTariff.CreateNewWith(
-                    yearsNaturalGasSellingPrices, _cogenerationParameterService, newNgsp, _identityFactory);
+                    _cogenerationParameterService, yearlyAverageElectricEnergyProductionPrice, newNgsp, _identityFactory);
         }
 
-        private IReadOnlyList<NaturalGasSellingPrice> GetNaturalGasSellingPricesWithinYear(int year) =>
-           _repository.GetAll(new NaturalGasSellingPricesInAYearSpecification(year));
+        private YearlyAverageElectricEnergyProductionPrice GetActiveYearlyAverageElectricEnergyProductionPrice() =>
+           _repository.GetSingle(new ActiveSpecification<YearlyAverageElectricEnergyProductionPrice>());
 
         private List<CogenerationTariff> GetActiveCogenerationTariffs() =>
             _repository.GetAll(new ActiveSpecification<CogenerationTariff>()).ToList();

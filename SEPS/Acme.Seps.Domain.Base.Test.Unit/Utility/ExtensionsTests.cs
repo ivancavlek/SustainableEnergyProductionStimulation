@@ -22,7 +22,7 @@ namespace Acme.Seps.Domain.Base.Test.Unit.Utility
 
         public void ToFirstMonthOfTheYearIsCorrectlyExecuted()
         {
-            var result = _dateTime.ToFirstMonthOfTheYear();
+            var result = _dateTime.ToFirstDayOfTheYear();
 
             result.Should().Be(new DateTime(2012, 1, 1));
         }

@@ -4,7 +4,7 @@ using NSubstitute;
 using System;
 using System.Reflection;
 
-namespace Acme.Seps.Utility.Test.Unit.Factory
+namespace Acme.Seps.Test.Unit.Utility.Factory
 {
     public sealed class EconometricIndexFactory<TEconomtricIndex>
         : IEconometricIndexFactory<TEconomtricIndex> where TEconomtricIndex : EconometricIndex

@@ -2,11 +2,11 @@
 using Acme.Domain.Base.Repository;
 using Acme.Seps.Domain.Base.CommandHandler;
 using Acme.Seps.Domain.Base.Repository;
+using Acme.Seps.Domain.Base.Utility;
 using Acme.Seps.Domain.Subsidy.DomainService;
 using Acme.Seps.Domain.Subsidy.Entity;
+using Acme.Seps.Test.Unit.Utility.Factory;
 using Acme.Seps.UseCases.Subsidy.Command;
-using Acme.Seps.UseCases.Subsidy.Command.Repository;
-using Acme.Seps.Utility.Test.Unit.Factory;
 using FluentAssertions;
 using NSubstitute;
 using System;
@@ -21,11 +21,19 @@ namespace Acme.Seps.UseCases.Subsidy.Test.Unit.CommandHandler
 
         public CalculateNaturalGasCommandHandlerTests()
         {
+            DateTimeOffset nineMonthsAgo = DateTime.Now.AddMonths(-9);
+
             IEconometricIndexFactory<NaturalGasSellingPrice> ngspFactory =
-                new EconometricIndexFactory<NaturalGasSellingPrice>(DateTime.Now.AddMonths(-9));
+                new EconometricIndexFactory<NaturalGasSellingPrice>(nineMonthsAgo);
             var activeNgsp = ngspFactory.Create();
 
-            ITariffFactory<CogenerationTariff> cogenerationFactory = new TariffFactory<CogenerationTariff>(activeNgsp);
+            IEconometricIndexFactory<YearlyAverageElectricEnergyProductionPrice> yeapFactory =
+                new EconometricIndexFactory<YearlyAverageElectricEnergyProductionPrice>(
+                    nineMonthsAgo.ToFirstDayOfTheYear().AddYears(-1));
+            var activeYeap = yeapFactory.Create();
+
+            ITariffFactory<CogenerationTariff> cogenerationFactory =
+                new CogenerationTariffFactory(activeYeap, activeNgsp);
             var activeCogenerationTariff = cogenerationFactory.Create();
 
             var repository = Substitute.For<IRepository>();
@@ -36,14 +44,14 @@ namespace Acme.Seps.UseCases.Subsidy.Test.Unit.CommandHandler
                 .GetAll(Arg.Any<ActiveSpecification<CogenerationTariff>>())
                 .Returns(new List<CogenerationTariff> { activeCogenerationTariff });
             repository
-                .GetAll(Arg.Any<NaturalGasSellingPricesInAYearSpecification>())
-                .Returns(new List<NaturalGasSellingPrice> { activeNgsp });
+                .GetSingle(Arg.Any<ActiveSpecification<YearlyAverageElectricEnergyProductionPrice>>())
+                .Returns(activeYeap);
 
             _unitOfWork = Substitute.For<IUnitOfWork>();
 
             var cogenerationParameterService = Substitute.For<ICogenerationParameterService>();
             cogenerationParameterService
-                .GetFrom(Arg.Any<IEnumerable<NaturalGasSellingPrice>>(), Arg.Any<NaturalGasSellingPrice>())
+                .Calculate(Arg.Any<YearlyAverageElectricEnergyProductionPrice>(), Arg.Any<NaturalGasSellingPrice>())
                 .Returns(1M);
 
             _calculateNaturalGas = new CalculateNaturalGasSellingPriceCommandHandler(
@@ -66,10 +74,10 @@ namespace Acme.Seps.UseCases.Subsidy.Test.Unit.CommandHandler
             {
                 _calculateNaturalGas.Handle(calculateNaturalGasCommand);
 
-                _unitOfWork.Received().Update(Arg.Any<NaturalGasSellingPrice>());
-                _unitOfWork.Received().Insert(Arg.Any<NaturalGasSellingPrice>());
                 _unitOfWork.Received().Update(Arg.Any<CogenerationTariff>());
                 _unitOfWork.Received().Insert(Arg.Any<CogenerationTariff>());
+                _unitOfWork.Received().Update(Arg.Any<NaturalGasSellingPrice>());
+                _unitOfWork.Received().Insert(Arg.Any<NaturalGasSellingPrice>());
                 _unitOfWork.Received().Commit();
                 monitoredEvent.Should().Raise("UseCaseExecutionProcessing");
             }

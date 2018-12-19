@@ -18,7 +18,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Acme.Seps.Text\Acme.Seps.Text.csproj" />
-    <ProjectReference Include="..\Acme.Seps.Utility.Test.Unit\Acme.Seps.Utility.Test.Unit.csproj" />
+    <ProjectReference Include="..\Acme.Seps.Utility.Test.Unit\Acme.Seps.Test.Unit.Utility.csproj" />
   </ItemGroup>
 
 </Project>

@@ -1,7 +1,7 @@
 ﻿using Acme.Domain.Base.Factory;
 using Acme.Seps.Domain.Base.Utility;
 using Acme.Seps.Domain.Subsidy.Entity;
-using Acme.Seps.Utility.Test.Unit.Factory;
+using Acme.Seps.Test.Unit.Utility.Factory;
 using FluentAssertions;
 using NSubstitute;
 using System;

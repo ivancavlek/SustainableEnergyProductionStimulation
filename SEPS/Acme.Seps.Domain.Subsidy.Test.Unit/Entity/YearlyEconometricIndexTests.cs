@@ -42,7 +42,7 @@ namespace Acme.Seps.Domain.Subsidy.Test.Unit.Entity
             var econometricIndex = new DummyYearlyEconometricIndex(
                 _amount, _remark, yearBeforeCurrentYear, _identityFactory);
 
-            econometricIndex.Active.Since.Should().Be(yearBeforeCurrentYear.ToFirstMonthOfTheYear());
+            econometricIndex.Active.Since.Should().Be(yearBeforeCurrentYear.ToFirstDayOfTheYear());
         }
 
         public void YearlyEconometricIndexIsCorrected()

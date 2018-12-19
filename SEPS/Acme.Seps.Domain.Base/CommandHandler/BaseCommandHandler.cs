@@ -1,5 +1,4 @@
-﻿using Acme.Seps.Domain.Base.Entity;
-using Acme.Seps.Text;
+﻿using Acme.Seps.Text;
 using System;
 
 namespace Acme.Seps.Domain.Base.CommandHandler

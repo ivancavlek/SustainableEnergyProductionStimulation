@@ -1,25 +1,26 @@
 ﻿using Acme.Seps.Domain.Subsidy.Entity;
-using System.Collections.Generic;
-using System.Linq;
+using System;
 
 namespace Acme.Seps.Domain.Subsidy.DomainService
 {
     public sealed class CogenerationParameterService : ICogenerationParameterService
     {
         private const decimal _factor = 0.25M;
-        private const decimal _lastQuarterGasPriceFor2006 = 1;
-        private const decimal _maepPriceFor2006 = 1;
+        private const decimal _initialNgspp = 1.07M;
+        private const decimal _initialYaep = 0.2625M;
 
-        decimal ICogenerationParameterService.GetFrom(
-            IEnumerable<NaturalGasSellingPrice> yearsNaturalGasSellingPrices,
+        decimal ICogenerationParameterService.Calculate(
+            YearlyAverageElectricEnergyProductionPrice yaep,
             NaturalGasSellingPrice naturalGasSellingPrice) =>
-            GetYaepRate(yearsNaturalGasSellingPrices.Sum(y => y.Amount)) +
-            GetNaturalGasSellingPriceRate(naturalGasSellingPrice.Amount);
+            Math.Round(
+                CalculateYaepRate(yaep) + CalculateNgspRate(naturalGasSellingPrice),
+                4,
+                MidpointRounding.AwayFromZero);
 
-        private static decimal GetYaepRate(decimal yaepAmount) =>
-            _factor * (yaepAmount / _maepPriceFor2006);
+        private static decimal CalculateYaepRate(YearlyAverageElectricEnergyProductionPrice yaep) =>
+            _factor * (yaep.Amount / _initialYaep);
 
-        private static decimal GetNaturalGasSellingPriceRate(decimal naturalGasSellingPriceAmount) =>
-            (1 - _factor) * (naturalGasSellingPriceAmount / _lastQuarterGasPriceFor2006);
+        private static decimal CalculateNgspRate(NaturalGasSellingPrice ngsp) =>
+            (1 - _factor) * (ngsp.Amount / _initialNgspp);
     }
 }

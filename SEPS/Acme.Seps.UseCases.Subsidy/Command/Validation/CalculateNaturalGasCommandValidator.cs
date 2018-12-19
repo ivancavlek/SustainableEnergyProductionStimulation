@@ -10,17 +10,17 @@ namespace Acme.Seps.UseCases.Subsidy.Command.Validation
         {
             RuleFor(cng => cng.Amount)
                 .GreaterThan(0M)
-                .WithMessage(SubsidyMessages.ParameterAmountBelowOrZeroException);
+                .WithMessage(cng => SepsMessage.ValueZeroOrAbove(nameof(cng.Amount)));
             RuleFor(cng => cng.Remark)
                 .NotEmpty()
-                .WithMessage(SubsidyMessages.RemarkNotSetException);
-            RuleFor(can => can.Year)
+                .WithMessage(cng => SepsMessage.EntityNotSet(nameof(cng.Remark)));
+            RuleFor(cng => cng.Year)
                 .GreaterThan(SepsVersion.InitialDate().Year)
-                .WithMessage(SubsidyMessages.YearlyParameterException);
-            RuleFor(can => can.Month)
+                .WithMessage(cng => SepsMessage.ValueHigherThanTheOther(cng.Year.ToString(), SepsVersion.InitialDate().Year.ToString()));
+            RuleFor(cng => cng.Month)
                 .GreaterThanOrEqualTo(1)
                 .LessThanOrEqualTo(12)
-                .WithMessage(SubsidyMessages.MonthlyParameterException);
+                .WithMessage(cng => SepsMessage.ValueHigherThanTheOther(cng.Month.ToString(), "1 - 12"));
         }
     }
 }

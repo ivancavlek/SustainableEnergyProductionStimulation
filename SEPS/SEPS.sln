@@ -47,6 +47,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Data", "Data", "{C94B5AED-1
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Plant", "Plant", "{0B469E57-F3E1-456C-97A6-F5AC0FB9BF9E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Acme.Seps.Text.Test.Unit", "Acme.Seps.Text.Test.Unit\Acme.Seps.Text.Test.Unit.csproj", "{5A88A061-B80E-4397-B01B-2C6C51C5B7F2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -105,6 +107,10 @@ Global
 		{71D4CD30-7910-455A-87F3-D8C47825FE78}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{71D4CD30-7910-455A-87F3-D8C47825FE78}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{71D4CD30-7910-455A-87F3-D8C47825FE78}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5A88A061-B80E-4397-B01B-2C6C51C5B7F2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5A88A061-B80E-4397-B01B-2C6C51C5B7F2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5A88A061-B80E-4397-B01B-2C6C51C5B7F2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5A88A061-B80E-4397-B01B-2C6C51C5B7F2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -128,6 +134,7 @@ Global
 		{71D4CD30-7910-455A-87F3-D8C47825FE78} = {4A821E5F-A98F-4536-808D-595CE17E37AB}
 		{C94B5AED-142C-4D9B-AC7C-FDF5C2C24507} = {DD526306-A805-4E30-B15D-FBF6FB5D2320}
 		{0B469E57-F3E1-456C-97A6-F5AC0FB9BF9E} = {DD526306-A805-4E30-B15D-FBF6FB5D2320}
+		{5A88A061-B80E-4397-B01B-2C6C51C5B7F2} = {4A821E5F-A98F-4536-808D-595CE17E37AB}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {1E01B9AD-6BD4-415E-A4CC-2881BE06104E}

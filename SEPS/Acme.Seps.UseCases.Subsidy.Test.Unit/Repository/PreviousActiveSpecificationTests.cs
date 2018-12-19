@@ -6,7 +6,6 @@ using Acme.Seps.UseCases.Subsidy.Command.Repository;
 using FluentAssertions;
 using NSubstitute;
 using System;
-using System.Collections.Generic;
 
 namespace Acme.Seps.UseCases.Subsidy.Test.Unit.Repository
 {
@@ -42,7 +41,7 @@ namespace Acme.Seps.UseCases.Subsidy.Test.Unit.Repository
             action
                 .Should()
                 .Throw<Exception>()
-                .WithMessage(SepsBaseMessage.InactiveException);
+                .WithMessage(SepsMessages.InactiveException);
         }
 
         public void FiltersActiveEntitites()
@@ -53,8 +52,6 @@ namespace Acme.Seps.UseCases.Subsidy.Test.Unit.Repository
             previousActiveDummy.SetInactive(dummyDate);
 
             var activeDummy = new DummySepsBaseAggregate(dummyDate, _identityFactory);
-
-            var dummyList = new List<DummySepsBaseAggregate> { previousActiveDummy };
 
             new PreviousActiveSpecification<DummySepsBaseAggregate>(activeDummy)
                 .IsSatisfiedBy(previousActiveDummy).Should().BeTrue();

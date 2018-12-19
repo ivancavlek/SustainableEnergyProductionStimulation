@@ -11,17 +11,17 @@ namespace Acme.Seps.UseCases.Subsidy.Command.Validation
         {
             RuleFor(can => can.Amount)
                 .GreaterThan(0M)
-                .WithMessage(SubsidyMessages.ParameterAmountBelowOrZeroException);
+                .WithMessage(ccc => SepsMessage.ValueZeroOrAbove(nameof(ccc.Amount)));
             RuleFor(can => can.Remark)
                 .NotEmpty()
-                .WithMessage(SubsidyMessages.RemarkNotSetException);
+                .WithMessage(ccc => SepsMessage.EntityNotSet(nameof(ccc.Remark)));
             RuleFor(can => can.Year)
                 .GreaterThan(SepsVersion.InitialDate().Year)
-                .WithMessage(SubsidyMessages.YearlyParameterException);
+                .WithMessage(can => SepsMessage.ValueHigherThanTheOther(can.Year.ToString(), SepsVersion.InitialDate().Year.ToString()));
             RuleFor(can => can.Month)
                 .GreaterThanOrEqualTo(1)
                 .LessThanOrEqualTo(12)
-                .WithMessage(SubsidyMessages.MonthlyParameterException);
+                .WithMessage(can => SepsMessage.ValueHigherThanTheOther(can.Month.ToString(), "1 - 12"));
         }
     }
 }

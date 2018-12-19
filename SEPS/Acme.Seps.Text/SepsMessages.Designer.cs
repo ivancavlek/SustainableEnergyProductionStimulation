@@ -22,24 +22,24 @@ namespace Acme.Seps.Text {
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    public class SepsBaseMessage {
+    internal class SepsMessages {
         
         private static global::System.Resources.ResourceManager resourceMan;
         
         private static global::System.Globalization.CultureInfo resourceCulture;
         
         [global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-        internal SepsBaseMessage() {
+        internal SepsMessages() {
         }
         
         /// <summary>
         ///   Returns the cached ResourceManager instance used by this class.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        public static global::System.Resources.ResourceManager ResourceManager {
+        internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Acme.Seps.Text.SepsBaseMessage", typeof(SepsBaseMessage).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Acme.Seps.Text.SepsMessages", typeof(SepsMessages).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -51,7 +51,7 @@ namespace Acme.Seps.Text {
         ///   resource lookups using this strongly typed resource class.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        public static global::System.Globalization.CultureInfo Culture {
+        internal static global::System.Globalization.CultureInfo Culture {
             get {
                 return resourceCulture;
             }
@@ -61,47 +61,101 @@ namespace Acme.Seps.Text {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Only active entities can be archived.
+        ///   Looks up a localized string similar to .
         /// </summary>
-        public static string ArchivingArchivedEntityException {
+        internal static string CannotDeactivateInactiveEntity {
             get {
-                return ResourceManager.GetString("ArchivingArchivedEntityException", resourceCulture);
+                return ResourceManager.GetString("CannotDeactivateInactiveEntity", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Date must be greater than initial date.
+        ///   Looks up a localized string similar to .
         /// </summary>
-        public static string DateMustBeGreaterThanInitialDate {
+        internal static string EntityNotSet {
             get {
-                return ResourceManager.GetString("DateMustBeGreaterThanInitialDate", resourceCulture);
+                return ResourceManager.GetString("EntityNotSet", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Entity must be active.
+        ///   Looks up a localized string similar to .
         /// </summary>
-        public static string InactiveException {
+        internal static string InactiveException {
             get {
                 return ResourceManager.GetString("InactiveException", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Successful save of entities to database.
+        ///   Looks up a localized string similar to .
         /// </summary>
-        public static string SuccessfulSave {
+        internal static string InitialValuesMustNotBeChanged {
+            get {
+                return ResourceManager.GetString("InitialValuesMustNotBeChanged", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        internal static string InsertParameter {
+            get {
+                return ResourceManager.GetString("InsertParameter", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        internal static string InsertTariff {
+            get {
+                return ResourceManager.GetString("InsertTariff", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        internal static string ParameterCorrection {
+            get {
+                return ResourceManager.GetString("ParameterCorrection", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        internal static string SuccessfulSave {
             get {
                 return ResourceManager.GetString("SuccessfulSave", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Since must be after until in period.
+        ///   Looks up a localized string similar to .
         /// </summary>
-        public static string UntilGreaterThanSincePeriodException {
+        internal static string TariffCorrection {
             get {
-                return ResourceManager.GetString("UntilGreaterThanSincePeriodException", resourceCulture);
+                return ResourceManager.GetString("TariffCorrection", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        internal static string ValueGreaterThanTheOther {
+            get {
+                return ResourceManager.GetString("ValueGreaterThanTheOther", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        internal static string ValueZeroOrAbove {
+            get {
+                return ResourceManager.GetString("ValueZeroOrAbove", resourceCulture);
             }
         }
     }

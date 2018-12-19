@@ -2,12 +2,10 @@
 using Acme.Domain.Base.Factory;
 using Acme.Domain.Base.Repository;
 using Acme.Seps.Domain.Base.CommandHandler;
-using Acme.Seps.Domain.Base.Entity;
 using Acme.Seps.Domain.Base.Repository;
 using Acme.Seps.Domain.Subsidy.Entity;
 using Acme.Seps.Text;
 using Acme.Seps.UseCases.Subsidy.Command.Repository;
-using Humanizer;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -76,10 +74,10 @@ namespace Acme.Seps.UseCases.Subsidy.Command
         private void LogRenewableEnergySourceTariffCorrection(RenewableEnergySourceTariff res) =>
             Log(new EntityExecutionLoggingEventArgs
             {
-                Message = string.Format(
-                    SubsidyMessages.TariffCorrectionLog,
-                    nameof(RenewableEnergySourceTariff).Humanize(LetterCasing.LowerCase),
-                    res.Active,
+                Message = SepsMessage.TariffCorrection(
+                    nameof(RenewableEnergySourceTariff),
+                    res.Active.Since.Date,
+                    res.Active.Until.Value.Date,
                     res.LowerRate,
                     res.HigherRate)
             });
@@ -87,10 +85,10 @@ namespace Acme.Seps.UseCases.Subsidy.Command
         private void LogConsumerPriceIndexCorrection(ConsumerPriceIndex cpi) =>
             Log(new EntityExecutionLoggingEventArgs
             {
-                Message = string.Format(
-                    SubsidyMessages.ParameterCorrectionLog,
-                    nameof(ConsumerPriceIndex).Humanize(LetterCasing.LowerCase),
-                    cpi.Active,
+                Message = SepsMessage.ParameterCorrection(
+                    nameof(ConsumerPriceIndex),
+                    cpi.Active.Since.Date,
+                    cpi.Active.Until.Value.Date,
                     cpi.Amount)
             });
     }

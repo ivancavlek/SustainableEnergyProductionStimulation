@@ -42,7 +42,7 @@ namespace Acme.Seps.Domain.Base.Test.Unit.ValueType
             action
                 .Should()
                 .ThrowExactly<DomainException>()
-                .WithMessage(SepsBaseMessage.UntilGreaterThanSincePeriodException);
+                .WithMessage(SepsMessage.UntilGreaterThanSincePeriodException);
         }
     }
 }

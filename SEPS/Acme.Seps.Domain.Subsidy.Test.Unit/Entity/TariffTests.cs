@@ -43,7 +43,7 @@ namespace Acme.Seps.Domain.Subsidy.Test.Unit.Entity
             action
                 .Should()
                 .ThrowExactly<DomainException>()
-                .WithMessage(SubsidyMessages.BelowZeroLowerProductionLimitException);
+                .WithMessage(SepsMessage.BelowZeroLowerProductionLimitException);
         }
 
         public void UpperProductionLimitMustBeAPositiveNumber()
@@ -60,7 +60,7 @@ namespace Acme.Seps.Domain.Subsidy.Test.Unit.Entity
             action
                 .Should()
                 .ThrowExactly<DomainException>()
-                .WithMessage(SubsidyMessages.BelowZeroUpperProductionLimitException);
+                .WithMessage(SepsMessage.BelowZeroUpperProductionLimitException);
         }
 
         public void LowerProductionLimitMustBeLowerOrEqualHigherProductionLimit()
@@ -77,7 +77,7 @@ namespace Acme.Seps.Domain.Subsidy.Test.Unit.Entity
             action
                 .Should()
                 .ThrowExactly<DomainException>()
-                .WithMessage(SubsidyMessages.LowerProductionLimitAboveUpperProductionLimitException);
+                .WithMessage(SepsMessage.LowerProductionLimitAboveUpperProductionLimitException);
         }
 
         public void LowerRateMustBeAPositiveNumber()
@@ -94,7 +94,7 @@ namespace Acme.Seps.Domain.Subsidy.Test.Unit.Entity
             action
                 .Should()
                 .ThrowExactly<DomainException>()
-                .WithMessage(SubsidyMessages.BelowZeroLowerRateException);
+                .WithMessage(SepsMessage.BelowZeroLowerRateException);
         }
 
         public void HigherRateMustBeAPositiveNumber()
@@ -111,7 +111,7 @@ namespace Acme.Seps.Domain.Subsidy.Test.Unit.Entity
             action
                 .Should()
                 .ThrowExactly<DomainException>()
-                .WithMessage(SubsidyMessages.BelowZeroUpperRateException);
+                .WithMessage(SepsMessage.BelowZeroUpperRateException);
         }
 
         public void LowerRateMustBeLowerOrEqualHigherRate()
@@ -128,7 +128,7 @@ namespace Acme.Seps.Domain.Subsidy.Test.Unit.Entity
             action
                 .Should()
                 .ThrowExactly<DomainException>()
-                .WithMessage(SubsidyMessages.LowerRateAboveUpperException);
+                .WithMessage(SepsMessage.LowerRateAboveUpperException);
         }
 
         public void ProjectTypeIdentifierMustBeANonDefaultId()
@@ -145,7 +145,7 @@ namespace Acme.Seps.Domain.Subsidy.Test.Unit.Entity
             action
                 .Should()
                 .ThrowExactly<DomainException>()
-                .WithMessage(SubsidyMessages.BelowZeroUpperRateException);
+                .WithMessage(SepsMessage.BelowZeroUpperRateException);
         }
 
         public void ProjectTypeIdentifierMustBeNonEmpty()
@@ -162,7 +162,7 @@ namespace Acme.Seps.Domain.Subsidy.Test.Unit.Entity
             action
                 .Should()
                 .ThrowExactly<DomainException>()
-                .WithMessage(SubsidyMessages.LowerRateAboveUpperException);
+                .WithMessage(SepsMessage.LowerRateAboveUpperException);
         }
 
         public void TariffIsProperlySet()

@@ -17,9 +17,9 @@ namespace Acme.Seps.Domain.Subsidy.Entity
             : base(amount, remark, since.ToFirstDayOfTheMonth(), identityFactory)
         {
             Active.Since.MustBeGreaterThanOrEqualTo(SepsVersion.InitialDate(), (_, __) =>
-                new DomainException(SubsidyMessages.MonthlyParameterException));
+                new DomainException(SepsMessage.CannotDeactivateInactiveEntity(GetType().Name)));
             Active.Since.MustBeLessThan(SystemTime.CurrentMonth(), (_, __) =>
-                new DomainException(SubsidyMessages.MonthlyParameterException));
+                new DomainException(SepsMessage.ValueHigherThanTheOther(Active.Since.Date.ToShortDateString(), SystemTime.CurrentMonth().Date.ToShortDateString())));
         }
 
         public TMonthlyEconometricIndex CreateNew(

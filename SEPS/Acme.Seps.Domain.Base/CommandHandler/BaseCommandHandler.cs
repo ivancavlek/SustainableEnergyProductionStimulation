@@ -11,6 +11,6 @@ namespace Acme.Seps.Domain.Base.CommandHandler
             UseCaseExecutionProcessing(this, useCaseExecutionProcessingLog);
 
         protected void LogSuccessfulCommit() =>
-            Log(new EntityExecutionLoggingEventArgs { Message = SepsBaseMessage.SuccessfulSave });
+            Log(new EntityExecutionLoggingEventArgs { Message = SepsMessage.SuccessfulSave() });
     }
 }

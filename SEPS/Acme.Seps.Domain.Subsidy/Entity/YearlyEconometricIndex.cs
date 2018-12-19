@@ -17,9 +17,9 @@ namespace Acme.Seps.Domain.Subsidy.Entity
             : base(amount, remark, since.ToFirstDayOfTheYear(), identityFactory)
         {
             Active.Since.Year.MustBeGreaterThanOrEqualTo(SepsVersion.InitialDate().Year, (_, __) =>
-                new DomainException(SubsidyMessages.YearlyParameterException));
+                new DomainException(SepsMessage.ValueHigherThanTheOther(Active.Since.Date.ToShortDateString(), SepsVersion.InitialDate().Date.ToShortDateString())));
             Active.Since.MustBeLessThan(SystemTime.CurrentYear(), (_, __) =>
-                new DomainException(SubsidyMessages.YearlyParameterException));
+                new DomainException(SepsMessage.ValueHigherThanTheOther(Active.Since.Date.ToShortDateString(), SystemTime.CurrentYear().Date.ToShortDateString())));
         }
 
         public TYearlyEconometricIndex CreateNew(

@@ -18,7 +18,7 @@ namespace Acme.Seps.Domain.Base.ValueType
         private ActivePeriod(DateTimeOffset since, DateTimeOffset until)
         {
             until.MustBeGreaterThanOrEqualTo(since, (_, __) =>
-                new DomainException(SepsBaseMessage.UntilGreaterThanSincePeriodException));
+                new DomainException(SepsMessage.ValueHigherThanTheOther(until.Date.ToShortDateString(), since.Date.ToShortDateString())));
 
             Since = since;
             Until = until;

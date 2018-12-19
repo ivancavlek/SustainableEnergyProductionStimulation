@@ -6,10 +6,14 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Update="SepsBaseMessage.Designer.cs">
-      <DependentUpon>SepsBaseMessage.resx</DependentUpon>
+    <PackageReference Include="Humanizer.Core" Version="2.5.16" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="SepsMessages.Designer.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
+      <DependentUpon>SepsMessages.resx</DependentUpon>
     </Compile>
     <Compile Update="SubsidyMessages.Designer.cs">
       <DependentUpon>SubsidyMessages.resx</DependentUpon>
@@ -19,9 +23,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Update="SepsBaseMessage.resx">
-      <LastGenOutput>SepsBaseMessage.Designer.cs</LastGenOutput>
-      <Generator>PublicResXFileCodeGenerator</Generator>
+    <EmbeddedResource Update="SepsMessages.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>SepsMessages.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Update="SubsidyMessages.resx">
       <LastGenOutput>SubsidyMessages.Designer.cs</LastGenOutput>

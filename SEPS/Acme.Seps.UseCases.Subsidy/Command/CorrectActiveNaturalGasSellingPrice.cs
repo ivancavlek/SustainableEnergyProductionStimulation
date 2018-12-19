@@ -7,7 +7,6 @@ using Acme.Seps.Domain.Subsidy.DomainService;
 using Acme.Seps.Domain.Subsidy.Entity;
 using Acme.Seps.Text;
 using Acme.Seps.UseCases.Subsidy.Command.Repository;
-using Humanizer;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -96,10 +95,10 @@ namespace Acme.Seps.UseCases.Subsidy.Command
         private void LogNewCogenerationTariffCorrection(CogenerationTariff cogenerationTariff) =>
             Log(new EntityExecutionLoggingEventArgs
             {
-                Message = string.Format(
-                    SubsidyMessages.TariffCorrectionLog,
-                    nameof(CogenerationTariff).Humanize(LetterCasing.LowerCase),
-                    cogenerationTariff.Active,
+                Message = SepsMessage.TariffCorrection(
+                    nameof(CogenerationTariff),
+                    cogenerationTariff.Active.Since.Date,
+                    cogenerationTariff.Active.Until.Value.Date,
                     cogenerationTariff.LowerRate,
                     cogenerationTariff.HigherRate)
             });
@@ -107,10 +106,10 @@ namespace Acme.Seps.UseCases.Subsidy.Command
         private void LogNaturalGasSellingPriceCorrection(NaturalGasSellingPrice naturalGasSellingPrice) =>
             Log(new EntityExecutionLoggingEventArgs
             {
-                Message = string.Format(
-                    SubsidyMessages.ParameterCorrectionLog,
-                    nameof(NaturalGasSellingPrice).Humanize(LetterCasing.LowerCase),
-                    naturalGasSellingPrice.Active,
+                Message = SepsMessage.ParameterCorrection(
+                    nameof(NaturalGasSellingPrice),
+                    naturalGasSellingPrice.Active.Since.Date,
+                    naturalGasSellingPrice.Active.Until.Value.Date,
                     naturalGasSellingPrice.Amount)
             });
     }

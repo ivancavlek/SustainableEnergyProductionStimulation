@@ -31,8 +31,8 @@ namespace Acme.Seps.Domain.Subsidy.Entity
         public RenewableEnergySourceTariff CreateNewWith(
             ConsumerPriceIndex consumerPriceIndex, IIdentityFactory<Guid> identityFactory)
         {
-            consumerPriceIndex.MustNotBeNull(message: SubsidyMessages.ConsumerPriceIndexNotSetException);
-            consumerPriceIndex.IsActive().MustBe(true, message: SepsBaseMessage.InactiveException);
+            consumerPriceIndex.MustNotBeNull(message: SepsMessage.EntityNotSet(nameof(consumerPriceIndex)));
+            consumerPriceIndex.IsActive().MustBe(true, message: SepsMessage.InactiveException(nameof(consumerPriceIndex)));
 
             SetInactive(consumerPriceIndex.Active.Since);
 

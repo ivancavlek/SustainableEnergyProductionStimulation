@@ -117,61 +117,48 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="LowerRateAboveUpperException" xml:space="preserve">
-    <value>Upper rate must be higher than lower rate.</value>
+  <data name="CannotDeactivateInactiveEntity" xml:space="preserve">
+    <value />
+    <comment>Cannot deactivate inactive {0}</comment>
   </data>
-  <data name="NaturalGasSellingPriceNotSetException" xml:space="preserve">
-    <value>Natural gas selling price must be set.</value>
+  <data name="EntityNotSet" xml:space="preserve">
+    <value />
+    <comment>{0} must be set</comment>
   </data>
-  <data name="ConsumerPriceIndexNotSetException" xml:space="preserve">
-    <value>Consumer price index must be set.</value>
-  </data>
-  <data name="RemarkNotSetException" xml:space="preserve">
-    <value>Remark must be set.</value>
-  </data>
-  <data name="ParameterAmountBelowOrZeroException" xml:space="preserve">
-    <value>Amount must be higher than zero.</value>
-  </data>
-  <data name="YearlyParameterException" xml:space="preserve">
-    <value>Year must be properly set.</value>
-  </data>
-  <data name="BelowZeroLowerProductionLimitException" xml:space="preserve">
-    <value>Lower production limit must be zero or above.</value>
-  </data>
-  <data name="BelowZeroLowerRateException" xml:space="preserve">
-    <value>Lower rate must be zero or above.</value>
-  </data>
-  <data name="BelowZeroUpperRateException" xml:space="preserve">
-    <value>Upper rate must be zero or above.</value>
-  </data>
-  <data name="MonthlyParameterException" xml:space="preserve">
-    <value>Month must be properly set.</value>
-  </data>
-  <data name="CogenerationParameterServiceException" xml:space="preserve">
-    <value>Cogeneration Parameter Service must be set.</value>
-  </data>
-  <data name="InsertParameterLog" xml:space="preserve">
-    <value>Created {0} for period {1} with amount {2:C}.</value>
-  </data>
-  <data name="ParameterCorrectionLog" xml:space="preserve">
-    <value>Corrected {0} for period {1} with amount {2:C}.</value>
-  </data>
-  <data name="TariffCorrectionLog" xml:space="preserve">
-    <value>Corrected {0} for period {1} with amounts {2:C}/{2:C}.</value>
-  </data>
-  <data name="InsertTariffLog" xml:space="preserve">
-    <value>Created {0} for period {1} with amounts {2:C}/{2:C}.</value>
-  </data>
-  <data name="BelowZeroUpperProductionLimitException" xml:space="preserve">
-    <value>Upper production limit must be zero or above.</value>
-  </data>
-  <data name="LowerProductionLimitAboveUpperProductionLimitException" xml:space="preserve">
-    <value>Upper production limit must be higher than lower production limit.</value>
-  </data>
-  <data name="ProjectTypeIdentifierException" xml:space="preserve">
-    <value>Project type identifier must be set.</value>
+  <data name="InactiveException" xml:space="preserve">
+    <value />
+    <comment>{0} must be active</comment>
   </data>
   <data name="InitialValuesMustNotBeChanged" xml:space="preserve">
-    <value>Initial values must not be changed</value>
+    <value />
+    <comment>Initial values must not be changed</comment>
+  </data>
+  <data name="InsertParameter" xml:space="preserve">
+    <value />
+    <comment>Created {0} for period {1:d} - {2:d} with amount {3:C}.</comment>
+  </data>
+  <data name="InsertTariff" xml:space="preserve">
+    <value />
+    <comment>Created {0} for period {1:d} - {2:d} with amounts {3:C}/{4:C}.</comment>
+  </data>
+  <data name="ParameterCorrection" xml:space="preserve">
+    <value />
+    <comment>Corrected {0} for period {1:d} - {2:d} with amount {3:C}.</comment>
+  </data>
+  <data name="SuccessfulSave" xml:space="preserve">
+    <value />
+    <comment>Successful save of entities to database</comment>
+  </data>
+  <data name="TariffCorrection" xml:space="preserve">
+    <value />
+    <comment>Corrected {0} for period {1:d} - {2:d} with amounts {3:C}/{4:C}.</comment>
+  </data>
+  <data name="ValueGreaterThanTheOther" xml:space="preserve">
+    <value />
+    <comment>{0} must be greater than {1}.</comment>
+  </data>
+  <data name="ValueZeroOrAbove" xml:space="preserve">
+    <value />
+    <comment>{0} must be zero or above.</comment>
   </data>
 </root>

@@ -41,11 +41,11 @@ namespace Acme.Seps.Domain.Subsidy.Entity
             NaturalGasSellingPrice naturalGasSellingPrice,
             IIdentityFactory<Guid> identityFactory)
         {
-            cogenerationParameterService.MustNotBeNull(message: SubsidyMessages.CogenerationParameterServiceException);
-            yearlyAverageElectricEnergyProductionPrice.MustNotBeNull(message: SubsidyMessages.NaturalGasSellingPriceNotSetException);
-            yearlyAverageElectricEnergyProductionPrice.IsActive().MustBe(true, message: SepsBaseMessage.InactiveException);
-            naturalGasSellingPrice.MustNotBeNull(message: SubsidyMessages.NaturalGasSellingPriceNotSetException);
-            naturalGasSellingPrice.IsActive().MustBe(true, message: SepsBaseMessage.InactiveException);
+            cogenerationParameterService.MustNotBeNull(message: SepsMessage.EntityNotSet(nameof(cogenerationParameterService)));
+            yearlyAverageElectricEnergyProductionPrice.MustNotBeNull(message: SepsMessage.EntityNotSet(nameof(yearlyAverageElectricEnergyProductionPrice)));
+            yearlyAverageElectricEnergyProductionPrice.IsActive().MustBe(true, message: SepsMessage.InactiveException(nameof(yearlyAverageElectricEnergyProductionPrice)));
+            naturalGasSellingPrice.MustNotBeNull(message: SepsMessage.EntityNotSet(nameof(naturalGasSellingPrice)));
+            naturalGasSellingPrice.IsActive().MustBe(true, message: SepsMessage.InactiveException(nameof(naturalGasSellingPrice)));
 
             var cogenerationParameter = CalculateCogenerationParameter(
                 cogenerationParameterService, yearlyAverageElectricEnergyProductionPrice, naturalGasSellingPrice);

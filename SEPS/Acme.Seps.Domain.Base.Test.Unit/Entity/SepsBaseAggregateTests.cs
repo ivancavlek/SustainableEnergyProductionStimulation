@@ -48,7 +48,7 @@ namespace Acme.Seps.Domain.Base.Test.Unit.Entity
             action
                 .Should()
                 .ThrowExactly<ArgumentOutOfRangeException>()
-                .WithMessage(SepsBaseMessage.DateMustBeGreaterThanInitialDate);
+                .WithMessage(SepsMessage.DateMustBeGreaterThanInitialDate);
         }
 
         public void OnlyActiveEntityCanBeSetInactived()
@@ -63,7 +63,7 @@ namespace Acme.Seps.Domain.Base.Test.Unit.Entity
             action
                 .Should()
                 .ThrowExactly<DomainException>()
-                .WithMessage(SepsBaseMessage.ArchivingArchivedEntityException);
+                .WithMessage(SepsMessage.ArchivingArchivedEntityException);
         }
 
         public void ActiveSinceIsCorrected()

@@ -32,7 +32,7 @@ namespace Acme.Seps.Domain.Subsidy.Test.Unit.Entity
             action
                 .Should()
                 .ThrowExactly<DomainException>()
-                .WithMessage(SubsidyMessages.MonthlyParameterException);
+                .WithMessage(SepsMessage.MonthlyParameterException);
         }
 
         public void DateIsCorrectlySet()

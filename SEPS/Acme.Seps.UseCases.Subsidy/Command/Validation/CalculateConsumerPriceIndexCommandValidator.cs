@@ -10,10 +10,10 @@ namespace Acme.Seps.UseCases.Subsidy.Command.Validation
         {
             RuleFor(ccc => ccc.Amount)
                 .GreaterThan(0M)
-                .WithMessage(SubsidyMessages.ParameterAmountBelowOrZeroException);
+                .WithMessage(ccc => SepsMessage.ValueZeroOrAbove(nameof(ccc.Amount)));
             RuleFor(ccc => ccc.Remark)
                 .NotEmpty()
-                .WithMessage(SubsidyMessages.RemarkNotSetException);
+                .WithMessage(ccc => SepsMessage.EntityNotSet(nameof(ccc.Remark)));
         }
     }
 }

@@ -16,7 +16,7 @@ namespace Acme.Seps.UseCases.Subsidy.Command.Repository
         {
             _activeAggregateRoot = activeAggregateRoot ?? throw new ArgumentNullException(nameof(activeAggregateRoot));
 
-            _activeAggregateRoot.IsActive().MustBe(true, message: SepsBaseMessage.InactiveException);
+            _activeAggregateRoot.IsActive().MustBe(true, message: SepsMessage.InactiveException(activeAggregateRoot.GetType().Name));
         }
 
         public override Expression<Func<TAggregateRoot, bool>> ToExpression() =>

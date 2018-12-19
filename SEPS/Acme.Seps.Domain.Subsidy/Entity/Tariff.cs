@@ -28,24 +28,24 @@ namespace Acme.Seps.Domain.Subsidy.Entity
         {
             if (lowerProductionLimit.HasValue)
                 lowerProductionLimit.Value.MustBeGreaterThanOrEqualTo(0, (_, __) =>
-                    new DomainException(SubsidyMessages.BelowZeroLowerProductionLimitException));
+                    new DomainException(SepsMessage.ValueZeroOrAbove(nameof(lowerProductionLimit))));
             if (upperProductionLimit.HasValue)
             {
                 upperProductionLimit.Value.MustBeGreaterThanOrEqualTo(0, (_, __) =>
-                   new DomainException(SubsidyMessages.BelowZeroUpperProductionLimitException));
+                   new DomainException(SepsMessage.ValueZeroOrAbove(nameof(upperProductionLimit))));
                 lowerProductionLimit.Value.MustBeLessThanOrEqualTo(upperProductionLimit.Value, (_, __) =>
-                    new DomainException(SubsidyMessages.LowerProductionLimitAboveUpperProductionLimitException));
+                    new DomainException(SepsMessage.ValueHigherThanTheOther(nameof(upperProductionLimit), nameof(lowerProductionLimit))));
             }
             lowerRate.MustBeGreaterThanOrEqualTo(0m, (_, __) =>
-                new DomainException(SubsidyMessages.BelowZeroLowerRateException));
+                new DomainException(SepsMessage.ValueZeroOrAbove(nameof(lowerRate))));
             higherRate.MustBeGreaterThanOrEqualTo(0m, (_, __) =>
-                new DomainException(SubsidyMessages.BelowZeroUpperRateException));
+                new DomainException(SepsMessage.ValueZeroOrAbove(nameof(higherRate))));
             lowerRate.MustBeLessThanOrEqualTo(higherRate, (_, __) =>
-                new DomainException(SubsidyMessages.LowerRateAboveUpperException));
+                new DomainException(SepsMessage.ValueHigherThanTheOther(nameof(higherRate), nameof(lowerRate))));
             projectTypeId.MustNotBeEmpty(() =>
-                new DomainException(SubsidyMessages.ProjectTypeIdentifierException));
+                new DomainException(SepsMessage.EntityNotSet(nameof(projectTypeId))));
             projectTypeId.MustNotBeDefault(() =>
-                new DomainException(SubsidyMessages.ProjectTypeIdentifierException));
+                new DomainException(SepsMessage.EntityNotSet(nameof(projectTypeId))));
 
             LowerProductionLimit = lowerProductionLimit;
             UpperProductionLimit = upperProductionLimit;

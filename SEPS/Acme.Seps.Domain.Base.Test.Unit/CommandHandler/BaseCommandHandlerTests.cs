@@ -1,5 +1,4 @@
 ﻿using Acme.Seps.Domain.Base.CommandHandler;
-using Acme.Seps.Domain.Base.Entity;
 using Acme.Seps.Text;
 using FluentAssertions;
 using System.Collections.Generic;
@@ -36,7 +35,7 @@ namespace Acme.Seps.Domain.Base.Test.Unit.CommandHandler
             _dummyCommandHandler.TestSaveLog();
 
             _receivedMessages.Count.Should().Be(1);
-            _receivedMessages.ElementAt(0).Should().Be(SepsBaseMessage.SuccessfulSave);
+            _receivedMessages.ElementAt(0).Should().Be(SepsMessage.SuccessfulSave());
         }
 
         private class DummyCommandHandler : BaseCommandHandler

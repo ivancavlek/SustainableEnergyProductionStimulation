@@ -50,7 +50,7 @@ namespace Acme.Seps.Domain.Subsidy.Test.Unit.Entity
             action
                 .Should()
                 .ThrowExactly<ArgumentNullException>()
-                .WithMessage(SubsidyMessages.CogenerationParameterServiceException);
+                .WithMessage(SepsMessage.CogenerationParameterServiceException);
         }
 
         public void YearlyAverageElectricEnergyProductionPriceMustBeSet()
@@ -61,7 +61,7 @@ namespace Acme.Seps.Domain.Subsidy.Test.Unit.Entity
             action
                 .Should()
                 .ThrowExactly<ArgumentNullException>()
-                .WithMessage(SubsidyMessages.NaturalGasSellingPriceNotSetException);
+                .WithMessage(SepsMessage.NaturalGasSellingPriceNotSetException);
         }
 
         public void NaturalGasSellingPriceMustBeSet()
@@ -72,7 +72,7 @@ namespace Acme.Seps.Domain.Subsidy.Test.Unit.Entity
             action
                 .Should()
                 .ThrowExactly<ArgumentNullException>()
-                .WithMessage(SubsidyMessages.NaturalGasSellingPriceNotSetException);
+                .WithMessage(SepsMessage.NaturalGasSellingPriceNotSetException);
         }
 
         public void NaturalGasSellingPriceMustBeActive()
@@ -91,7 +91,7 @@ namespace Acme.Seps.Domain.Subsidy.Test.Unit.Entity
             action
                 .Should()
                 .Throw<Exception>()
-                .WithMessage(SepsBaseMessage.InactiveException);
+                .WithMessage(SepsMessages.InactiveException);
         }
 
         public void CreatesProperly()

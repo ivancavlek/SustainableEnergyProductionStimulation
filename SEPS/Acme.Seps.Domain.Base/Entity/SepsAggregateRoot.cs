@@ -22,7 +22,8 @@ namespace Acme.Seps.Domain.Base.Entity
             : base(identityFactory)
         {
             since.MustBeGreaterThanOrEqualTo(
-                SepsVersion.InitialDate(), message: SepsBaseMessage.DateMustBeGreaterThanInitialDate);
+                SepsVersion.InitialDate(),
+                message: SepsMessage.ValueHigherThanTheOther(since.Date.ToShortDateString(), SepsVersion.InitialDate().Date.ToShortDateString()));
 
             Active = new ActivePeriod(since);
         }
@@ -30,7 +31,7 @@ namespace Acme.Seps.Domain.Base.Entity
         protected void SetInactive(DateTimeOffset inactiveFrom)
         {
             _isActive.IsSatisfiedBy(this).MustBe(true, (_, __) =>
-                new DomainException(SepsBaseMessage.ArchivingArchivedEntityException));
+                new DomainException(SepsMessage.CannotDeactivateInactiveEntity(GetType().Name)));
 
             Active = Active.SetActiveUntil(inactiveFrom);
         }

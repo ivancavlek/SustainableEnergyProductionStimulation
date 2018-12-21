@@ -37,12 +37,15 @@ namespace Acme.Seps.Domain.Base.Test.Unit.ValueType
 
         public void ActiveSinceMustNotBeLowerThanActiveUntil()
         {
-            Action action = () => _activePeriod.SetActiveUntil(_activeSince.AddYears(-1));
+            var until = _activeSince.AddYears(-1);
+
+            Action action = () => _activePeriod.SetActiveUntil(until);
 
             action
                 .Should()
                 .ThrowExactly<DomainException>()
-                .WithMessage(SepsMessage.UntilGreaterThanSincePeriodException);
+                .WithMessage(SepsMessage.ValueHigherThanTheOther(
+                    until.Date.ToShortDateString(), _activePeriod.Since.Date.ToShortDateString()));
         }
     }
 }

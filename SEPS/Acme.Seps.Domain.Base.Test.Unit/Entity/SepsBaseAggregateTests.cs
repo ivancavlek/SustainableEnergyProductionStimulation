@@ -43,12 +43,15 @@ namespace Acme.Seps.Domain.Base.Test.Unit.Entity
 
         public void OnlyDatesAfterInitialDateAreValid()
         {
-            Action action = () => new DummySepsBaseAggregate(_activeSince.AddYears(-1), _identityFactory);
+            var since = _activeSince.AddYears(-1);
+
+            Action action = () => new DummySepsBaseAggregate(since, _identityFactory);
 
             action
                 .Should()
                 .ThrowExactly<ArgumentOutOfRangeException>()
-                .WithMessage(SepsMessage.DateMustBeGreaterThanInitialDate);
+                .WithMessage(SepsMessage.ValueHigherThanTheOther(
+                    since.Date.ToShortDateString(), SepsVersion.InitialDate().Date.ToShortDateString()));
         }
 
         public void OnlyActiveEntityCanBeSetInactived()
@@ -63,7 +66,7 @@ namespace Acme.Seps.Domain.Base.Test.Unit.Entity
             action
                 .Should()
                 .ThrowExactly<DomainException>()
-                .WithMessage(SepsMessage.ArchivingArchivedEntityException);
+                .WithMessage(SepsMessage.CannotDeactivateInactiveEntity("DummySepsBaseAggregate"));
         }
 
         public void ActiveSinceIsCorrected()

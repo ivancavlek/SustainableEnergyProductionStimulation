@@ -73,7 +73,7 @@ namespace Acme.Seps.UseCases.Subsidy.Command
                 Message = SepsMessage.InsertTariff(
                     nameof(RenewableEnergySourceTariff),
                     res.Active.Since.Date,
-                    res.Active.Until.Value.Date,
+                    res.Active.Until,
                     res.LowerRate,
                     res.HigherRate)
             });
@@ -84,7 +84,7 @@ namespace Acme.Seps.UseCases.Subsidy.Command
                 Message = SepsMessage.InsertParameter(
                     nameof(ConsumerPriceIndex),
                     cpi.Active.Since.Date,
-                    cpi.Active.Until.Value.Date,
+                    cpi.Active.Until,
                     cpi.Amount)
             });
     }

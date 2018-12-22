@@ -135,15 +135,15 @@
   </data>
   <data name="InsertParameter" xml:space="preserve">
     <value />
-    <comment>Created {0} for period {1:d} - {2:d} with amount {3:C}.</comment>
+    <comment>Created {0} for period {1:d} - {2} with amount {3:C}.</comment>
   </data>
   <data name="InsertTariff" xml:space="preserve">
     <value />
-    <comment>Created {0} for period {1:d} - {2:d} with amounts {3:C}/{4:C}.</comment>
+    <comment>Created {0} for period {1:d} - {2} with amounts {3:C}/{4:C}.</comment>
   </data>
   <data name="ParameterCorrection" xml:space="preserve">
     <value />
-    <comment>Corrected {0} for period {1:d} - {2:d} with amount {3:C}.</comment>
+    <comment>Corrected {0} for period {1:d} - {2} with amount {3:C}.</comment>
   </data>
   <data name="SuccessfulSave" xml:space="preserve">
     <value />
@@ -151,7 +151,11 @@
   </data>
   <data name="TariffCorrection" xml:space="preserve">
     <value />
-    <comment>Corrected {0} for period {1:d} - {2:d} with amounts {3:C}/{4:C}.</comment>
+    <comment>Corrected {0} for period {1:d} - {2} with amounts {3:C}/{4:C}.</comment>
+  </data>
+  <data name="Undefined" xml:space="preserve">
+    <value />
+    <comment>undefined</comment>
   </data>
   <data name="ValueGreaterThanTheOther" xml:space="preserve">
     <value />

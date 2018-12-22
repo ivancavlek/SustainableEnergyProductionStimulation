@@ -144,6 +144,15 @@ namespace Acme.Seps.Text {
         /// <summary>
         ///   Looks up a localized string similar to .
         /// </summary>
+        internal static string Undefined {
+            get {
+                return ResourceManager.GetString("Undefined", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
         internal static string ValueGreaterThanTheOther {
             get {
                 return ResourceManager.GetString("ValueGreaterThanTheOther", resourceCulture);

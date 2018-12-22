@@ -18,42 +18,42 @@ namespace Acme.Seps.Text
         public static string InitialValuesMustNotBeChanged() =>
             SepsMessages.InitialValuesMustNotBeChanged;
 
-        public static string InsertParameter(string entityName, DateTime since, DateTime until, decimal amount) =>
+        public static string InsertParameter(string entityName, DateTimeOffset since, DateTimeOffset? until, decimal amount) =>
             string.Format(
                 SepsMessages.InsertParameter,
                 nameof(entityName).Humanize(LetterCasing.LowerCase),
                 since,
-                until,
+                GetUntil(until),
                 amount);
 
         public static string InsertTariff(
-            string entityName, DateTime since, DateTime until, decimal lowerRate, decimal higherRate) =>
+            string entityName, DateTimeOffset since, DateTimeOffset? until, decimal lowerRate, decimal higherRate) =>
             string.Format(
                 SepsMessages.InsertTariff,
                 nameof(entityName).Humanize(LetterCasing.LowerCase),
                 since,
-                until,
+                GetUntil(until),
                 lowerRate,
                 higherRate);
 
-        public static string ParameterCorrection(string entityName, DateTime since, DateTime until, decimal amount) =>
+        public static string ParameterCorrection(string entityName, DateTimeOffset since, DateTimeOffset? until, decimal amount) =>
             string.Format(
                 SepsMessages.ParameterCorrection,
                 nameof(entityName).Humanize(LetterCasing.LowerCase),
                 since,
-                until,
+                GetUntil(until),
                 amount);
 
         public static string SuccessfulSave() =>
             SepsMessages.SuccessfulSave;
 
         public static string TariffCorrection(
-            string entityName, DateTime since, DateTime until, decimal lowerRate, decimal higherRate) =>
+            string entityName, DateTimeOffset since, DateTimeOffset? until, decimal lowerRate, decimal higherRate) =>
             string.Format(
                 SepsMessages.TariffCorrection,
                 nameof(entityName).Humanize(LetterCasing.LowerCase),
                 since,
-                until,
+                GetUntil(until),
                 lowerRate,
                 higherRate);
 
@@ -65,5 +65,8 @@ namespace Acme.Seps.Text
 
         public static string ValueZeroOrAbove(string entityName) =>
             string.Format(SepsMessages.ValueZeroOrAbove, nameof(entityName).Humanize(LetterCasing.Sentence));
+
+        private static string GetUntil(DateTimeOffset? until) =>
+            until.HasValue ? until.Value.Date.ToShortDateString() : SepsMessages.Undefined;
     }
 }

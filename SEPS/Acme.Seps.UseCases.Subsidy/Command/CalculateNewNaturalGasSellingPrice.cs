@@ -87,7 +87,7 @@ namespace Acme.Seps.UseCases.Subsidy.Command
                 Message = SepsMessage.InsertTariff(
                     nameof(CogenerationTariff),
                     cogenerationTariff.Active.Since.Date,
-                    cogenerationTariff.Active.Until.Value.Date,
+                    cogenerationTariff.Active.Until,
                     cogenerationTariff.LowerRate,
                     cogenerationTariff.HigherRate)
             });
@@ -98,7 +98,7 @@ namespace Acme.Seps.UseCases.Subsidy.Command
                 Message = SepsMessage.InsertParameter(
                     nameof(NaturalGasSellingPrice),
                     naturalGasSellingPrice.Active.Since.Date,
-                    naturalGasSellingPrice.Active.Until.Value.Date,
+                    naturalGasSellingPrice.Active.Until,
                     naturalGasSellingPrice.Amount)
             });
     }

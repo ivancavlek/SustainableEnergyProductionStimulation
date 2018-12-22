@@ -41,7 +41,7 @@ namespace Acme.Seps.UseCases.Subsidy.Test.Unit.Repository
             action
                 .Should()
                 .Throw<Exception>()
-                .WithMessage(SepsMessages.InactiveException);
+                .WithMessage(SepsMessage.InactiveException("DummySepsBaseAggregate"));
         }
 
         public void FiltersActiveEntitites()

@@ -61,7 +61,7 @@ namespace Acme.Seps.Text {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Cannot deactivate inactive {0}.
         /// </summary>
         internal static string CannotDeactivateInactiveEntity {
             get {
@@ -70,7 +70,7 @@ namespace Acme.Seps.Text {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to {0} must be set.
         /// </summary>
         internal static string EntityNotSet {
             get {
@@ -79,7 +79,7 @@ namespace Acme.Seps.Text {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to {0} must be active.
         /// </summary>
         internal static string InactiveException {
             get {
@@ -88,7 +88,7 @@ namespace Acme.Seps.Text {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Initial values must not be changed.
         /// </summary>
         internal static string InitialValuesMustNotBeChanged {
             get {
@@ -97,7 +97,7 @@ namespace Acme.Seps.Text {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Created {0} for period {1:d} - {2} with amount {3:C}.
         /// </summary>
         internal static string InsertParameter {
             get {
@@ -106,7 +106,7 @@ namespace Acme.Seps.Text {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Created {0} for period {1:d} - {2} with amounts {3:C}/{4:C}.
         /// </summary>
         internal static string InsertTariff {
             get {
@@ -115,7 +115,7 @@ namespace Acme.Seps.Text {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Corrected {0} for period {1:d} - {2} with amount {3:C}.
         /// </summary>
         internal static string ParameterCorrection {
             get {
@@ -124,7 +124,7 @@ namespace Acme.Seps.Text {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Successful save of entities to database.
         /// </summary>
         internal static string SuccessfulSave {
             get {
@@ -133,7 +133,7 @@ namespace Acme.Seps.Text {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Corrected {0} for period {1:d} - {2} with amounts {3:C}/{4:C}.
         /// </summary>
         internal static string TariffCorrection {
             get {
@@ -142,7 +142,7 @@ namespace Acme.Seps.Text {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to undefined.
         /// </summary>
         internal static string Undefined {
             get {
@@ -151,7 +151,7 @@ namespace Acme.Seps.Text {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to {0} must be greater than {1}.
         /// </summary>
         internal static string ValueGreaterThanTheOther {
             get {
@@ -160,7 +160,7 @@ namespace Acme.Seps.Text {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to {0} must be zero or above.
         /// </summary>
         internal static string ValueZeroOrAbove {
             get {

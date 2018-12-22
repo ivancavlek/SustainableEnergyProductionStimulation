@@ -7,13 +7,13 @@ namespace Acme.Seps.Text
     {
         public static string CannotDeactivateInactiveEntity(string entityName) =>
             string.Format(
-                SepsMessages.CannotDeactivateInactiveEntity, nameof(entityName).Humanize(LetterCasing.Sentence));
+                SepsMessages.CannotDeactivateInactiveEntity, entityName.Humanize(LetterCasing.Sentence));
 
         public static string EntityNotSet(string entityName) =>
-            string.Format(SepsMessages.EntityNotSet, nameof(entityName).Humanize(LetterCasing.Sentence));
+            string.Format(SepsMessages.EntityNotSet, entityName.Humanize(LetterCasing.Sentence));
 
         public static string InactiveException(string entityName) =>
-            string.Format(SepsMessages.InactiveException, nameof(entityName).Humanize(LetterCasing.Sentence));
+            string.Format(SepsMessages.InactiveException, entityName.Humanize(LetterCasing.Sentence));
 
         public static string InitialValuesMustNotBeChanged() =>
             SepsMessages.InitialValuesMustNotBeChanged;
@@ -21,7 +21,7 @@ namespace Acme.Seps.Text
         public static string InsertParameter(string entityName, DateTimeOffset since, DateTimeOffset? until, decimal amount) =>
             string.Format(
                 SepsMessages.InsertParameter,
-                nameof(entityName).Humanize(LetterCasing.LowerCase),
+                entityName.Humanize(LetterCasing.LowerCase),
                 since,
                 GetUntil(until),
                 amount);
@@ -30,7 +30,7 @@ namespace Acme.Seps.Text
             string entityName, DateTimeOffset since, DateTimeOffset? until, decimal lowerRate, decimal higherRate) =>
             string.Format(
                 SepsMessages.InsertTariff,
-                nameof(entityName).Humanize(LetterCasing.LowerCase),
+                entityName.Humanize(LetterCasing.LowerCase),
                 since,
                 GetUntil(until),
                 lowerRate,
@@ -39,7 +39,7 @@ namespace Acme.Seps.Text
         public static string ParameterCorrection(string entityName, DateTimeOffset since, DateTimeOffset? until, decimal amount) =>
             string.Format(
                 SepsMessages.ParameterCorrection,
-                nameof(entityName).Humanize(LetterCasing.LowerCase),
+                entityName.Humanize(LetterCasing.LowerCase),
                 since,
                 GetUntil(until),
                 amount);
@@ -51,7 +51,7 @@ namespace Acme.Seps.Text
             string entityName, DateTimeOffset since, DateTimeOffset? until, decimal lowerRate, decimal higherRate) =>
             string.Format(
                 SepsMessages.TariffCorrection,
-                nameof(entityName).Humanize(LetterCasing.LowerCase),
+                entityName.Humanize(LetterCasing.LowerCase),
                 since,
                 GetUntil(until),
                 lowerRate,
@@ -60,11 +60,11 @@ namespace Acme.Seps.Text
         public static string ValueHigherThanTheOther(string higherEntityName, string lowerEntityName) =>
             string.Format(
                 SepsMessages.ValueGreaterThanTheOther,
-                nameof(higherEntityName).Humanize(LetterCasing.Sentence),
-                nameof(lowerEntityName).Humanize(LetterCasing.Sentence));
+                higherEntityName.Humanize(LetterCasing.Sentence),
+                lowerEntityName.Humanize(LetterCasing.LowerCase));
 
         public static string ValueZeroOrAbove(string entityName) =>
-            string.Format(SepsMessages.ValueZeroOrAbove, nameof(entityName).Humanize(LetterCasing.Sentence));
+            string.Format(SepsMessages.ValueZeroOrAbove, entityName.Humanize(LetterCasing.Sentence));
 
         private static string GetUntil(DateTimeOffset? until) =>
             until.HasValue ? until.Value.Date.ToShortDateString() : SepsMessages.Undefined;

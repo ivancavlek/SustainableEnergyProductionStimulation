@@ -118,51 +118,52 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="CannotDeactivateInactiveEntity" xml:space="preserve">
-    <value />
-    <comment>Cannot deactivate inactive {0}</comment>
+    <value>Cannot deactivate inactive {0}</value>
+    
   </data>
   <data name="EntityNotSet" xml:space="preserve">
-    <value />
-    <comment>{0} must be set</comment>
+    <value>{0} must be set</value>
+    
   </data>
   <data name="InactiveException" xml:space="preserve">
-    <value />
-    <comment>{0} must be active</comment>
+    <value>{0} must be active</value>
+    
   </data>
   <data name="InitialValuesMustNotBeChanged" xml:space="preserve">
-    <value />
-    <comment>Initial values must not be changed</comment>
+    <value>Initial values must not be changed</value>
+    
   </data>
   <data name="InsertParameter" xml:space="preserve">
-    <value />
-    <comment>Created {0} for period {1:d} - {2} with amount {3:C}.</comment>
+    <value>Created {0} for period {1:d} - {2} with amount {3:C}</value>
+    
   </data>
   <data name="InsertTariff" xml:space="preserve">
-    <value />
-    <comment>Created {0} for period {1:d} - {2} with amounts {3:C}/{4:C}.</comment>
+    <value>Created {0} for period {1:d} - {2} with amounts {3:C}/{4:C}</value>
+    
+    
   </data>
   <data name="ParameterCorrection" xml:space="preserve">
-    <value />
-    <comment>Corrected {0} for period {1:d} - {2} with amount {3:C}.</comment>
+    <value>Corrected {0} for period {1:d} - {2} with amount {3:C}</value>
+    
   </data>
   <data name="SuccessfulSave" xml:space="preserve">
-    <value />
-    <comment>Successful save of entities to database</comment>
+    <value>Successful save of entities to database</value>
+    
   </data>
   <data name="TariffCorrection" xml:space="preserve">
-    <value />
-    <comment>Corrected {0} for period {1:d} - {2} with amounts {3:C}/{4:C}.</comment>
+    <value>Corrected {0} for period {1:d} - {2} with amounts {3:C}/{4:C}</value>
+    
   </data>
   <data name="Undefined" xml:space="preserve">
-    <value />
-    <comment>undefined</comment>
+    <value>undefined</value>
+    
   </data>
   <data name="ValueGreaterThanTheOther" xml:space="preserve">
-    <value />
-    <comment>{0} must be greater than {1}.</comment>
+    <value>{0} must be greater than {1}</value>
+    
   </data>
   <data name="ValueZeroOrAbove" xml:space="preserve">
-    <value />
-    <comment>{0} must be zero or above.</comment>
+    <value>{0} must be zero or above</value>
+    
   </data>
 </root>

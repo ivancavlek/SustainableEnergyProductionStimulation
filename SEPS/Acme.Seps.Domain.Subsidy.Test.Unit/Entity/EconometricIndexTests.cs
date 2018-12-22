@@ -31,7 +31,7 @@ namespace Acme.Seps.Domain.Subsidy.Test.Unit.Entity
             action
                 .Should()
                 .ThrowExactly<DomainException>()
-                .WithMessage(SepsMessage.ParameterAmountBelowOrZeroException);
+                .WithMessage(SepsMessage.ValueZeroOrAbove("amount"));
         }
 
         public void AmountCannotBeZeroBased()
@@ -41,7 +41,7 @@ namespace Acme.Seps.Domain.Subsidy.Test.Unit.Entity
             action
                 .Should()
                 .ThrowExactly<DomainException>()
-                .WithMessage(SepsMessage.ParameterAmountBelowOrZeroException);
+                .WithMessage(SepsMessage.ValueZeroOrAbove("amount"));
         }
 
         public void RemarkMustExist()
@@ -51,7 +51,7 @@ namespace Acme.Seps.Domain.Subsidy.Test.Unit.Entity
             action
                 .Should()
                 .ThrowExactly<DomainException>()
-                .WithMessage(SepsMessage.RemarkNotSetException);
+                .WithMessage(SepsMessage.EntityNotSet("remark"));
         }
 
         public void CreatesProperly()
@@ -74,7 +74,7 @@ namespace Acme.Seps.Domain.Subsidy.Test.Unit.Entity
             action
                 .Should()
                 .ThrowExactly<DomainException>()
-                .WithMessage(SepsMessage.InitialValuesMustNotBeChanged);
+                .WithMessage(SepsMessage.InitialValuesMustNotBeChanged());
         }
 
         public void AmountCorrectionCannotBeANegativeValue()
@@ -86,7 +86,7 @@ namespace Acme.Seps.Domain.Subsidy.Test.Unit.Entity
             action
                 .Should()
                 .ThrowExactly<DomainException>()
-                .WithMessage(SepsMessage.ParameterAmountBelowOrZeroException);
+                .WithMessage(SepsMessage.ValueZeroOrAbove("amount"));
         }
 
         public void AmountCorrectionCannotBeZeroBased()
@@ -98,7 +98,7 @@ namespace Acme.Seps.Domain.Subsidy.Test.Unit.Entity
             action
                 .Should()
                 .ThrowExactly<DomainException>()
-                .WithMessage(SepsMessage.ParameterAmountBelowOrZeroException);
+                .WithMessage(SepsMessage.ValueZeroOrAbove("amount"));
         }
 
         public void AmountCorrectionRemarkMustExist()
@@ -110,7 +110,7 @@ namespace Acme.Seps.Domain.Subsidy.Test.Unit.Entity
             action
                 .Should()
                 .ThrowExactly<DomainException>()
-                .WithMessage(SepsMessage.RemarkNotSetException);
+                .WithMessage(SepsMessage.EntityNotSet("remark"));
         }
 
         public void AmountCorrectionIsCorrect()

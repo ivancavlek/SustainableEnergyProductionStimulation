@@ -32,7 +32,7 @@ namespace Acme.Seps.Domain.Subsidy.Test.Unit.Entity
             action
                 .Should()
                 .ThrowExactly<DomainException>()
-                .WithMessage(SepsMessage.YearlyParameterException);
+                .WithMessage(SepsMessage.ValueHigherThanTheOther(currentYear.Date.ToShortDateString(), SystemTime.CurrentYear().Date.ToShortDateString()));
         }
 
         public void DateIsCorrectlySet()

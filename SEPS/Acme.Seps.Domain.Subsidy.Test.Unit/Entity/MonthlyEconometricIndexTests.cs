@@ -22,6 +22,19 @@ namespace Acme.Seps.Domain.Subsidy.Test.Unit.Entity
             _identityFactory = Substitute.For<IIdentityFactory<Guid>>();
         }
 
+        public void NewEconometricIndexCannotHaveInitialValues()
+        {
+            var beforeInitialDate = SepsVersion.InitialDate().AddYears(-1);
+
+            Action action = () => new DummyMonthlyEconometricIndex(
+                _amount, _remark, beforeInitialDate, _identityFactory);
+
+            action
+                .Should()
+                .Throw<Exception>()
+                .WithMessage(SepsMessage.ValueHigherThanTheOther(beforeInitialDate.Date.ToShortDateString(), SepsVersion.InitialDate().Date.ToShortDateString()));
+        }
+
         public void DateCannotBeFromCurrentMonth()
         {
             var currentMonth = DateTime.Now.Date;
@@ -32,7 +45,7 @@ namespace Acme.Seps.Domain.Subsidy.Test.Unit.Entity
             action
                 .Should()
                 .ThrowExactly<DomainException>()
-                .WithMessage(SepsMessage.MonthlyParameterException);
+                .WithMessage(SepsMessage.ValueHigherThanTheOther(currentMonth.Date.ToShortDateString(), SystemTime.CurrentMonth().Date.ToShortDateString()));
         }
 
         public void DateIsCorrectlySet()

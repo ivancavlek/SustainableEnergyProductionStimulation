@@ -29,7 +29,7 @@ namespace Acme.Seps.Domain.Subsidy.Test.Unit.Entity
             action
                 .Should()
                 .ThrowExactly<ArgumentNullException>()
-                .WithMessage(SepsMessage.ConsumerPriceIndexNotSetException);
+                .WithMessage(SepsMessage.EntityNotSet("consumerPriceIndex"));
         }
 
         public void ConsumerPriceIndexMustBeActive()
@@ -45,7 +45,7 @@ namespace Acme.Seps.Domain.Subsidy.Test.Unit.Entity
             action
                 .Should()
                 .Throw<Exception>()
-                .WithMessage(SepsMessages.InactiveException);
+                .WithMessage(SepsMessage.InactiveException("consumerPriceIndex"));
         }
 
         public void CreatesProperly()

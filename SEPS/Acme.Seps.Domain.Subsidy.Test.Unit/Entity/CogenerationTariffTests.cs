@@ -50,7 +50,7 @@ namespace Acme.Seps.Domain.Subsidy.Test.Unit.Entity
             action
                 .Should()
                 .ThrowExactly<ArgumentNullException>()
-                .WithMessage(SepsMessage.CogenerationParameterServiceException);
+                .WithMessage(SepsMessage.EntityNotSet("cogenerationParameterService"));
         }
 
         public void YearlyAverageElectricEnergyProductionPriceMustBeSet()
@@ -61,7 +61,18 @@ namespace Acme.Seps.Domain.Subsidy.Test.Unit.Entity
             action
                 .Should()
                 .ThrowExactly<ArgumentNullException>()
-                .WithMessage(SepsMessage.NaturalGasSellingPriceNotSetException);
+                .WithMessage(SepsMessage.EntityNotSet("yearlyAverageElectricEnergyProductionPrice"));
+        }
+
+        public void YearlyAverageElectricEnergyProductionPriceMustBeActive()
+        {
+            Action action = () => _activeCgn.CreateNewWith(
+                _cogenerationParameterService, null, _newNaturalGasSellingPrice, _identityFactory);
+
+            action
+                .Should()
+                .ThrowExactly<ArgumentNullException>()
+                .WithMessage(SepsMessage.InactiveException("yearlyAverageElectricEnergyProductionPrice"));
         }
 
         public void NaturalGasSellingPriceMustBeSet()
@@ -72,7 +83,7 @@ namespace Acme.Seps.Domain.Subsidy.Test.Unit.Entity
             action
                 .Should()
                 .ThrowExactly<ArgumentNullException>()
-                .WithMessage(SepsMessage.NaturalGasSellingPriceNotSetException);
+                .WithMessage(SepsMessage.EntityNotSet("naturalGasSellingPrice"));
         }
 
         public void NaturalGasSellingPriceMustBeActive()
@@ -91,7 +102,7 @@ namespace Acme.Seps.Domain.Subsidy.Test.Unit.Entity
             action
                 .Should()
                 .Throw<Exception>()
-                .WithMessage(SepsMessages.InactiveException);
+                .WithMessage(SepsMessage.InactiveException("naturalGasSellingPrice"));
         }
 
         public void CreatesProperly()

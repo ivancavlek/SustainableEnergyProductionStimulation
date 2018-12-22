@@ -10,14 +10,16 @@ namespace Acme.Seps.Domain.Subsidy.Entity
     public abstract class MonthlyEconometricIndex<TMonthlyEconometricIndex> : EconometricIndex
         where TMonthlyEconometricIndex : MonthlyEconometricIndex<TMonthlyEconometricIndex>
     {
-        protected MonthlyEconometricIndex() { }
+        protected MonthlyEconometricIndex()
+        {
+        }
 
         protected MonthlyEconometricIndex(
             decimal amount, string remark, DateTimeOffset since, IIdentityFactory<Guid> identityFactory)
             : base(amount, remark, since.ToFirstDayOfTheMonth(), identityFactory)
         {
-            Active.Since.MustBeGreaterThanOrEqualTo(SepsVersion.InitialDate(), (_, __) =>
-                new DomainException(SepsMessage.CannotDeactivateInactiveEntity(GetType().Name)));
+            Active.Since.MustBeGreaterThan(SepsVersion.InitialDate(), (_, __) =>
+                new DomainException(SepsMessage.ValueHigherThanTheOther(Active.Since.Date.ToShortDateString(), SepsVersion.InitialDate().Date.ToShortDateString())));
             Active.Since.MustBeLessThan(SystemTime.CurrentMonth(), (_, __) =>
                 new DomainException(SepsMessage.ValueHigherThanTheOther(Active.Since.Date.ToShortDateString(), SystemTime.CurrentMonth().Date.ToShortDateString())));
         }
@@ -35,9 +37,11 @@ namespace Acme.Seps.Domain.Subsidy.Entity
                 case MonthlyAverageElectricEnergyProductionPrice _:
                     return new MonthlyAverageElectricEnergyProductionPrice(amount, remark, until, identityFactory)
                         as TMonthlyEconometricIndex;
+
                 case NaturalGasSellingPrice _:
                     return new NaturalGasSellingPrice(amount, remark, until, identityFactory)
                         as TMonthlyEconometricIndex;
+
                 default:
                     throw new ArgumentException();
             }

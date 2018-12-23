@@ -37,7 +37,7 @@ namespace Acme.Seps.Domain.Subsidy.Test.Unit.Entity
 
         public void DateCannotBeFromCurrentMonth()
         {
-            var currentMonth = DateTime.Now.Date;
+            DateTimeOffset currentMonth = DateTimeOffset.Now.ToFirstDayOfTheMonth();
 
             Action action = () => new DummyMonthlyEconometricIndex(
                 _amount, _remark, currentMonth, _identityFactory);

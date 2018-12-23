@@ -24,7 +24,7 @@ namespace Acme.Seps.Domain.Subsidy.Test.Unit.Entity
 
         public void DateCannotBeFromCurrentYear()
         {
-            var currentYear = DateTime.Now.Date;
+            DateTimeOffset currentYear = DateTimeOffset.Now.ToFirstDayOfTheYear();
 
             Action action = () => new DummyYearlyEconometricIndex(
                 _amount, _remark, currentYear, _identityFactory);

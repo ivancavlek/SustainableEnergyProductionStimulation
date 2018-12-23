@@ -137,7 +137,7 @@ namespace Acme.Seps.Domain.Subsidy.Test.Unit.Entity
                 _lowerProductionLimit,
                 _higherProductionLimit,
                 _lowerRate,
-                -1M,
+                _higherRate,
                 Guid.Empty,
                 _activeFrom,
                 _identityFactory);
@@ -153,8 +153,8 @@ namespace Acme.Seps.Domain.Subsidy.Test.Unit.Entity
             Action action = () => new DummyTariff(
                 _lowerProductionLimit,
                 _higherProductionLimit,
-                2M,
-                1M,
+                _lowerRate,
+                _higherRate,
                 new Guid(),
                 _activeFrom,
                 _identityFactory);

@@ -66,12 +66,20 @@ namespace Acme.Seps.Domain.Subsidy.Test.Unit.Entity
 
         public void YearlyAverageElectricEnergyProductionPriceMustBeActive()
         {
+            typeof(YearlyAverageElectricEnergyProductionPrice)
+                .BaseType.BaseType.BaseType
+                .GetMethod("SetInactive", BindingFlags.NonPublic | BindingFlags.Instance)
+                .Invoke(_yearlyAverageElectricEnergyProductionPrice, new object[] { DateTimeOffset.Now });
+
             Action action = () => _activeCgn.CreateNewWith(
-                _cogenerationParameterService, null, _newNaturalGasSellingPrice, _identityFactory);
+                _cogenerationParameterService,
+                _yearlyAverageElectricEnergyProductionPrice,
+                _newNaturalGasSellingPrice,
+                _identityFactory);
 
             action
                 .Should()
-                .ThrowExactly<ArgumentNullException>()
+                .Throw<Exception>()
                 .WithMessage(SepsMessage.InactiveException("yearlyAverageElectricEnergyProductionPrice"));
         }
 

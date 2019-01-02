@@ -23,4 +23,10 @@ namespace Acme.Seps.Domain.Subsidy.DomainService
         private static decimal CalculateNgspRate(NaturalGasSellingPrice ngsp) =>
             (1 - _factor) * (ngsp.Amount / _initialNgspp);
     }
+
+    public interface ICogenerationParameterService
+    {
+        decimal Calculate(
+            YearlyAverageElectricEnergyProductionPrice yaep, NaturalGasSellingPrice naturalGasSellingPrice);
+    }
 }

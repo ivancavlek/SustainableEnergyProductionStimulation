@@ -5,7 +5,6 @@ using Acme.Seps.Domain.Base.Repository;
 using Acme.Seps.Domain.Subsidy.Entity;
 using Acme.Seps.Test.Unit.Utility.Factory;
 using Acme.Seps.UseCases.Subsidy.Command;
-using FluentAssertions;
 using NSubstitute;
 using System;
 using System.Collections.Generic;
@@ -48,17 +47,13 @@ namespace Acme.Seps.UseCases.Subsidy.Test.Unit.CommandHandler
                 Remark = nameof(CalculateConsumerPriceIndexCommand)
             };
 
-            using (var monitoredEvent = _calculateCpi.Monitor())
-            {
-                _calculateCpi.Handle(calculateCommand);
+            _calculateCpi.Handle(calculateCommand);
 
-                _unitOfWork.Received().Update(Arg.Any<ConsumerPriceIndex>());
-                _unitOfWork.Received().Insert(Arg.Any<ConsumerPriceIndex>());
-                _unitOfWork.Received().Update(Arg.Any<RenewableEnergySourceTariff>());
-                _unitOfWork.Received().Insert(Arg.Any<RenewableEnergySourceTariff>());
-                _unitOfWork.Received().Commit();
-                monitoredEvent.Should().Raise("UseCaseExecutionProcessing");
-            }
+            _unitOfWork.Received().Update(Arg.Any<ConsumerPriceIndex>());
+            _unitOfWork.Received().Insert(Arg.Any<ConsumerPriceIndex>());
+            _unitOfWork.Received().Update(Arg.Any<RenewableEnergySourceTariff>());
+            _unitOfWork.Received().Insert(Arg.Any<RenewableEnergySourceTariff>());
+            _unitOfWork.Received().Commit();
         }
     }
 }

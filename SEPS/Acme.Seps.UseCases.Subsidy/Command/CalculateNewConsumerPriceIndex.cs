@@ -67,26 +67,26 @@ namespace Acme.Seps.UseCases.Subsidy.Command
         private List<RenewableEnergySourceTariff> GetActiveRenewableEnergySourceTariffs() =>
             _repository.GetAll(new ActiveSpecification<RenewableEnergySourceTariff>()).ToList();
 
-        private void LogNewRenewableEnergySourceTariff(RenewableEnergySourceTariff res) =>
+        private void LogNewRenewableEnergySourceTariff(RenewableEnergySourceTariff renewableEnergySourceTariff) =>
             Log(new EntityExecutionLoggingEventArgs
-            {
-                Message = SepsMessage.InsertTariff(
+            (
+                SepsMessage.InsertTariff(
                     nameof(RenewableEnergySourceTariff),
-                    res.Active.Since.Date,
-                    res.Active.Until,
-                    res.LowerRate,
-                    res.HigherRate)
-            });
+                    renewableEnergySourceTariff.Active.Since.Date,
+                    renewableEnergySourceTariff.Active.Until,
+                    renewableEnergySourceTariff.LowerRate,
+                    renewableEnergySourceTariff.HigherRate)
+            ));
 
-        private void LogNewConsumerPriceIndex(ConsumerPriceIndex cpi) =>
+        private void LogNewConsumerPriceIndex(ConsumerPriceIndex consumerPriceIndex) =>
             Log(new EntityExecutionLoggingEventArgs
-            {
-                Message = SepsMessage.InsertParameter(
+            (
+                SepsMessage.InsertParameter(
                     nameof(ConsumerPriceIndex),
-                    cpi.Active.Since.Date,
-                    cpi.Active.Until,
-                    cpi.Amount)
-            });
+                    consumerPriceIndex.Active.Since.Date,
+                    consumerPriceIndex.Active.Until,
+                    consumerPriceIndex.Amount)
+            ));
     }
 
     public sealed class CalculateConsumerPriceIndexCommand

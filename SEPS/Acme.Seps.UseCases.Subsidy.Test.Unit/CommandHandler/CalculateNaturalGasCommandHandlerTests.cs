@@ -7,7 +7,6 @@ using Acme.Seps.Domain.Subsidy.DomainService;
 using Acme.Seps.Domain.Subsidy.Entity;
 using Acme.Seps.Test.Unit.Utility.Factory;
 using Acme.Seps.UseCases.Subsidy.Command;
-using FluentAssertions;
 using NSubstitute;
 using System;
 using System.Collections.Generic;
@@ -70,17 +69,13 @@ namespace Acme.Seps.UseCases.Subsidy.Test.Unit.CommandHandler
                 Year = lastPeriod.Year,
             };
 
-            using (var monitoredEvent = _calculateNaturalGas.Monitor())
-            {
-                _calculateNaturalGas.Handle(calculateNaturalGasCommand);
+            _calculateNaturalGas.Handle(calculateNaturalGasCommand);
 
-                _unitOfWork.Received().Update(Arg.Any<CogenerationTariff>());
-                _unitOfWork.Received().Insert(Arg.Any<CogenerationTariff>());
-                _unitOfWork.Received().Update(Arg.Any<NaturalGasSellingPrice>());
-                _unitOfWork.Received().Insert(Arg.Any<NaturalGasSellingPrice>());
-                _unitOfWork.Received().Commit();
-                monitoredEvent.Should().Raise("UseCaseExecutionProcessing");
-            }
+            _unitOfWork.Received().Update(Arg.Any<CogenerationTariff>());
+            _unitOfWork.Received().Insert(Arg.Any<CogenerationTariff>());
+            _unitOfWork.Received().Update(Arg.Any<NaturalGasSellingPrice>());
+            _unitOfWork.Received().Insert(Arg.Any<NaturalGasSellingPrice>());
+            _unitOfWork.Received().Commit();
         }
     }
 }

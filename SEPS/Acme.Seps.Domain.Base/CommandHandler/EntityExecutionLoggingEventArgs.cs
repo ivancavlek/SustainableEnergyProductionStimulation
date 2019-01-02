@@ -2,8 +2,11 @@
 
 namespace Acme.Seps.Domain.Base.CommandHandler
 {
-    public class EntityExecutionLoggingEventArgs : EventArgs
+    public sealed class EntityExecutionLoggingEventArgs : EventArgs
     {
-        public string Message { get; set; }
+        public string Message { get; }
+
+        public EntityExecutionLoggingEventArgs(string message) =>
+            Message = message;
     }
 }

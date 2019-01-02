@@ -24,7 +24,7 @@ namespace Acme.Seps.Domain.Base.Test.Unit.CommandHandler
         {
             const string message = "Test message";
 
-            _dummyCommandHandler.TestLog(new EntityExecutionLoggingEventArgs { Message = message });
+            _dummyCommandHandler.TestLog(new EntityExecutionLoggingEventArgs(message));
 
             _receivedMessages.Count.Should().Be(1);
             _receivedMessages.ElementAt(0).Should().Be(message);

@@ -8,7 +8,6 @@ using Acme.Seps.Domain.Subsidy.Entity;
 using Acme.Seps.Test.Unit.Utility.Factory;
 using Acme.Seps.UseCases.Subsidy.Command;
 using Acme.Seps.UseCases.Subsidy.Command.Repository;
-using FluentAssertions;
 using NSubstitute;
 using System;
 using System.Collections.Generic;
@@ -90,15 +89,11 @@ namespace Acme.Seps.UseCases.Subsidy.Test.Unit.CommandHandler
                 Year = lastPeriod.Year,
             };
 
-            using (var monitoredEvent = _calculateNaturalGas.Monitor())
-            {
-                _calculateNaturalGas.Handle(correctActiveNaturalGasCommand);
+            _calculateNaturalGas.Handle(correctActiveNaturalGasCommand);
 
-                _unitOfWork.Received(2).Update(Arg.Any<CogenerationTariff>());
-                _unitOfWork.Received(2).Update(Arg.Any<NaturalGasSellingPrice>());
-                _unitOfWork.Received().Commit();
-                monitoredEvent.Should().Raise("UseCaseExecutionProcessing");
-            }
+            _unitOfWork.Received(2).Update(Arg.Any<CogenerationTariff>());
+            _unitOfWork.Received(2).Update(Arg.Any<NaturalGasSellingPrice>());
+            _unitOfWork.Received().Commit();
         }
     }
 }

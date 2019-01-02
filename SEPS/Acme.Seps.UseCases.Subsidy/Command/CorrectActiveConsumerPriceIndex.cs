@@ -71,26 +71,27 @@ namespace Acme.Seps.UseCases.Subsidy.Command
         private List<RenewableEnergySourceTariff> GetActiveRenewableEnergySourceTariffs() =>
             _repository.GetAll(new ActiveSpecification<RenewableEnergySourceTariff>()).ToList();
 
-        private void LogRenewableEnergySourceTariffCorrection(RenewableEnergySourceTariff res) =>
+        private void LogRenewableEnergySourceTariffCorrection(
+            RenewableEnergySourceTariff renewableEnergySourceTariff) =>
             Log(new EntityExecutionLoggingEventArgs
-            {
-                Message = SepsMessage.TariffCorrection(
+            (
+                SepsMessage.TariffCorrection(
                     nameof(RenewableEnergySourceTariff),
-                    res.Active.Since.Date,
-                    res.Active.Until,
-                    res.LowerRate,
-                    res.HigherRate)
-            });
+                    renewableEnergySourceTariff.Active.Since.Date,
+                    renewableEnergySourceTariff.Active.Until,
+                    renewableEnergySourceTariff.LowerRate,
+                    renewableEnergySourceTariff.HigherRate)
+            ));
 
-        private void LogConsumerPriceIndexCorrection(ConsumerPriceIndex cpi) =>
+        private void LogConsumerPriceIndexCorrection(ConsumerPriceIndex consumerPriceIndex) =>
             Log(new EntityExecutionLoggingEventArgs
-            {
-                Message = SepsMessage.ParameterCorrection(
+            (
+                SepsMessage.ParameterCorrection(
                     nameof(ConsumerPriceIndex),
-                    cpi.Active.Since.Date,
-                    cpi.Active.Until,
-                    cpi.Amount)
-            });
+                    consumerPriceIndex.Active.Since.Date,
+                    consumerPriceIndex.Active.Until,
+                    consumerPriceIndex.Amount)
+            ));
     }
 
     public sealed class CorrectActiveConsumerPriceIndexCommand

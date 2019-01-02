@@ -6,7 +6,6 @@ using Acme.Seps.Domain.Subsidy.Entity;
 using Acme.Seps.Test.Unit.Utility.Factory;
 using Acme.Seps.UseCases.Subsidy.Command;
 using Acme.Seps.UseCases.Subsidy.Command.Repository;
-using FluentAssertions;
 using NSubstitute;
 using System;
 using System.Collections.Generic;
@@ -65,14 +64,10 @@ namespace Acme.Seps.UseCases.Subsidy.Test.Unit.CommandHandler
                 Remark = nameof(CalculateConsumerPriceIndexCommand)
             };
 
-            using (var monitoredEvent = _correctActiveCpi.Monitor())
-            {
-                _correctActiveCpi.Handle(correctActiveCpi);
+            _correctActiveCpi.Handle(correctActiveCpi);
 
-                _unitOfWork.Received().Update(Arg.Any<RenewableEnergySourceTariff>());
-                _unitOfWork.Received().Commit();
-                monitoredEvent.Should().Raise("UseCaseExecutionProcessing");
-            }
+            _unitOfWork.Received().Update(Arg.Any<RenewableEnergySourceTariff>());
+            _unitOfWork.Received().Commit();
         }
     }
 }

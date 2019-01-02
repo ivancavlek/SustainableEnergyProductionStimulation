@@ -83,24 +83,24 @@ namespace Acme.Seps.UseCases.Subsidy.Command
 
         private void LogNewCogenerationTariffCreation(CogenerationTariff cogenerationTariff) =>
             Log(new EntityExecutionLoggingEventArgs
-            {
-                Message = SepsMessage.InsertTariff(
+            (
+                SepsMessage.InsertTariff(
                     nameof(CogenerationTariff),
                     cogenerationTariff.Active.Since.Date,
                     cogenerationTariff.Active.Until,
                     cogenerationTariff.LowerRate,
                     cogenerationTariff.HigherRate)
-            });
+            ));
 
         private void LogNewNaturalGasSellingPriceCreation(NaturalGasSellingPrice naturalGasSellingPrice) =>
             Log(new EntityExecutionLoggingEventArgs
-            {
-                Message = SepsMessage.InsertParameter(
+            (
+                SepsMessage.InsertParameter(
                     nameof(NaturalGasSellingPrice),
                     naturalGasSellingPrice.Active.Since.Date,
                     naturalGasSellingPrice.Active.Until,
                     naturalGasSellingPrice.Amount)
-            });
+            ));
     }
 
     public sealed class CalculateNaturalGasSellingPriceCommand

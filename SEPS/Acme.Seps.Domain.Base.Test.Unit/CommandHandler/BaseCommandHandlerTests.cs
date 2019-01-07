@@ -1,6 +1,10 @@
-﻿using Acme.Seps.Domain.Base.CommandHandler;
+﻿using Acme.Domain.Base.Factory;
+using Acme.Domain.Base.Repository;
+using Acme.Seps.Domain.Base.CommandHandler;
 using Acme.Seps.Text;
 using FluentAssertions;
+using NSubstitute;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -13,11 +17,42 @@ namespace Acme.Seps.Domain.Base.Test.Unit.CommandHandler
 
         public BaseCommandHandlerTests()
         {
-            _dummyCommandHandler = new DummyCommandHandler();
+            _dummyCommandHandler = new DummyCommandHandler(
+                Substitute.For<IRepository>(), Substitute.For<IUnitOfWork>(), Substitute.For<IIdentityFactory<Guid>>());
             _receivedMessages = new List<string>();
 
             _dummyCommandHandler.UseCaseExecutionProcessing += (object sender, EntityExecutionLoggingEventArgs e) =>
                 _receivedMessages.Add(e.Message);
+        }
+
+        public void RepositoryIsCorrectlyInitialized()
+        {
+            Action action = () => new DummyCommandHandler(
+                null, Substitute.For<IUnitOfWork>(), Substitute.For<IIdentityFactory<Guid>>());
+
+            action
+                .Should()
+                .ThrowExactly<ArgumentNullException>();
+        }
+
+        public void UnitOfWorkIsCorrectlyInitialized()
+        {
+            Action action = () => new DummyCommandHandler(
+                Substitute.For<IRepository>(), null, Substitute.For<IIdentityFactory<Guid>>());
+
+            action
+                .Should()
+                .ThrowExactly<ArgumentNullException>();
+        }
+
+        public void IdentityFactoryIsCorrectlyInitialized()
+        {
+            Action action = () => new DummyCommandHandler(
+                Substitute.For<IRepository>(), Substitute.For<IUnitOfWork>(), null);
+
+            action
+                .Should()
+                .ThrowExactly<ArgumentNullException>();
         }
 
         public void LogIsWritten()
@@ -40,6 +75,10 @@ namespace Acme.Seps.Domain.Base.Test.Unit.CommandHandler
 
         private class DummyCommandHandler : BaseCommandHandler
         {
+            public DummyCommandHandler(
+                IRepository repository, IUnitOfWork unitOfWork, IIdentityFactory<Guid> identityFactory)
+                : base(repository, unitOfWork, identityFactory) { }
+
             public void TestLog(EntityExecutionLoggingEventArgs test) =>
                 base.Log(test);
 

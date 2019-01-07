@@ -14,17 +14,9 @@ namespace Acme.Seps.UseCases.Subsidy.Command
     public sealed class CalculateCpiCommandHandler
         : BaseCommandHandler, ISepsCommandHandler<CalculateConsumerPriceIndexCommand>
     {
-        private readonly IRepository _repository;
-        private readonly IUnitOfWork _unitOfWork;
-        private readonly IIdentityFactory<Guid> _identityFactory;
-
         public CalculateCpiCommandHandler(
             IRepository repository, IUnitOfWork unitOfWork, IIdentityFactory<Guid> identityFactory)
-        {
-            _repository = repository ?? throw new ArgumentNullException(nameof(repository));
-            _unitOfWork = unitOfWork ?? throw new ArgumentNullException(nameof(unitOfWork));
-            _identityFactory = identityFactory ?? throw new ArgumentNullException(nameof(identityFactory));
-        }
+            : base(repository, unitOfWork, identityFactory) { }
 
         void ICommandHandler<CalculateConsumerPriceIndexCommand>.Handle(CalculateConsumerPriceIndexCommand command)
         {

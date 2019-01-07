@@ -17,21 +17,16 @@ namespace Acme.Seps.UseCases.Subsidy.Command
         : BaseCommandHandler, ISepsCommandHandler<CorrectActiveNaturalGasSellingPriceCommand>
     {
         private readonly ICogenerationParameterService _cogenerationParameterService;
-        private readonly IRepository _repository;
-        private readonly IUnitOfWork _unitOfWork;
-        private readonly IIdentityFactory<Guid> _identityFactory;
 
         public CorrectActiveNaturalGasSellingPriceCommandHandler(
             ICogenerationParameterService cogenerationParameterService,
             IRepository repository,
             IUnitOfWork unitOfWork,
             IIdentityFactory<Guid> identityFactory)
+            : base(repository, unitOfWork, identityFactory)
         {
             _cogenerationParameterService =
                 cogenerationParameterService ?? throw new ArgumentNullException(nameof(cogenerationParameterService));
-            _repository = repository ?? throw new ArgumentNullException(nameof(repository));
-            _unitOfWork = unitOfWork ?? throw new ArgumentNullException(nameof(unitOfWork));
-            _identityFactory = identityFactory ?? throw new ArgumentNullException(nameof(identityFactory));
         }
 
         void ICommandHandler<CorrectActiveNaturalGasSellingPriceCommand>.Handle(

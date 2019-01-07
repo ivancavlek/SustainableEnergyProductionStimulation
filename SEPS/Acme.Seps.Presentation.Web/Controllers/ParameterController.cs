@@ -14,6 +14,7 @@ namespace Acme.Seps.Presentation.Web.Controllers
     {
         private readonly ISepsCommandHandler<CalculateConsumerPriceIndexCommand> _calculateCpi;
         private readonly ISepsCommandHandler<CalculateNaturalGasSellingPriceCommand> _calculateNaturalGas;
+        private readonly ISepsCommandHandler<CalculateNewAverageElectricEnergyProductionPriceCommand> _calculateAverageElectricEnergyProductionPrice;
         private readonly ISepsCommandHandler<CorrectActiveConsumerPriceIndexCommand> _correctActiveCpi;
         private readonly ISepsCommandHandler<CorrectActiveNaturalGasSellingPriceCommand> _correctActiveNaturalGas;
         private readonly IQueryHandler<GetEconometricIndexQuery, IReadOnlyList<EconometricIndexQueryResult>> _econometricIndexesQuery;
@@ -23,6 +24,7 @@ namespace Acme.Seps.Presentation.Web.Controllers
         public ParameterController(
             ISepsCommandHandler<CalculateConsumerPriceIndexCommand> calculateCpi,
             ISepsCommandHandler<CalculateNaturalGasSellingPriceCommand> calculateNaturalGas,
+            ISepsCommandHandler<CalculateNewAverageElectricEnergyProductionPriceCommand> calculateAverageElectricEnergyProductionPrice,
             ISepsCommandHandler<CorrectActiveConsumerPriceIndexCommand> correctActiveCpi,
             ISepsCommandHandler<CorrectActiveNaturalGasSellingPriceCommand> correctActiveNaturalGas,
             IQueryHandler<GetEconometricIndexQuery, IReadOnlyList<EconometricIndexQueryResult>> econometricIndexesQuery,
@@ -31,6 +33,7 @@ namespace Acme.Seps.Presentation.Web.Controllers
         {
             _calculateCpi = calculateCpi ?? throw new ArgumentNullException(nameof(calculateCpi));
             _calculateNaturalGas = calculateNaturalGas ?? throw new ArgumentNullException(nameof(calculateNaturalGas));
+            _calculateAverageElectricEnergyProductionPrice = calculateAverageElectricEnergyProductionPrice ?? throw new ArgumentNullException(nameof(calculateAverageElectricEnergyProductionPrice));
             _correctActiveCpi = correctActiveCpi ?? throw new ArgumentNullException(nameof(correctActiveCpi));
             _correctActiveNaturalGas = correctActiveNaturalGas ?? throw new ArgumentNullException(nameof(correctActiveNaturalGas));
             _econometricIndexesQuery = econometricIndexesQuery ?? throw new ArgumentNullException(nameof(econometricIndexesQuery));
@@ -89,6 +92,17 @@ namespace Acme.Seps.Presentation.Web.Controllers
             return Ok(); // ToDo: not in line with REST pattern, we could return latest value
         }
 
+        [HttpPost]
+        [Route("CalculateAverageElectricEnergyProductionPrice")]
+        public IActionResult CalculateNaturalGas(
+            [FromBody]CalculateNewAverageElectricEnergyProductionPriceCommand calculateNewAverageElectricEnergyProductionPrice)
+        {
+            _calculateAverageElectricEnergyProductionPrice.UseCaseExecutionProcessing +=
+                CalculateAverageElectricEnergyProductionPrice_UseCaseExecutionProcessing;
+            _calculateAverageElectricEnergyProductionPrice.Handle(calculateNewAverageElectricEnergyProductionPrice);
+            return Ok(); // ToDo: not in line with REST pattern, we could return latest value
+        }
+
         [HttpPut]
         [Route("CorrectActiveCpi")]
         public IActionResult CorrectActiveCpi([FromBody]CorrectActiveConsumerPriceIndexCommand correctActiveCpi)
@@ -110,6 +124,11 @@ namespace Acme.Seps.Presentation.Web.Controllers
         }
 
         private void CalculateNaturalGas_UseCaseExecutionProcessing(object sender, EntityExecutionLoggingEventArgs e)
+        {
+        }
+
+        private void CalculateAverageElectricEnergyProductionPrice_UseCaseExecutionProcessing(
+            object sender, EntityExecutionLoggingEventArgs e)
         {
         }
 

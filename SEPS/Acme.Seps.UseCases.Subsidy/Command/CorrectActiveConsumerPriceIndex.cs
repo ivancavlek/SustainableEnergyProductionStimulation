@@ -28,7 +28,7 @@ namespace Acme.Seps.UseCases.Subsidy.Command
             activeCpi.Correct(command.Amount, command.Remark);
             CorrectRenewableEnergySourceTariffs(activeCpi, previousRes);
 
-            _unitOfWork.Commit();
+            Commit();
 
             LogConsumerPriceIndexCorrection(activeCpi);
             LogSuccessfulCommit();

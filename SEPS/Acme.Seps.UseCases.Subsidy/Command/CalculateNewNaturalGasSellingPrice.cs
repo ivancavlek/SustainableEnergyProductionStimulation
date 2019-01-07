@@ -33,11 +33,9 @@ namespace Acme.Seps.UseCases.Subsidy.Command
             var activeNgsp = GetActiveNaturalGasSellingPrice();
 
             var newNgsp = CreateNewNaturalGasSellingPrice(activeNgsp, command);
-            CreateNewRenewableEnergySourceTariffs(newNgsp);
+            CreateNewCogenerationTariffs(newNgsp);
 
-            _unitOfWork.Update(activeNgsp);
-            _unitOfWork.Insert(newNgsp);
-            _unitOfWork.Commit();
+            Commit();
 
             LogNewNaturalGasSellingPriceCreation(newNgsp);
             LogSuccessfulCommit();
@@ -47,11 +45,18 @@ namespace Acme.Seps.UseCases.Subsidy.Command
             _repository.GetSingle(new ActiveSpecification<NaturalGasSellingPrice>());
 
         private NaturalGasSellingPrice CreateNewNaturalGasSellingPrice(
-            NaturalGasSellingPrice naturalGasSellingPrice, CalculateNaturalGasSellingPriceCommand command) =>
-            naturalGasSellingPrice.CreateNew(
+            NaturalGasSellingPrice activeNgsp, CalculateNaturalGasSellingPriceCommand command)
+        {
+            var newNgsp = activeNgsp.CreateNew(
                 command.Amount, command.Remark, command.Month, command.Year, _identityFactory);
 
-        private void CreateNewRenewableEnergySourceTariffs(NaturalGasSellingPrice newNgsp)
+            _unitOfWork.Update(activeNgsp);
+            _unitOfWork.Insert(newNgsp);
+
+            return newNgsp;
+        }
+
+        private void CreateNewCogenerationTariffs(NaturalGasSellingPrice newNgsp)
         {
             var yearlyAverageElectricEnergyProductionPrice = GetActiveYearlyAverageElectricEnergyProductionPrice();
 

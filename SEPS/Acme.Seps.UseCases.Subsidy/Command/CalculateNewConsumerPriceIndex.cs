@@ -21,13 +21,11 @@ namespace Acme.Seps.UseCases.Subsidy.Command
         void ICommandHandler<CalculateConsumerPriceIndexCommand>.Handle(CalculateConsumerPriceIndexCommand command)
         {
             var activeCpi = GetActiveConsumerPriceIndex();
-            var newCpi = CreateNewConsumerPriceIndex(command, activeCpi);
+            var newCpi = CreateNewConsumerPriceIndex(activeCpi, command);
 
             CreateNewRenewableEnergySourceTariffs(newCpi);
 
-            _unitOfWork.Update(activeCpi);
-            _unitOfWork.Insert(newCpi);
-            _unitOfWork.Commit();
+            Commit();
 
             LogNewConsumerPriceIndex(newCpi);
             LogSuccessfulCommit();
@@ -37,8 +35,15 @@ namespace Acme.Seps.UseCases.Subsidy.Command
             _repository.GetSingle(new ActiveSpecification<ConsumerPriceIndex>());
 
         private ConsumerPriceIndex CreateNewConsumerPriceIndex(
-            CalculateConsumerPriceIndexCommand command, ConsumerPriceIndex cpi) =>
-            cpi.CreateNew(command.Amount, command.Remark, _identityFactory);
+            ConsumerPriceIndex activeCpi, CalculateConsumerPriceIndexCommand command)
+        {
+            var newCpi = activeCpi.CreateNew(command.Amount, command.Remark, _identityFactory);
+
+            _unitOfWork.Update(activeCpi);
+            _unitOfWork.Insert(newCpi);
+
+            return newCpi;
+        }
 
         private void CreateNewRenewableEnergySourceTariffs(ConsumerPriceIndex newCpi)
         {

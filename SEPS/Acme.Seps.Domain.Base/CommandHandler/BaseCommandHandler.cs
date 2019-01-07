@@ -21,6 +21,9 @@ namespace Acme.Seps.Domain.Base.CommandHandler
             _identityFactory = identityFactory ?? throw new ArgumentNullException(nameof(identityFactory));
         }
 
+        protected void Commit() =>
+            _unitOfWork.Commit();
+
         protected void Log(EntityExecutionLoggingEventArgs useCaseExecutionProcessingLog) =>
             UseCaseExecutionProcessing(this, useCaseExecutionProcessingLog);
 

@@ -43,7 +43,7 @@ namespace Acme.Seps.UseCases.Subsidy.Command
 
             _unitOfWork.Update(activeNaturalGasSellingPrice);
             _unitOfWork.Update(previousActiveNaturalGasSellingPrice);
-            _unitOfWork.Commit();
+            Commit();
 
             LogNaturalGasSellingPriceCorrection(activeNaturalGasSellingPrice);
             LogSuccessfulCommit();

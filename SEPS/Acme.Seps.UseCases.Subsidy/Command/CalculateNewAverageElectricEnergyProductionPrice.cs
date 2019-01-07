@@ -2,90 +2,112 @@
 using Acme.Domain.Base.Factory;
 using Acme.Domain.Base.Repository;
 using Acme.Seps.Domain.Base.CommandHandler;
+using Acme.Seps.Domain.Base.Repository;
 using Acme.Seps.Domain.Base.Utility;
+using Acme.Seps.Domain.Subsidy.DomainService;
+using Acme.Seps.Domain.Subsidy.Entity;
 using Acme.Seps.Text;
 using FluentValidation;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Acme.Seps.UseCases.Subsidy.Command
 {
     public sealed class CalculateNewAverageElectricEnergyProductionPriceCommandHandler
         : BaseCommandHandler, ISepsCommandHandler<CalculateNewAverageElectricEnergyProductionPriceCommand>
     {
+        private readonly ICogenerationParameterService _cogenerationParameterService;
+
         public CalculateNewAverageElectricEnergyProductionPriceCommandHandler(
-            IRepository repository, IUnitOfWork unitOfWork, IIdentityFactory<Guid> identityFactory)
-            : base(repository, unitOfWork, identityFactory) { }
+            ICogenerationParameterService cogenerationParameterService,
+            IRepository repository,
+            IUnitOfWork unitOfWork,
+            IIdentityFactory<Guid> identityFactory)
+            : base(repository, unitOfWork, identityFactory)
+        {
+            _cogenerationParameterService = cogenerationParameterService ?? throw new ArgumentNullException(nameof(cogenerationParameterService));
+        }
 
         void ICommandHandler<CalculateNewAverageElectricEnergyProductionPriceCommand>.Handle(
             CalculateNewAverageElectricEnergyProductionPriceCommand command)
         {
-            //var activeNgsp = GetActiveMonthlyAverageElectricEnergyProductionPrice();
+            var activeMaeepp = GetActiveMonthlyAverageElectricEnergyProductionPrice();
+            var newMaeepp = CreateNewMonthlyAverageElectricEnergyProductionPrice(activeMaeepp, command);
 
-            //var newNgsp = CreateNewMonthlyAverageElectricEnergyProductionPrice(activeNgsp, command);
-            //CreateNewRenewableEnergySourceTariffs(newNgsp);
+            var yaeepp = YearlyAverageElectricEnergyProductionPriceCalculation(newMaeepp);
+            CreateNewCogenerationTariffs(yaeepp);
 
-            //_unitOfWork.Update(activeNgsp);
-            //_unitOfWork.Insert(newNgsp);
-            //_unitOfWork.Commit();
+            Commit();
 
-            //LogNewNaturalGasSellingPriceCreation(newNgsp);
-            //LogSuccessfulCommit();
+            LogNewAverageElectricEnergyProductionPriceCreation(newMaeepp);
+            LogSuccessfulCommit();
         }
 
-        //private MonthlyAverageElectricEnergyProductionPrice GetActiveMonthlyAverageElectricEnergyProductionPrice() =>
-        //    _repository.GetSingle(new ActiveSpecification<MonthlyAverageElectricEnergyProductionPrice>());
+        private MonthlyAverageElectricEnergyProductionPrice GetActiveMonthlyAverageElectricEnergyProductionPrice() =>
+            _repository.GetSingle(new ActiveSpecification<MonthlyAverageElectricEnergyProductionPrice>());
 
-        //private MonthlyAverageElectricEnergyProductionPrice CreateNewMonthlyAverageElectricEnergyProductionPrice(
-        //    MonthlyAverageElectricEnergyProductionPrice monthlyAverageElectricEnergyProductionPrice,
-        //    CalculateNewAverageElectricEnergyProductionPriceCommand command) =>
-        //    monthlyAverageElectricEnergyProductionPrice.CreateNew(
-        //        command.Amount, command.Remark, command.Month, command.Year, _identityFactory);
+        private MonthlyAverageElectricEnergyProductionPrice CreateNewMonthlyAverageElectricEnergyProductionPrice(
+            MonthlyAverageElectricEnergyProductionPrice activeMaeepp,
+            CalculateNewAverageElectricEnergyProductionPriceCommand command)
+        {
+            var newMaeepp = activeMaeepp.CreateNew(
+                command.Amount, command.Remark, command.Month, command.Year, _identityFactory);
 
-        //private void CreateNewRenewableEnergySourceTariffs(NaturalGasSellingPrice newNgsp)
-        //{
-        //    var yearlyAverageElectricEnergyProductionPrice = GetActiveYearlyAverageElectricEnergyProductionPrice();
+            _unitOfWork.Update(activeMaeepp);
+            _unitOfWork.Insert(newMaeepp);
 
-        //    GetActiveCogenerationTariffs().ForEach(ctf =>
-        //    {
-        //        var newCogenerationTariff = CreateNewCogenerationTariff(ctf);
+            return newMaeepp;
+        }
 
-        //        _unitOfWork.Update(ctf);
-        //        _unitOfWork.Insert(newCogenerationTariff);
+        private void CreateNewCogenerationTariffs(YearlyAverageElectricEnergyProductionPrice yaeepp)
+        {
+            var ngsp = GetActiveNaturalGasSellingPrice();
 
-        //        LogNewCogenerationTariffCreation(newCogenerationTariff);
-        //    });
+            GetActiveCogenerationTariffs().ForEach(ctf =>
+            {
+                var newCogenerationTariff = CreateNewCogenerationTariff(ctf);
 
-        //    CogenerationTariff CreateNewCogenerationTariff(CogenerationTariff cogenerationTariff) =>
-        //        cogenerationTariff.CreateNewWith(
-        //            _cogenerationParameterService, yearlyAverageElectricEnergyProductionPrice, newNgsp, _identityFactory);
-        //}
+                _unitOfWork.Update(ctf);
+                _unitOfWork.Insert(newCogenerationTariff);
 
-        //private YearlyAverageElectricEnergyProductionPrice GetActiveYearlyAverageElectricEnergyProductionPrice() =>
-        //   _repository.GetSingle(new ActiveSpecification<YearlyAverageElectricEnergyProductionPrice>());
+                LogNewCogenerationTariffCreation(newCogenerationTariff);
+            });
 
-        //private List<CogenerationTariff> GetActiveCogenerationTariffs() =>
-        //    _repository.GetAll(new ActiveSpecification<CogenerationTariff>()).ToList();
+            CogenerationTariff CreateNewCogenerationTariff(CogenerationTariff cogenerationTariff) =>
+                cogenerationTariff.CreateNewWith(_cogenerationParameterService, yaeepp, ngsp, _identityFactory);
+        }
 
-        //private void LogNewCogenerationTariffCreation(CogenerationTariff cogenerationTariff) =>
-        //    Log(new EntityExecutionLoggingEventArgs
-        //    (
-        //        SepsMessage.InsertTariff(
-        //            nameof(CogenerationTariff),
-        //            cogenerationTariff.Active.Since.Date,
-        //            cogenerationTariff.Active.Until,
-        //            cogenerationTariff.LowerRate,
-        //            cogenerationTariff.HigherRate)
-        //    ));
+        private YearlyAverageElectricEnergyProductionPrice GetActiveYearlyAverageElectricEnergyProductionPrice() =>
+           _repository.GetSingle(new ActiveSpecification<YearlyAverageElectricEnergyProductionPrice>());
 
-        //private void LogNewNaturalGasSellingPriceCreation(NaturalGasSellingPrice naturalGasSellingPrice) =>
-        //    Log(new EntityExecutionLoggingEventArgs
-        //    (
-        //        SepsMessage.InsertParameter(
-        //            nameof(NaturalGasSellingPrice),
-        //            naturalGasSellingPrice.Active.Since.Date,
-        //            naturalGasSellingPrice.Active.Until,
-        //            naturalGasSellingPrice.Amount)
-        //    ));
+        private NaturalGasSellingPrice GetActiveNaturalGasSellingPrice() =>
+           _repository.GetSingle(new ActiveSpecification<NaturalGasSellingPrice>());
+
+        private List<CogenerationTariff> GetActiveCogenerationTariffs() =>
+            _repository.GetAll(new ActiveSpecification<CogenerationTariff>()).ToList();
+
+        private void LogNewCogenerationTariffCreation(CogenerationTariff cogenerationTariff) =>
+            Log(new EntityExecutionLoggingEventArgs
+            (
+                SepsMessage.InsertTariff(
+                    nameof(CogenerationTariff),
+                    cogenerationTariff.Active.Since.Date,
+                    cogenerationTariff.Active.Until,
+                    cogenerationTariff.LowerRate,
+                    cogenerationTariff.HigherRate)
+            ));
+
+        private void LogNewAverageElectricEnergyProductionPriceCreation(
+            MonthlyAverageElectricEnergyProductionPrice monthlyAverageElectricEnergyProductionPrice) =>
+            Log(new EntityExecutionLoggingEventArgs
+            (
+                SepsMessage.InsertParameter(
+                    nameof(NaturalGasSellingPrice),
+                    monthlyAverageElectricEnergyProductionPrice.Active.Since.Date,
+                    monthlyAverageElectricEnergyProductionPrice.Active.Until,
+                    monthlyAverageElectricEnergyProductionPrice.Amount)
+            ));
     }
 
     public sealed class CalculateNewAverageElectricEnergyProductionPriceCommand

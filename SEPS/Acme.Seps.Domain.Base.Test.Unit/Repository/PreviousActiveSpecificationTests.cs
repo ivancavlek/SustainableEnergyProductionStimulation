@@ -1,5 +1,4 @@
 ﻿using Acme.Domain.Base.Factory;
-using Acme.Seps.Domain.Base;
 using Acme.Seps.Domain.Base.Entity;
 using Acme.Seps.Domain.Base.Utility;
 using Acme.Seps.Text;
@@ -7,7 +6,7 @@ using FluentAssertions;
 using NSubstitute;
 using System;
 
-namespace Acme.Seps.UseCases.Subsidy.Test.Unit.Repository
+namespace Acme.Seps.Domain.Base.Test.Unit.Repository
 {
     public class PreviousActiveSpecificationTests
     {

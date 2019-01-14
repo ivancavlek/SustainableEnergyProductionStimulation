@@ -1,5 +1,6 @@
 ﻿using Acme.Domain.Base.Factory;
 using Acme.Domain.Base.Repository;
+using Acme.Seps.Domain.Base;
 using Acme.Seps.Domain.Base.CommandHandler;
 using Acme.Seps.Domain.Base.Repository;
 using Acme.Seps.Domain.Base.Utility;
@@ -7,7 +8,6 @@ using Acme.Seps.Domain.Subsidy.DomainService;
 using Acme.Seps.Domain.Subsidy.Entity;
 using Acme.Seps.Test.Unit.Utility.Factory;
 using Acme.Seps.UseCases.Subsidy.Command;
-using Acme.Seps.UseCases.Subsidy.Command.Repository;
 using NSubstitute;
 using System;
 using System.Collections.Generic;
@@ -29,23 +29,23 @@ namespace Acme.Seps.UseCases.Subsidy.Test.Unit.CommandHandler
 
             var cogenerationParameterService = Substitute.For<ICogenerationParameterService>();
             cogenerationParameterService
-                .Calculate(Arg.Any<YearlyAverageElectricEnergyProductionPrice>(), Arg.Any<NaturalGasSellingPrice>())
+                .Calculate(Arg.Any<AverageElectricEnergyProductionPrice>(), Arg.Any<NaturalGasSellingPrice>())
                 .Returns(1M);
 
             ngspFactory =
                 new EconometricIndexFactory<NaturalGasSellingPrice>(nineMonthsAgo.AddMonths(-5));
             var previousActiveNgsp = ngspFactory.Create();
 
-            IEconometricIndexFactory<YearlyAverageElectricEnergyProductionPrice> yeapFactory =
-                new EconometricIndexFactory<YearlyAverageElectricEnergyProductionPrice>(
+            IEconometricIndexFactory<AverageElectricEnergyProductionPrice> aeeppFactory =
+                new EconometricIndexFactory<AverageElectricEnergyProductionPrice>(
                     nineMonthsAgo.ToFirstDayOfTheYear().AddYears(-1));
-            var activeYeap = yeapFactory.Create();
+            var activeAeepp = aeeppFactory.Create();
 
             ITariffFactory<CogenerationTariff> cogenerationFactory =
-                new CogenerationTariffFactory(activeYeap, previousActiveNgsp);
+                new CogenerationTariffFactory(activeAeepp, previousActiveNgsp);
             var previousActiveCtfs = new List<CogenerationTariff> { cogenerationFactory.Create() };
 
-            cogenerationFactory = new CogenerationTariffFactory(activeYeap, activeNgsp);
+            cogenerationFactory = new CogenerationTariffFactory(activeAeepp, activeNgsp);
             var activeCtfs = new List<CogenerationTariff> { cogenerationFactory.Create() };
 
             var dummyGuid = Guid.NewGuid();
@@ -68,8 +68,8 @@ namespace Acme.Seps.UseCases.Subsidy.Test.Unit.CommandHandler
                 .GetAll(Arg.Any<ActiveSpecification<CogenerationTariff>>())
                 .Returns(activeCtfs);
             repository
-                .GetSingle(Arg.Any<ActiveSpecification<YearlyAverageElectricEnergyProductionPrice>>())
-                .Returns(activeYeap);
+                .GetSingle(Arg.Any<ActiveSpecification<AverageElectricEnergyProductionPrice>>())
+                .Returns(activeAeepp);
 
             _unitOfWork = Substitute.For<IUnitOfWork>();
 

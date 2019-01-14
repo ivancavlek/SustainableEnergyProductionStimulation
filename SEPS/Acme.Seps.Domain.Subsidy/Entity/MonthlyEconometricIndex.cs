@@ -34,8 +34,8 @@ namespace Acme.Seps.Domain.Subsidy.Entity
 
             switch (this)
             {
-                case MonthlyAverageElectricEnergyProductionPrice _:
-                    return new MonthlyAverageElectricEnergyProductionPrice(amount, remark, until, identityFactory)
+                case AverageElectricEnergyProductionPrice _:
+                    return new AverageElectricEnergyProductionPrice(amount, remark, until, identityFactory)
                         as TMonthlyEconometricIndex;
 
                 case NaturalGasSellingPrice _:

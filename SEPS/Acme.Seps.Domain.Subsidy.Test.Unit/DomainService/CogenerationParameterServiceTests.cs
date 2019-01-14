@@ -10,7 +10,7 @@ namespace Acme.Seps.Domain.Subsidy.Test.Unit.DomainService
     {
         private readonly ICogenerationParameterService _cogenerationParameterService;
         private readonly NaturalGasSellingPrice _naturalGasSellingPrice;
-        private readonly YearlyAverageElectricEnergyProductionPrice _yearlyAverageElectricEnergyProductionPrice;
+        private readonly AverageElectricEnergyProductionPrice _averageElectricEnergyProductionPrice;
 
         public CogenerationParameterServiceTests()
         {
@@ -18,9 +18,9 @@ namespace Acme.Seps.Domain.Subsidy.Test.Unit.DomainService
                 new EconometricIndexFactory<NaturalGasSellingPrice>(DateTime.Now.AddYears(-3));
             _naturalGasSellingPrice = ngspFactory.Create();
 
-            IEconometricIndexFactory<YearlyAverageElectricEnergyProductionPrice> yaepFactory =
-                new EconometricIndexFactory<YearlyAverageElectricEnergyProductionPrice>(DateTime.Now.AddYears(-3));
-            _yearlyAverageElectricEnergyProductionPrice = yaepFactory.Create();
+            IEconometricIndexFactory<AverageElectricEnergyProductionPrice> aeeppFactory =
+                new EconometricIndexFactory<AverageElectricEnergyProductionPrice>(DateTime.Now.AddYears(-3));
+            _averageElectricEnergyProductionPrice = aeeppFactory.Create();
 
             _cogenerationParameterService = new CogenerationParameterService();
         }
@@ -28,7 +28,7 @@ namespace Acme.Seps.Domain.Subsidy.Test.Unit.DomainService
         public void RatesAreCorrectlyCalculated()
         {
             var result = _cogenerationParameterService
-                .Calculate(_yearlyAverageElectricEnergyProductionPrice, _naturalGasSellingPrice);
+                .Calculate(_averageElectricEnergyProductionPrice, _naturalGasSellingPrice);
 
             result.Should().Be(165.3316M);
         }

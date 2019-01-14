@@ -7,18 +7,18 @@ namespace Acme.Seps.Domain.Subsidy.DomainService
     {
         private const decimal _factor = 0.25M;
         private const decimal _initialNgspp = 1.07M;
-        private const decimal _initialYaep = 0.2625M;
+        private const decimal _initialAeepp = 0.2625M;
 
         decimal ICogenerationParameterService.Calculate(
-            YearlyAverageElectricEnergyProductionPrice yaep,
+            AverageElectricEnergyProductionPrice averageElectricEnergyProductionPrice,
             NaturalGasSellingPrice naturalGasSellingPrice) =>
             Math.Round(
-                CalculateYaepRate(yaep) + CalculateNgspRate(naturalGasSellingPrice),
+                CalculateAeeppRate(averageElectricEnergyProductionPrice) + CalculateNgspRate(naturalGasSellingPrice),
                 4,
                 MidpointRounding.AwayFromZero);
 
-        private static decimal CalculateYaepRate(YearlyAverageElectricEnergyProductionPrice yaep) =>
-            _factor * (yaep.Amount / _initialYaep);
+        private static decimal CalculateAeeppRate(AverageElectricEnergyProductionPrice aeepp) =>
+            _factor * (aeepp.Amount / _initialAeepp);
 
         private static decimal CalculateNgspRate(NaturalGasSellingPrice ngsp) =>
             (1 - _factor) * (ngsp.Amount / _initialNgspp);
@@ -27,6 +27,7 @@ namespace Acme.Seps.Domain.Subsidy.DomainService
     public interface ICogenerationParameterService
     {
         decimal Calculate(
-            YearlyAverageElectricEnergyProductionPrice yaep, NaturalGasSellingPrice naturalGasSellingPrice);
+            AverageElectricEnergyProductionPrice averageElectricEnergyProductionPrice,
+            NaturalGasSellingPrice naturalGasSellingPrice);
     }
 }

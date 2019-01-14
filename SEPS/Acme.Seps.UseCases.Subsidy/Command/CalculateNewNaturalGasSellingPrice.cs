@@ -58,7 +58,7 @@ namespace Acme.Seps.UseCases.Subsidy.Command
 
         private void CreateNewCogenerationTariffs(NaturalGasSellingPrice newNgsp)
         {
-            var yearlyAverageElectricEnergyProductionPrice = GetActiveYearlyAverageElectricEnergyProductionPrice();
+            var activeAeepp = GetActiveAverageElectricEnergyProductionPrice();
 
             GetActiveCogenerationTariffs().ForEach(ctf =>
             {
@@ -71,12 +71,11 @@ namespace Acme.Seps.UseCases.Subsidy.Command
             });
 
             CogenerationTariff CreateNewCogenerationTariff(CogenerationTariff cogenerationTariff) =>
-                cogenerationTariff.CreateNewWith(
-                    _cogenerationParameterService, yearlyAverageElectricEnergyProductionPrice, newNgsp, _identityFactory);
+                cogenerationTariff.CreateNewWith(_cogenerationParameterService, activeAeepp, newNgsp, _identityFactory);
         }
 
-        private YearlyAverageElectricEnergyProductionPrice GetActiveYearlyAverageElectricEnergyProductionPrice() =>
-           _repository.GetSingle(new ActiveSpecification<YearlyAverageElectricEnergyProductionPrice>());
+        private AverageElectricEnergyProductionPrice GetActiveAverageElectricEnergyProductionPrice() =>
+           _repository.GetSingle(new ActiveSpecification<AverageElectricEnergyProductionPrice>());
 
         private List<CogenerationTariff> GetActiveCogenerationTariffs() =>
             _repository.GetAll(new ActiveSpecification<CogenerationTariff>()).ToList();

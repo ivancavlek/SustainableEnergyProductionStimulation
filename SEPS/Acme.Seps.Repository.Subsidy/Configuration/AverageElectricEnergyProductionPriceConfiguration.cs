@@ -6,24 +6,24 @@ using System;
 
 namespace Acme.Seps.Repository.Subsidy.Configuration
 {
-    internal sealed class YearlyAverageElectricEnergyProductionPriceConfiguration
-        : BaseParameterConfiguration<YearlyAverageElectricEnergyProductionPrice>,
-        IEntityTypeConfiguration<YearlyAverageElectricEnergyProductionPrice>
+    internal sealed class AverageElectricEnergyProductionPriceConfiguration
+        : BaseParameterConfiguration<AverageElectricEnergyProductionPrice>,
+        IEntityTypeConfiguration<AverageElectricEnergyProductionPrice>
     {
         private readonly Guid _id;
 
-        internal YearlyAverageElectricEnergyProductionPriceConfiguration(Guid id)
+        internal AverageElectricEnergyProductionPriceConfiguration(Guid id)
         {
             _id = id;
         }
 
-        public override void Configure(EntityTypeBuilder<YearlyAverageElectricEnergyProductionPrice> builder)
+        public override void Configure(EntityTypeBuilder<AverageElectricEnergyProductionPrice> builder)
         {
             base.Configure(builder);
             SeedData(builder);
         }
 
-        private void SeedData(EntityTypeBuilder<YearlyAverageElectricEnergyProductionPrice> builder)
+        private void SeedData(EntityTypeBuilder<AverageElectricEnergyProductionPrice> builder)
         {
             builder.HasData(
                 new
@@ -31,7 +31,7 @@ namespace Acme.Seps.Repository.Subsidy.Configuration
                     Id = _id,
                     Amount = 0.2625M,
                     Remark = "Initial value",
-                    EconometricIndexType = nameof(YearlyAverageElectricEnergyProductionPrice)
+                    EconometricIndexType = nameof(AverageElectricEnergyProductionPrice)
                 });
             builder.OwnsOne(vte => vte.Active, vte =>
             {

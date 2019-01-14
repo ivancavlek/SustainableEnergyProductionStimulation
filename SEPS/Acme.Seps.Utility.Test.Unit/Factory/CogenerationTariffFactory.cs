@@ -9,16 +9,16 @@ namespace Acme.Seps.Test.Unit.Utility.Factory
     public sealed class CogenerationTariffFactory : ITariffFactory<CogenerationTariff>
     {
         private readonly NaturalGasSellingPrice _naturalGasSellingPrice;
-        private readonly YearlyAverageElectricEnergyProductionPrice _yearlyAverageElectricEnergyProductionPrice;
+        private readonly AverageElectricEnergyProductionPrice _averageElectricEnergyProductionPrice;
 
         public CogenerationTariffFactory(
-            YearlyAverageElectricEnergyProductionPrice yearlyAverageElectricEnergyProductionPrice,
+            AverageElectricEnergyProductionPrice averageElectricEnergyProductionPrice,
             NaturalGasSellingPrice naturalGasSellingPrice)
         {
             _naturalGasSellingPrice = naturalGasSellingPrice ??
                 throw new ArgumentNullException(nameof(naturalGasSellingPrice));
-            _yearlyAverageElectricEnergyProductionPrice = yearlyAverageElectricEnergyProductionPrice ??
-                throw new ArgumentNullException(nameof(yearlyAverageElectricEnergyProductionPrice));
+            _averageElectricEnergyProductionPrice = averageElectricEnergyProductionPrice ??
+                throw new ArgumentNullException(nameof(averageElectricEnergyProductionPrice));
         }
 
         CogenerationTariff ITariffFactory<CogenerationTariff>.Create() =>
@@ -29,7 +29,7 @@ namespace Acme.Seps.Test.Unit.Utility.Factory
                 new object[]
                 {
                     _naturalGasSellingPrice,
-                    _yearlyAverageElectricEnergyProductionPrice,
+                    _averageElectricEnergyProductionPrice,
                     100M,
                     500M,
                     10M,

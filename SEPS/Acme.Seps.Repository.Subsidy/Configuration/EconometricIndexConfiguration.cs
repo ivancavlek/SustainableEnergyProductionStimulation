@@ -29,8 +29,8 @@ namespace Acme.Seps.Repository.Subsidy.Configuration
                 .HasDiscriminator<string>(_discriminator)
                 .HasValue<ConsumerPriceIndex>(nameof(ConsumerPriceIndex))
                 .HasValue<NaturalGasSellingPrice>(nameof(NaturalGasSellingPrice))
-                .HasValue<MonthlyAverageElectricEnergyProductionPrice>(
-                    nameof(MonthlyAverageElectricEnergyProductionPrice));
+                .HasValue<AverageElectricEnergyProductionPrice>(
+                    nameof(AverageElectricEnergyProductionPrice));
         }
 
         private void ConfigureProperties(EntityTypeBuilder<EconometricIndex> builder)

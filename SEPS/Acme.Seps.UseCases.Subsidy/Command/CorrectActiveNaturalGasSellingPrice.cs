@@ -1,12 +1,12 @@
 ﻿using Acme.Domain.Base.CommandHandler;
 using Acme.Domain.Base.Factory;
 using Acme.Domain.Base.Repository;
+using Acme.Seps.Domain.Base;
 using Acme.Seps.Domain.Base.CommandHandler;
 using Acme.Seps.Domain.Base.Repository;
 using Acme.Seps.Domain.Subsidy.DomainService;
 using Acme.Seps.Domain.Subsidy.Entity;
 using Acme.Seps.Text;
-using Acme.Seps.UseCases.Subsidy.Command.Repository;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -67,7 +67,7 @@ namespace Acme.Seps.UseCases.Subsidy.Command
 
                 ctf.NaturalGasSellingPriceCorrection(
                     _cogenerationParameterService,
-                    GetActiveYearlyAverageElectricEnergyProductionPrice(),
+                    GetActiveAverageElectricEnergyProductionPrice(),
                     correctedNgsp,
                     previousCogeneration);
 
@@ -84,8 +84,8 @@ namespace Acme.Seps.UseCases.Subsidy.Command
         private List<CogenerationTariff> GetActiveCogenerationTariffs() =>
             _repository.GetAll(new ActiveSpecification<CogenerationTariff>()).ToList();
 
-        private YearlyAverageElectricEnergyProductionPrice GetActiveYearlyAverageElectricEnergyProductionPrice() =>
-            _repository.GetSingle(new ActiveSpecification<YearlyAverageElectricEnergyProductionPrice>());
+        private AverageElectricEnergyProductionPrice GetActiveAverageElectricEnergyProductionPrice() =>
+            _repository.GetSingle(new ActiveSpecification<AverageElectricEnergyProductionPrice>());
 
         private void LogNewCogenerationTariffCorrection(CogenerationTariff cogenerationTariff) =>
             Log(new EntityExecutionLoggingEventArgs

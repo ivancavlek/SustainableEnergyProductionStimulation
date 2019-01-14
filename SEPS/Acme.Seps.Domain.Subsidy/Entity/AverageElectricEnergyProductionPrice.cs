@@ -3,14 +3,14 @@ using System;
 
 namespace Acme.Seps.Domain.Subsidy.Entity
 {
-    public class MonthlyAverageElectricEnergyProductionPrice
-        : MonthlyEconometricIndex<MonthlyAverageElectricEnergyProductionPrice>
+    public class AverageElectricEnergyProductionPrice
+        : MonthlyEconometricIndex<AverageElectricEnergyProductionPrice>
     {
         protected override int DecimalPlaces => 4;
 
-        protected MonthlyAverageElectricEnergyProductionPrice() { }
+        protected AverageElectricEnergyProductionPrice() { }
 
-        internal protected MonthlyAverageElectricEnergyProductionPrice(
+        internal protected AverageElectricEnergyProductionPrice(
             decimal amount, string remark, DateTimeOffset since, IIdentityFactory<Guid> guidIdentityFactory)
             : base(amount, remark, since, guidIdentityFactory) { }
     }

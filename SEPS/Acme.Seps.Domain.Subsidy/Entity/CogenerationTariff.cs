@@ -9,14 +9,13 @@ namespace Acme.Seps.Domain.Subsidy.Entity
     public class CogenerationTariff : Tariff
     {
         public NaturalGasSellingPrice NaturalGasSellingPrice { get; private set; }
-        public MonthlyAverageElectricEnergyProductionPrice MonthlyAverageElectricEnergyProductionPrice { get; private set; }
-        public YearlyAverageElectricEnergyProductionPrice YearlyAverageElectricEnergyProductionPrice { get; private set; }
+        public AverageElectricEnergyProductionPrice AverageElectricEnergyProductionPrice { get; private set; }
 
         protected CogenerationTariff() { }
 
         protected CogenerationTariff(
             NaturalGasSellingPrice naturalGasSellingPrice,
-            YearlyAverageElectricEnergyProductionPrice yearlyAverageElectricEnergyProductionPrice,
+            AverageElectricEnergyProductionPrice averageElectricEnergyProductionPrice,
             decimal? lowerProductionLimit,
             decimal? upperProductionLimit,
             decimal lowerRate,
@@ -32,30 +31,30 @@ namespace Acme.Seps.Domain.Subsidy.Entity
                   identityFactory)
         {
             NaturalGasSellingPrice = naturalGasSellingPrice;
-            YearlyAverageElectricEnergyProductionPrice = yearlyAverageElectricEnergyProductionPrice;
+            AverageElectricEnergyProductionPrice = averageElectricEnergyProductionPrice;
         }
 
         public CogenerationTariff CreateNewWith(
             ICogenerationParameterService cogenerationParameterService,
-            YearlyAverageElectricEnergyProductionPrice yearlyAverageElectricEnergyProductionPrice,
+            AverageElectricEnergyProductionPrice averageElectricEnergyProductionPrice,
             NaturalGasSellingPrice naturalGasSellingPrice,
             IIdentityFactory<Guid> identityFactory)
         {
             cogenerationParameterService.MustNotBeNull(message: SepsMessage.EntityNotSet(nameof(cogenerationParameterService)));
-            yearlyAverageElectricEnergyProductionPrice.MustNotBeNull(message: SepsMessage.EntityNotSet(nameof(yearlyAverageElectricEnergyProductionPrice)));
-            yearlyAverageElectricEnergyProductionPrice.IsActive().MustBe(true, message: SepsMessage.InactiveException(nameof(yearlyAverageElectricEnergyProductionPrice)));
+            averageElectricEnergyProductionPrice.MustNotBeNull(message: SepsMessage.EntityNotSet(nameof(averageElectricEnergyProductionPrice)));
+            averageElectricEnergyProductionPrice.IsActive().MustBe(true, message: SepsMessage.InactiveException(nameof(averageElectricEnergyProductionPrice)));
             naturalGasSellingPrice.MustNotBeNull(message: SepsMessage.EntityNotSet(nameof(naturalGasSellingPrice)));
             naturalGasSellingPrice.IsActive().MustBe(true, message: SepsMessage.InactiveException(nameof(naturalGasSellingPrice)));
 
             var cogenerationParameter = CalculateCogenerationParameter(
-                cogenerationParameterService, yearlyAverageElectricEnergyProductionPrice, naturalGasSellingPrice);
+                cogenerationParameterService, averageElectricEnergyProductionPrice, naturalGasSellingPrice);
 
             SetInactive(naturalGasSellingPrice.Active.Since);
 
             return new CogenerationTariff
             (
                 naturalGasSellingPrice,
-                yearlyAverageElectricEnergyProductionPrice,
+                averageElectricEnergyProductionPrice,
                 LowerProductionLimit,
                 UpperProductionLimit,
                 Math.Round(cogenerationParameter * LowerRate, 4, MidpointRounding.AwayFromZero),
@@ -67,12 +66,12 @@ namespace Acme.Seps.Domain.Subsidy.Entity
 
         public void NaturalGasSellingPriceCorrection(
             ICogenerationParameterService cogenerationParameterService,
-            YearlyAverageElectricEnergyProductionPrice yearlyAverageElectricEnergyProductionPrice,
+            AverageElectricEnergyProductionPrice averageElectricEnergyProductionPrice,
             NaturalGasSellingPrice correctedNgsp,
             CogenerationTariff previousCgn)
         {
             var cogenerationParameter = CalculateCogenerationParameter(
-                cogenerationParameterService, yearlyAverageElectricEnergyProductionPrice, correctedNgsp);
+                cogenerationParameterService, averageElectricEnergyProductionPrice, correctedNgsp);
 
             LowerRate = cogenerationParameter * previousCgn.LowerRate;
             HigherRate = cogenerationParameter * previousCgn.HigherRate;
@@ -82,8 +81,8 @@ namespace Acme.Seps.Domain.Subsidy.Entity
 
         private decimal CalculateCogenerationParameter(
             ICogenerationParameterService cogenerationParameterService,
-            YearlyAverageElectricEnergyProductionPrice yaep,
+            AverageElectricEnergyProductionPrice averageElectricEnergyProductionPrice,
             NaturalGasSellingPrice ngsp) =>
-            cogenerationParameterService.Calculate(yaep, ngsp);
+            cogenerationParameterService.Calculate(averageElectricEnergyProductionPrice, ngsp);
     }
 }

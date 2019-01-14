@@ -35,10 +35,6 @@ namespace Acme.Seps.Domain.Subsidy.Entity
                     return new ConsumerPriceIndex(amount, remark, Active.Until.Value, identityFactory)
                         as TYearlyEconometricIndex;
 
-                case YearlyAverageElectricEnergyProductionPrice yeap:
-                    return new YearlyAverageElectricEnergyProductionPrice(
-                        amount, remark, Active.Until.Value, identityFactory) as TYearlyEconometricIndex;
-
                 default:
                     throw new ArgumentException();
             }

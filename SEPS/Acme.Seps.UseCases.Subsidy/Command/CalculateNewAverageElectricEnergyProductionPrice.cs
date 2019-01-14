@@ -3,11 +3,9 @@ using Acme.Domain.Base.Factory;
 using Acme.Domain.Base.Repository;
 using Acme.Seps.Domain.Base.CommandHandler;
 using Acme.Seps.Domain.Base.Repository;
-using Acme.Seps.Domain.Base.Utility;
 using Acme.Seps.Domain.Subsidy.DomainService;
 using Acme.Seps.Domain.Subsidy.Entity;
 using Acme.Seps.Text;
-using FluentValidation;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -32,35 +30,35 @@ namespace Acme.Seps.UseCases.Subsidy.Command
         void ICommandHandler<CalculateNewAverageElectricEnergyProductionPriceCommand>.Handle(
             CalculateNewAverageElectricEnergyProductionPriceCommand command)
         {
-            var activeMaeepp = GetActiveMonthlyAverageElectricEnergyProductionPrice();
-            var newMaeepp = CreateNewMonthlyAverageElectricEnergyProductionPrice(activeMaeepp, command);
+            var activeAeepp = GetActiveAverageElectricEnergyProductionPrice();
+            var newAeepp = CreateNewAverageElectricEnergyProductionPrice(activeAeepp, command);
 
-            var yaeepp = YearlyAverageElectricEnergyProductionPriceCalculation(newMaeepp);
-            CreateNewCogenerationTariffs(yaeepp);
+            CreateNewCogenerationTariffs(newAeepp);
 
             Commit();
 
-            LogNewAverageElectricEnergyProductionPriceCreation(newMaeepp);
+            LogNewAverageElectricEnergyProductionPriceCreation(newAeepp);
             LogSuccessfulCommit();
         }
 
-        private MonthlyAverageElectricEnergyProductionPrice GetActiveMonthlyAverageElectricEnergyProductionPrice() =>
-            _repository.GetSingle(new ActiveSpecification<MonthlyAverageElectricEnergyProductionPrice>());
+        private AverageElectricEnergyProductionPrice GetActiveAverageElectricEnergyProductionPrice() =>
+            _repository.GetSingle(new ActiveSpecification<AverageElectricEnergyProductionPrice>());
 
-        private MonthlyAverageElectricEnergyProductionPrice CreateNewMonthlyAverageElectricEnergyProductionPrice(
-            MonthlyAverageElectricEnergyProductionPrice activeMaeepp,
+        private AverageElectricEnergyProductionPrice CreateNewAverageElectricEnergyProductionPrice(
+            AverageElectricEnergyProductionPrice activeAeepp,
             CalculateNewAverageElectricEnergyProductionPriceCommand command)
         {
-            var newMaeepp = activeMaeepp.CreateNew(
+            var newAeepp = activeAeepp.CreateNew(
                 command.Amount, command.Remark, command.Month, command.Year, _identityFactory);
 
-            _unitOfWork.Update(activeMaeepp);
-            _unitOfWork.Insert(newMaeepp);
+            _unitOfWork.Update(activeAeepp);
+            _unitOfWork.Insert(newAeepp);
 
-            return newMaeepp;
+            return newAeepp;
         }
 
-        private void CreateNewCogenerationTariffs(YearlyAverageElectricEnergyProductionPrice yaeepp)
+        private void CreateNewCogenerationTariffs(
+            AverageElectricEnergyProductionPrice averageElectricEnergyProductionPrice)
         {
             var ngsp = GetActiveNaturalGasSellingPrice();
 
@@ -75,11 +73,9 @@ namespace Acme.Seps.UseCases.Subsidy.Command
             });
 
             CogenerationTariff CreateNewCogenerationTariff(CogenerationTariff cogenerationTariff) =>
-                cogenerationTariff.CreateNewWith(_cogenerationParameterService, yaeepp, ngsp, _identityFactory);
+                cogenerationTariff.CreateNewWith(
+                    _cogenerationParameterService, averageElectricEnergyProductionPrice, ngsp, _identityFactory);
         }
-
-        private YearlyAverageElectricEnergyProductionPrice GetActiveYearlyAverageElectricEnergyProductionPrice() =>
-           _repository.GetSingle(new ActiveSpecification<YearlyAverageElectricEnergyProductionPrice>());
 
         private NaturalGasSellingPrice GetActiveNaturalGasSellingPrice() =>
            _repository.GetSingle(new ActiveSpecification<NaturalGasSellingPrice>());
@@ -99,14 +95,14 @@ namespace Acme.Seps.UseCases.Subsidy.Command
             ));
 
         private void LogNewAverageElectricEnergyProductionPriceCreation(
-            MonthlyAverageElectricEnergyProductionPrice monthlyAverageElectricEnergyProductionPrice) =>
+            AverageElectricEnergyProductionPrice averageElectricEnergyProductionPrice) =>
             Log(new EntityExecutionLoggingEventArgs
             (
                 SepsMessage.InsertParameter(
                     nameof(NaturalGasSellingPrice),
-                    monthlyAverageElectricEnergyProductionPrice.Active.Since.Date,
-                    monthlyAverageElectricEnergyProductionPrice.Active.Until,
-                    monthlyAverageElectricEnergyProductionPrice.Amount)
+                    averageElectricEnergyProductionPrice.Active.Since.Date,
+                    averageElectricEnergyProductionPrice.Active.Until,
+                    averageElectricEnergyProductionPrice.Amount)
             ));
     }
 
@@ -116,26 +112,5 @@ namespace Acme.Seps.UseCases.Subsidy.Command
         public string Remark { get; set; }
         public int Month { get; set; }
         public int Year { get; set; }
-    }
-
-    public sealed class CalculateNewAverageElectricEnergyProductionPriceCommandValidator
-        : AbstractValidator<CalculateNewAverageElectricEnergyProductionPriceCommand>
-    {
-        public CalculateNewAverageElectricEnergyProductionPriceCommandValidator()
-        {
-            RuleFor(cng => cng.Amount)
-                .GreaterThan(0M)
-                .WithMessage(cng => SepsMessage.ValueZeroOrAbove(nameof(cng.Amount)));
-            RuleFor(cng => cng.Remark)
-                .NotEmpty()
-                .WithMessage(cng => SepsMessage.EntityNotSet(nameof(cng.Remark)));
-            RuleFor(cng => cng.Year)
-                .GreaterThan(SepsVersion.InitialDate().Year)
-                .WithMessage(cng => SepsMessage.ValueHigherThanTheOther(cng.Year.ToString(), SepsVersion.InitialDate().Year.ToString()));
-            RuleFor(cng => cng.Month)
-                .GreaterThanOrEqualTo(1)
-                .LessThanOrEqualTo(12)
-                .WithMessage(cng => SepsMessage.ValueHigherThanTheOther(cng.Month.ToString(), "1 - 12"));
-        }
     }
 }

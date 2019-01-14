@@ -1,11 +1,11 @@
 ﻿using Acme.Domain.Base.CommandHandler;
 using Acme.Domain.Base.Factory;
 using Acme.Domain.Base.Repository;
+using Acme.Seps.Domain.Base;
 using Acme.Seps.Domain.Base.CommandHandler;
 using Acme.Seps.Domain.Base.Repository;
 using Acme.Seps.Domain.Subsidy.Entity;
 using Acme.Seps.Text;
-using Acme.Seps.UseCases.Subsidy.Command.Repository;
 using System;
 using System.Collections.Generic;
 using System.Linq;

@@ -15,7 +15,7 @@ namespace Acme.Seps.Domain.Subsidy.Test.Unit.Entity
     {
         private readonly CogenerationTariff _activeCgn;
         private readonly NaturalGasSellingPrice _newNaturalGasSellingPrice;
-        private readonly YearlyAverageElectricEnergyProductionPrice _yearlyAverageElectricEnergyProductionPrice;
+        private readonly AverageElectricEnergyProductionPrice _averageElectricEnergyProductionPrice;
         private readonly ICogenerationParameterService _cogenerationParameterService;
         private readonly IIdentityFactory<Guid> _identityFactory;
 
@@ -26,15 +26,15 @@ namespace Acme.Seps.Domain.Subsidy.Test.Unit.Entity
 
             DateTimeOffset cgnSince = DateTimeOffset.Now.ToFirstDayOfTheMonth().AddMonths(-9);
 
-            IEconometricIndexFactory<YearlyAverageElectricEnergyProductionPrice> yeapFactory =
-                new EconometricIndexFactory<YearlyAverageElectricEnergyProductionPrice>(
+            IEconometricIndexFactory<AverageElectricEnergyProductionPrice> aeeppFactory =
+                new EconometricIndexFactory<AverageElectricEnergyProductionPrice>(
                     cgnSince.AddYears(-1).ToFirstDayOfTheYear());
-            _yearlyAverageElectricEnergyProductionPrice = yeapFactory.Create();
+            _averageElectricEnergyProductionPrice = aeeppFactory.Create();
 
             IEconometricIndexFactory<NaturalGasSellingPrice> ngspFactory =
                 new EconometricIndexFactory<NaturalGasSellingPrice>(cgnSince);
             ITariffFactory<CogenerationTariff> cogenerationFactory =
-                new CogenerationTariffFactory(_yearlyAverageElectricEnergyProductionPrice, ngspFactory.Create());
+                new CogenerationTariffFactory(_averageElectricEnergyProductionPrice, ngspFactory.Create());
             _activeCgn = cogenerationFactory.Create();
 
             DateTimeOffset ngspSince = DateTimeOffset.Now.ToFirstDayOfTheMonth().AddMonths(-4);
@@ -45,7 +45,7 @@ namespace Acme.Seps.Domain.Subsidy.Test.Unit.Entity
         public void CogenerationParameterServiceMustBeSet()
         {
             Action action = () => _activeCgn.CreateNewWith(
-                null, _yearlyAverageElectricEnergyProductionPrice, _newNaturalGasSellingPrice, _identityFactory);
+                null, _averageElectricEnergyProductionPrice, _newNaturalGasSellingPrice, _identityFactory);
 
             action
                 .Should()
@@ -53,7 +53,7 @@ namespace Acme.Seps.Domain.Subsidy.Test.Unit.Entity
                 .WithMessage(SepsMessage.EntityNotSet("cogenerationParameterService"));
         }
 
-        public void YearlyAverageElectricEnergyProductionPriceMustBeSet()
+        public void AverageElectricEnergyProductionPriceMustBeSet()
         {
             Action action = () => _activeCgn.CreateNewWith(
                 _cogenerationParameterService, null, _newNaturalGasSellingPrice, _identityFactory);
@@ -61,32 +61,32 @@ namespace Acme.Seps.Domain.Subsidy.Test.Unit.Entity
             action
                 .Should()
                 .ThrowExactly<ArgumentNullException>()
-                .WithMessage(SepsMessage.EntityNotSet("yearlyAverageElectricEnergyProductionPrice"));
+                .WithMessage(SepsMessage.EntityNotSet("averageElectricEnergyProductionPrice"));
         }
 
-        public void YearlyAverageElectricEnergyProductionPriceMustBeActive()
+        public void AverageElectricEnergyProductionPriceMustBeActive()
         {
-            typeof(YearlyAverageElectricEnergyProductionPrice)
+            typeof(AverageElectricEnergyProductionPrice)
                 .BaseType.BaseType.BaseType
                 .GetMethod("SetInactive", BindingFlags.NonPublic | BindingFlags.Instance)
-                .Invoke(_yearlyAverageElectricEnergyProductionPrice, new object[] { DateTimeOffset.Now });
+                .Invoke(_averageElectricEnergyProductionPrice, new object[] { DateTimeOffset.Now });
 
             Action action = () => _activeCgn.CreateNewWith(
                 _cogenerationParameterService,
-                _yearlyAverageElectricEnergyProductionPrice,
+                _averageElectricEnergyProductionPrice,
                 _newNaturalGasSellingPrice,
                 _identityFactory);
 
             action
                 .Should()
                 .Throw<Exception>()
-                .WithMessage(SepsMessage.InactiveException("yearlyAverageElectricEnergyProductionPrice"));
+                .WithMessage(SepsMessage.InactiveException("averageElectricEnergyProductionPrice"));
         }
 
         public void NaturalGasSellingPriceMustBeSet()
         {
             Action action = () => _activeCgn.CreateNewWith(
-                _cogenerationParameterService, _yearlyAverageElectricEnergyProductionPrice, null, _identityFactory);
+                _cogenerationParameterService, _averageElectricEnergyProductionPrice, null, _identityFactory);
 
             action
                 .Should()
@@ -103,7 +103,7 @@ namespace Acme.Seps.Domain.Subsidy.Test.Unit.Entity
 
             Action action = () => _activeCgn.CreateNewWith(
                 _cogenerationParameterService,
-                _yearlyAverageElectricEnergyProductionPrice,
+                _averageElectricEnergyProductionPrice,
                 _newNaturalGasSellingPrice,
                 _identityFactory);
 
@@ -118,12 +118,12 @@ namespace Acme.Seps.Domain.Subsidy.Test.Unit.Entity
             const decimal cogenerationParameter = 1M;
 
             _cogenerationParameterService
-                .Calculate(Arg.Any<YearlyAverageElectricEnergyProductionPrice>(), Arg.Any<NaturalGasSellingPrice>())
+                .Calculate(Arg.Any<AverageElectricEnergyProductionPrice>(), Arg.Any<NaturalGasSellingPrice>())
                 .Returns(cogenerationParameter);
 
             var newChp = _activeCgn.CreateNewWith(
                 _cogenerationParameterService,
-                _yearlyAverageElectricEnergyProductionPrice,
+                _averageElectricEnergyProductionPrice,
                 _newNaturalGasSellingPrice,
                 _identityFactory);
 
@@ -139,20 +139,20 @@ namespace Acme.Seps.Domain.Subsidy.Test.Unit.Entity
             const decimal cogenerationParameter = 1M;
 
             _cogenerationParameterService
-                .Calculate(Arg.Any<YearlyAverageElectricEnergyProductionPrice>(), Arg.Any<NaturalGasSellingPrice>())
+                .Calculate(Arg.Any<AverageElectricEnergyProductionPrice>(), Arg.Any<NaturalGasSellingPrice>())
                 .Returns(cogenerationParameter);
 
             DateTimeOffset cgnSince = DateTimeOffset.Now.ToFirstDayOfTheMonth().AddMonths(-9);
             IEconometricIndexFactory<NaturalGasSellingPrice> ngspFactory =
                 new EconometricIndexFactory<NaturalGasSellingPrice>(cgnSince);
             ITariffFactory<CogenerationTariff> cogenerationFactory =
-                new CogenerationTariffFactory(_yearlyAverageElectricEnergyProductionPrice, ngspFactory.Create());
+                new CogenerationTariffFactory(_averageElectricEnergyProductionPrice, ngspFactory.Create());
             var previousCgn = cogenerationFactory.Create();
             ngspFactory = new EconometricIndexFactory<NaturalGasSellingPrice>(cgnSince.AddMonths(6));
             var correctedNgsp = ngspFactory.Create();
 
             _activeCgn.NaturalGasSellingPriceCorrection(
-                _cogenerationParameterService, _yearlyAverageElectricEnergyProductionPrice, correctedNgsp, previousCgn);
+                _cogenerationParameterService, _averageElectricEnergyProductionPrice, correctedNgsp, previousCgn);
 
             _activeCgn.LowerRate.Should().Be(_activeCgn.LowerRate * cogenerationParameter);
             _activeCgn.HigherRate.Should().Be(_activeCgn.HigherRate * cogenerationParameter);

@@ -13,21 +13,18 @@ namespace Acme.Seps.Repository.Subsidy.Configuration
         : BaseParameterConfiguration<CogenerationTariff>, IEntityTypeConfiguration<CogenerationTariff>
     {
         private readonly Guid _naturalGasSellingPriceId;
-        private readonly Guid _monthlyAverageElectricEnergyProductionPriceId;
-        private readonly Guid _yearlyAverageElectricEnergyProductionPriceId;
+        private readonly Guid _averageElectricEnergyProductionPriceId;
         private readonly IEnumerable<Guid> _projectIds;
         private readonly IIdentityFactory<Guid> _identityFactory;
 
         internal CogenerationTariffConfiguration(
             Guid naturalGasSellingPriceId,
-            Guid monthlyAverageElectricEnergyProductionPriceId,
-            Guid yearlyAverageElectricEnergyProductionPriceId,
+            Guid averageElectricEnergyProductionPriceId,
             IEnumerable<Guid> projectIds,
             IIdentityFactory<Guid> identityFactory)
         {
             _naturalGasSellingPriceId = naturalGasSellingPriceId;
-            _monthlyAverageElectricEnergyProductionPriceId = monthlyAverageElectricEnergyProductionPriceId;
-            _yearlyAverageElectricEnergyProductionPriceId = yearlyAverageElectricEnergyProductionPriceId;
+            _averageElectricEnergyProductionPriceId = averageElectricEnergyProductionPriceId;
             _projectIds = projectIds ?? throw new ArgumentNullException(nameof(projectIds));
             _identityFactory = identityFactory ?? throw new ArgumentNullException(nameof(identityFactory));
         }
@@ -52,8 +49,7 @@ namespace Acme.Seps.Repository.Subsidy.Configuration
                 TarrifType = nameof(CogenerationTariff),
                 ProjectTypeId = _projectIds.ElementAt(10),
                 NaturalGasSellingPriceId = _naturalGasSellingPriceId,
-                MonthlyAverageElectricEnergyProductionPrice = _monthlyAverageElectricEnergyProductionPriceId,
-                YearlyAverageElectricEnergyProductionPrice = _yearlyAverageElectricEnergyProductionPriceId
+                AverageElectricEnergyProductionPrice = _averageElectricEnergyProductionPriceId
             });
             builder.OwnsOne(vte => vte.Active, vte =>
             {
@@ -76,8 +72,7 @@ namespace Acme.Seps.Repository.Subsidy.Configuration
                 TarrifType = nameof(CogenerationTariff),
                 ProjectTypeId = _projectIds.ElementAt(11),
                 NaturalGasSellingPriceId = _naturalGasSellingPriceId,
-                MonthlyAverageElectricEnergyProductionPrice = _monthlyAverageElectricEnergyProductionPriceId,
-                YearlyAverageElectricEnergyProductionPrice = _yearlyAverageElectricEnergyProductionPriceId
+                AverageElectricEnergyProductionPrice = _averageElectricEnergyProductionPriceId
             });
             builder.OwnsOne(vte => vte.Active, vte =>
             {

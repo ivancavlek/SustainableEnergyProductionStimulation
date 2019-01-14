@@ -1,11 +1,11 @@
 ﻿using Acme.Domain.Base.Factory;
 using Acme.Domain.Base.Repository;
+using Acme.Seps.Domain.Base;
 using Acme.Seps.Domain.Base.CommandHandler;
 using Acme.Seps.Domain.Base.Repository;
 using Acme.Seps.Domain.Subsidy.Entity;
 using Acme.Seps.Test.Unit.Utility.Factory;
 using Acme.Seps.UseCases.Subsidy.Command;
-using Acme.Seps.UseCases.Subsidy.Command.Repository;
 using NSubstitute;
 using System;
 using System.Collections.Generic;

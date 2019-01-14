@@ -5,7 +5,7 @@ using Light.GuardClauses;
 using System;
 using System.Linq.Expressions;
 
-namespace Acme.Seps.UseCases.Subsidy.Command.Repository
+namespace Acme.Seps.Domain.Base
 {
     public sealed class PreviousActiveSpecification<TAggregateRoot>
         : BaseSpecification<TAggregateRoot> where TAggregateRoot : SepsAggregateRoot

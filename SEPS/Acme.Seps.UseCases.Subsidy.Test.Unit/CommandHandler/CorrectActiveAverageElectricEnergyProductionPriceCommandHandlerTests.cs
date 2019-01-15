@@ -14,35 +14,35 @@ using System.Collections.Generic;
 
 namespace Acme.Seps.UseCases.Subsidy.Test.Unit.CommandHandler
 {
-    public class CorrectActiveNaturalGasCommandHandlerTests
+    public class CorrectActiveAverageElectricEnergyProductionPriceCommandHandlerTests
     {
-        private readonly ISepsCommandHandler<CorrectActiveNaturalGasSellingPriceCommand> _calculateActiveNgsp;
+        private readonly ISepsCommandHandler<CorrectActiveAverageElectricEnergyProductionPriceCommand> _correctActiveAeepp;
         private readonly IUnitOfWork _unitOfWork;
 
-        public CorrectActiveNaturalGasCommandHandlerTests()
+        public CorrectActiveAverageElectricEnergyProductionPriceCommandHandlerTests()
         {
             DateTimeOffset nineMonthsAgo = DateTime.Now.AddMonths(-9);
 
-            IEconometricIndexFactory<NaturalGasSellingPrice> ngspFactory =
-                new EconometricIndexFactory<NaturalGasSellingPrice>(nineMonthsAgo);
-            var activeNgsp = ngspFactory.Create();
+            IEconometricIndexFactory<AverageElectricEnergyProductionPrice> aeeppFactory =
+                new EconometricIndexFactory<AverageElectricEnergyProductionPrice>(nineMonthsAgo);
+            var activeAeepp = aeeppFactory.Create();
 
             var cogenerationParameterService = Substitute.For<ICogenerationParameterService>();
             cogenerationParameterService
                 .Calculate(Arg.Any<AverageElectricEnergyProductionPrice>(), Arg.Any<NaturalGasSellingPrice>())
                 .Returns(1M);
 
-            ngspFactory =
-                new EconometricIndexFactory<NaturalGasSellingPrice>(nineMonthsAgo.AddMonths(-5));
-            var previousActiveNgsp = ngspFactory.Create();
+            aeeppFactory =
+                new EconometricIndexFactory<AverageElectricEnergyProductionPrice>(nineMonthsAgo.AddMonths(-5));
+            var previousActiveAeepp = aeeppFactory.Create();
 
-            IEconometricIndexFactory<AverageElectricEnergyProductionPrice> aeeppFactory =
-                new EconometricIndexFactory<AverageElectricEnergyProductionPrice>(
+            IEconometricIndexFactory<NaturalGasSellingPrice> ngspFactory =
+                new EconometricIndexFactory<NaturalGasSellingPrice>(
                     nineMonthsAgo.ToFirstDayOfTheYear().AddYears(-1));
-            var activeAeepp = aeeppFactory.Create();
+            var activeNgsp = ngspFactory.Create();
 
             ITariffFactory<CogenerationTariff> cogenerationFactory =
-                new CogenerationTariffFactory(activeAeepp, previousActiveNgsp);
+                new CogenerationTariffFactory(previousActiveAeepp, activeNgsp);
             var previousActiveCtfs = new List<CogenerationTariff> { cogenerationFactory.Create() };
 
             cogenerationFactory = new CogenerationTariffFactory(activeAeepp, activeNgsp);
@@ -56,11 +56,11 @@ namespace Acme.Seps.UseCases.Subsidy.Test.Unit.CommandHandler
 
             var repository = Substitute.For<IRepository>();
             repository
-                .GetSingle(Arg.Any<ActiveSpecification<NaturalGasSellingPrice>>())
-                .Returns(activeNgsp);
+                .GetSingle(Arg.Any<ActiveSpecification<AverageElectricEnergyProductionPrice>>())
+                .Returns(activeAeepp);
             repository
-                .GetSingle(Arg.Any<PreviousActiveSpecification<NaturalGasSellingPrice>>())
-                .Returns(previousActiveNgsp);
+                .GetSingle(Arg.Any<PreviousActiveSpecification<AverageElectricEnergyProductionPrice>>())
+                .Returns(previousActiveAeepp);
             repository
                 .GetAll(Arg.Any<PreviousActiveSpecification<CogenerationTariff>>())
                 .Returns(previousActiveCtfs);
@@ -68,12 +68,12 @@ namespace Acme.Seps.UseCases.Subsidy.Test.Unit.CommandHandler
                 .GetAll(Arg.Any<ActiveSpecification<CogenerationTariff>>())
                 .Returns(activeCtfs);
             repository
-                .GetSingle(Arg.Any<ActiveSpecification<AverageElectricEnergyProductionPrice>>())
-                .Returns(activeAeepp);
+                .GetSingle(Arg.Any<ActiveSpecification<NaturalGasSellingPrice>>())
+                .Returns(activeNgsp);
 
             _unitOfWork = Substitute.For<IUnitOfWork>();
 
-            _calculateActiveNgsp = new CorrectActiveNaturalGasSellingPriceCommandHandler(
+            _correctActiveAeepp = new CorrectActiveAverageElectricEnergyProductionPriceCommandHandler(
                 cogenerationParameterService, repository, _unitOfWork, Substitute.For<IIdentityFactory<Guid>>());
         }
 
@@ -81,18 +81,18 @@ namespace Acme.Seps.UseCases.Subsidy.Test.Unit.CommandHandler
         {
             var lastPeriod = DateTime.Now.AddMonths(-3);
 
-            var correctActiveNaturalGasCommand = new CorrectActiveNaturalGasSellingPriceCommand
+            var correctActiveNaturalGasCommand = new CorrectActiveAverageElectricEnergyProductionPriceCommand
             {
                 Amount = 100M,
                 Month = lastPeriod.Month,
-                Remark = nameof(CalculateNewNaturalGasSellingPriceCommand),
+                Remark = nameof(CorrectActiveAverageElectricEnergyProductionPriceCommand),
                 Year = lastPeriod.Year,
             };
 
-            _calculateActiveNgsp.Handle(correctActiveNaturalGasCommand);
+            _correctActiveAeepp.Handle(correctActiveNaturalGasCommand);
 
             _unitOfWork.Received(2).Update(Arg.Any<CogenerationTariff>());
-            _unitOfWork.Received(2).Update(Arg.Any<NaturalGasSellingPrice>());
+            _unitOfWork.Received(2).Update(Arg.Any<AverageElectricEnergyProductionPrice>());
             _unitOfWork.Received().Commit();
         }
     }

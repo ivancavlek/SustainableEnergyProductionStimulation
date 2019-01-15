@@ -49,7 +49,7 @@ namespace Acme.Seps.Repository.Subsidy.Configuration
                 TarrifType = nameof(CogenerationTariff),
                 ProjectTypeId = _projectIds.ElementAt(10),
                 NaturalGasSellingPriceId = _naturalGasSellingPriceId,
-                AverageElectricEnergyProductionPrice = _averageElectricEnergyProductionPriceId
+                AverageElectricEnergyProductionPriceId = _averageElectricEnergyProductionPriceId
             });
             builder.OwnsOne(vte => vte.Active, vte =>
             {
@@ -72,7 +72,7 @@ namespace Acme.Seps.Repository.Subsidy.Configuration
                 TarrifType = nameof(CogenerationTariff),
                 ProjectTypeId = _projectIds.ElementAt(11),
                 NaturalGasSellingPriceId = _naturalGasSellingPriceId,
-                AverageElectricEnergyProductionPrice = _averageElectricEnergyProductionPriceId
+                AverageElectricEnergyProductionPriceId = _averageElectricEnergyProductionPriceId
             });
             builder.OwnsOne(vte => vte.Active, vte =>
             {

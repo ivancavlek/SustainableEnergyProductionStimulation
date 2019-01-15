@@ -4,7 +4,7 @@ using FluentValidation;
 namespace Acme.Seps.UseCases.Subsidy.Command.Validation
 {
     public sealed class CalculateConsumerPriceIndexCommandValidator
-        : AbstractValidator<CalculateConsumerPriceIndexCommand>
+        : AbstractValidator<CalculateNewConsumerPriceIndexCommand>
     {
         public CalculateConsumerPriceIndexCommandValidator()
         {

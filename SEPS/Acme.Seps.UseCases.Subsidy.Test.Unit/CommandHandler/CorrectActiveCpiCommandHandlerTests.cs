@@ -61,7 +61,7 @@ namespace Acme.Seps.UseCases.Subsidy.Test.Unit.CommandHandler
             var correctActiveCpi = new CorrectActiveConsumerPriceIndexCommand
             {
                 Amount = 100M,
-                Remark = nameof(CalculateConsumerPriceIndexCommand)
+                Remark = nameof(CalculateNewConsumerPriceIndexCommand)
             };
 
             _correctActiveCpi.Handle(correctActiveCpi);

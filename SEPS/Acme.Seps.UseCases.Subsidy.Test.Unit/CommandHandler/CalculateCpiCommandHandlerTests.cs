@@ -13,7 +13,7 @@ namespace Acme.Seps.UseCases.Subsidy.Test.Unit.CommandHandler
 {
     public class CalculateCpiCommandHandlerTests
     {
-        private readonly ISepsCommandHandler<CalculateConsumerPriceIndexCommand> _calculateCpi;
+        private readonly ISepsCommandHandler<CalculateNewConsumerPriceIndexCommand> _calculateCpi;
         private readonly IUnitOfWork _unitOfWork;
 
         public CalculateCpiCommandHandlerTests()
@@ -41,10 +41,10 @@ namespace Acme.Seps.UseCases.Subsidy.Test.Unit.CommandHandler
 
         public void ExecutesProperly()
         {
-            var calculateCommand = new CalculateConsumerPriceIndexCommand
+            var calculateCommand = new CalculateNewConsumerPriceIndexCommand
             {
                 Amount = 100M,
-                Remark = nameof(CalculateConsumerPriceIndexCommand)
+                Remark = nameof(CalculateNewConsumerPriceIndexCommand)
             };
 
             _calculateCpi.Handle(calculateCommand);

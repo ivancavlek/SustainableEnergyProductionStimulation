@@ -4,7 +4,7 @@ using FluentValidation;
 
 namespace Acme.Seps.UseCases.Subsidy.Command.Validation
 {
-    public sealed class CalculateNaturalGasCommandValidator : AbstractValidator<CalculateNaturalGasSellingPriceCommand>
+    public sealed class CalculateNaturalGasCommandValidator : AbstractValidator<CalculateNewNaturalGasSellingPriceCommand>
     {
         public CalculateNaturalGasCommandValidator()
         {

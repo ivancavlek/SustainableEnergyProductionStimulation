@@ -15,7 +15,7 @@ namespace Acme.Seps.UseCases.Subsidy.Test.Unit.CommandHandler
 {
     public class CalculateNaturalGasCommandHandlerTests
     {
-        private readonly ISepsCommandHandler<CalculateNaturalGasSellingPriceCommand> _calculateNaturalGas;
+        private readonly ISepsCommandHandler<CalculateNewNaturalGasSellingPriceCommand> _calculateNaturalGas;
         private readonly IUnitOfWork _unitOfWork;
 
         public CalculateNaturalGasCommandHandlerTests()
@@ -61,11 +61,11 @@ namespace Acme.Seps.UseCases.Subsidy.Test.Unit.CommandHandler
         {
             var lastPeriod = DateTime.Now.AddMonths(-3);
 
-            var calculateNaturalGasCommand = new CalculateNaturalGasSellingPriceCommand
+            var calculateNaturalGasCommand = new CalculateNewNaturalGasSellingPriceCommand
             {
                 Amount = 100M,
                 Month = lastPeriod.Month,
-                Remark = nameof(CalculateNaturalGasSellingPriceCommand),
+                Remark = nameof(CalculateNewNaturalGasSellingPriceCommand),
                 Year = lastPeriod.Year,
             };
 

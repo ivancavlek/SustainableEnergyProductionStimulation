@@ -42,7 +42,7 @@ namespace Acme.Seps.Presentation.Web.Test.Integration
         [Fact, TestPriority(2)]
         public async Task ModelValidationSendsBadRequestOnErroneousModel()
         {
-            var command = new CalculateConsumerPriceIndexCommand { Amount = -2, Remark = null };
+            var command = new CalculateNewConsumerPriceIndexCommand { Amount = -2, Remark = null };
 
             var response = await _client
                 .PostAsync(
@@ -55,6 +55,21 @@ namespace Acme.Seps.Presentation.Web.Test.Integration
         }
 
         [Fact, TestPriority(3)]
+        public async Task GetAverageElectricEnergyProductionPrices()
+        {
+            var allAeepps = await GetAllAverageElectricEnergyProductionPrices().ConfigureAwait(false);
+
+            allAeepps.Count.Should().Be(1);
+            foreach (var cpi in allAeepps)
+            {
+                cpi.Amount.Should().Be(0.2625M);
+                cpi.Remark.Should().Be("Initial value");
+                cpi.Since.Should().Be(new DateTime(2007, 7, 1));
+                cpi.Until.Should().BeNull();
+            }
+        }
+
+        [Fact, TestPriority(4)]
         public async Task GetConsumerPriceIndexes()
         {
             var allCpis = await GetAllConsumerPriceIndexes().ConfigureAwait(false);
@@ -69,7 +84,7 @@ namespace Acme.Seps.Presentation.Web.Test.Integration
             }
         }
 
-        [Fact, TestPriority(4)]
+        [Fact, TestPriority(5)]
         public async Task GetNaturalGasSellingPrices()
         {
             var allNgsps = await GetAllNaturalGasSellingPrices().ConfigureAwait(false);
@@ -84,7 +99,7 @@ namespace Acme.Seps.Presentation.Web.Test.Integration
             }
         }
 
-        [Fact, TestPriority(5)]
+        [Fact, TestPriority(6)]
         public async Task GetRenewableEnergySourceTariffs()
         {
             var allRess = await GetAllResTariffs().ConfigureAwait(false);
@@ -98,7 +113,7 @@ namespace Acme.Seps.Presentation.Web.Test.Integration
             }
         }
 
-        [Fact, TestPriority(6)]
+        [Fact, TestPriority(7)]
         public async Task GetCogenerationTariffs()
         {
             var allCgns = await GetAllCogenerationTariffs().ConfigureAwait(false);
@@ -107,15 +122,41 @@ namespace Acme.Seps.Presentation.Web.Test.Integration
             foreach (var cgn in allCgns)
             {
                 cgn.NaturalGasSellingPriceAmount.Should().Be(1.07M);
+                cgn.AverageElectricEnergyProductionPriceAmount.Should().Be(0.2625M);
                 cgn.Since.Should().Be(new DateTime(2007, 7, 1));
                 cgn.Until.Should().BeNull();
             }
         }
 
-        [Fact, TestPriority(7)]
+        [Fact, TestPriority(8)]
+        public async Task CalculateAverageElectricEnergyProductionPrice()
+        {
+            var lastMonth = DateTime.Now.AddMonths(-3);
+
+            var command = new CalculateNewAverageElectricEnergyProductionPriceCommand
+            {
+                Amount = 1.32M,
+                Month = lastMonth.Month,
+                Year = lastMonth.Year,
+                Remark = "Integration test calculate AEEPP remark"
+            };
+
+            var response = await _client
+                .PostAsync(
+                    _baseUri + "CalculateAverageElectricEnergyProductionPrice",
+                    new StringContent(JsonConvert.SerializeObject(command), Encoding.UTF8, "application/json"))
+                .ConfigureAwait(false);
+
+            response.EnsureSuccessStatusCode();
+
+            await CheckNewAndOldAeeppAndCgnValues(
+                lastMonth.Year, lastMonth.Month, command.Amount, command.Remark).ConfigureAwait(false);
+        }
+
+        [Fact, TestPriority(9)]
         public async Task CalculateCpi()
         {
-            var command = new CalculateConsumerPriceIndexCommand
+            var command = new CalculateNewConsumerPriceIndexCommand
             {
                 Amount = 102.9M,
                 Remark = "Integration test calculate CPI remark"
@@ -132,12 +173,12 @@ namespace Acme.Seps.Presentation.Web.Test.Integration
             await CheckNewAndOldCpiAndResValues(command.Amount, command.Remark).ConfigureAwait(false);
         }
 
-        [Fact, TestPriority(8)]
+        [Fact, TestPriority(10)]
         public async Task CalculateNaturalGas()
         {
             var lastMonth = DateTime.Now.AddMonths(-3);
 
-            var command = new CalculateNaturalGasSellingPriceCommand
+            var command = new CalculateNewNaturalGasSellingPriceCommand
             {
                 Amount = 1.32M,
                 Month = lastMonth.Month,
@@ -157,14 +198,60 @@ namespace Acme.Seps.Presentation.Web.Test.Integration
                 lastMonth.Year, lastMonth.Month, command.Amount, command.Remark).ConfigureAwait(false);
         }
 
-        [Fact, TestPriority(9)]
+        [Fact, TestPriority(11)]
+        public async Task CorrectActiveAeepp()
+        {
+            var allAeepps = await GetAllAverageElectricEnergyProductionPrices().ConfigureAwait(false);
+
+            var lastMonth = DateTime.Now.AddMonths(-3);
+
+            if (allAeepps.Count.Equals(1))
+            {
+                var command = new CalculateNewAverageElectricEnergyProductionPriceCommand
+                {
+                    Amount = 1.32M,
+                    Month = lastMonth.Month,
+                    Year = lastMonth.Year,
+                    Remark = "Integration test correct AEEPP remark"
+                };
+
+                var response = await _client
+                    .PostAsync(
+                        _baseUri + "CalculateAverageElectricEnergyProductionPrice",
+                        new StringContent(JsonConvert.SerializeObject(command), Encoding.UTF8, "application/json"))
+                    .ConfigureAwait(false);
+            }
+
+            lastMonth = DateTime.Now.AddMonths(-1);
+
+            var correctCommand = new CorrectActiveAverageElectricEnergyProductionPriceCommand
+            {
+                Amount = 1.32M,
+                Month = lastMonth.Month,
+                Year = lastMonth.Year,
+                Remark = "Integration test correct AEEPP remark"
+            };
+
+            var correctResponse = await _client
+                .PutAsync(
+                    _baseUri + "CorrectActiveAverageElectricEnergyProductionPrice",
+                    new StringContent(JsonConvert.SerializeObject(correctCommand), Encoding.UTF8, "application/json"))
+                .ConfigureAwait(false);
+
+            correctResponse.EnsureSuccessStatusCode();
+
+            await CheckNewAndOldAeeppAndCgnValues(
+                lastMonth.Year, lastMonth.Month, correctCommand.Amount, correctCommand.Remark).ConfigureAwait(false);
+        }
+
+        [Fact, TestPriority(12)]
         public async Task CorrectActiveCpi()
         {
             var allCpis = await GetAllConsumerPriceIndexes().ConfigureAwait(false);
 
             if (allCpis.Count.Equals(1))
             {
-                var command = new CalculateConsumerPriceIndexCommand
+                var command = new CalculateNewConsumerPriceIndexCommand
                 {
                     Amount = 102.9M,
                     Remark = "Integration test correct CPI remark"
@@ -196,7 +283,7 @@ namespace Acme.Seps.Presentation.Web.Test.Integration
             await CheckNewAndOldCpiAndResValues(correctCommand.Amount, correctCommand.Remark).ConfigureAwait(false);
         }
 
-        [Fact, TestPriority(10)]
+        [Fact, TestPriority(13)]
         public async Task CorrectActiveNgsp()
         {
             var allNgsps = await GetAllNaturalGasSellingPrices().ConfigureAwait(false);
@@ -205,7 +292,7 @@ namespace Acme.Seps.Presentation.Web.Test.Integration
 
             if (allNgsps.Count.Equals(1))
             {
-                var command = new CalculateNaturalGasSellingPriceCommand
+                var command = new CalculateNewNaturalGasSellingPriceCommand
                 {
                     Amount = 1.32M,
                     Month = lastMonth.Month,
@@ -222,7 +309,7 @@ namespace Acme.Seps.Presentation.Web.Test.Integration
 
             lastMonth = DateTime.Now.AddMonths(-1);
 
-            var correctCommand = new CalculateNaturalGasSellingPriceCommand
+            var correctCommand = new CorrectActiveNaturalGasSellingPriceCommand
             {
                 Amount = 1.32M,
                 Month = lastMonth.Month,
@@ -240,6 +327,14 @@ namespace Acme.Seps.Presentation.Web.Test.Integration
 
             await CheckNewAndOldNgspAndCgnValues(
                 lastMonth.Year, lastMonth.Month, correctCommand.Amount, correctCommand.Remark).ConfigureAwait(false);
+        }
+
+        private async Task<List<EconometricIndexQueryResult>> GetAllAverageElectricEnergyProductionPrices()
+        {
+            var aeeppQueryResponse = await _client
+                .GetAsync(_baseUri + "GetAverageElectricEnergyProductionPrices").ConfigureAwait(false);
+            var aeeppJsonResponse = await aeeppQueryResponse.Content.ReadAsStringAsync().ConfigureAwait(false);
+            return JsonConvert.DeserializeObject<List<EconometricIndexQueryResult>>(aeeppJsonResponse);
         }
 
         private async Task<List<EconometricIndexQueryResult>> GetAllConsumerPriceIndexes()
@@ -271,6 +366,48 @@ namespace Acme.Seps.Presentation.Web.Test.Integration
             var cgnJsonResponse = await cgnQueryResponse.Content.ReadAsStringAsync().ConfigureAwait(false);
             return JsonConvert.DeserializeObject<List<CogenerationTariffQueryResult>>(
                 cgnJsonResponse);
+        }
+
+        private async Task CheckNewAndOldAeeppAndCgnValues(int year, int month, decimal newAmount, string newRemark)
+        {
+            var allAeepps = await GetAllAverageElectricEnergyProductionPrices().ConfigureAwait(false);
+
+            var oldAeepp = allAeepps.Single(ngs => ngs.Until.HasValue);
+            var newAeepp = allAeepps.Single(ngs => !ngs.Until.HasValue);
+            const decimal oldAmount = 1.07M;
+            var oldDate = new DateTime(2007, 7, 1);
+            var newDate = new DateTime(year, month, 1);
+
+            oldAeepp.Amount.Should().Be(oldAmount);
+            oldAeepp.Remark.Should().Be("Initial value");
+            oldAeepp.Since.Should().Be(oldDate);
+            oldAeepp.Until.Should().Be(newDate);
+            newAeepp.Amount.Should().Be(newAmount);
+            newAeepp.Remark.Should().Be(newRemark);
+            newAeepp.Since.Should().Be(newDate);
+            newAeepp.Until.Should().BeNull();
+
+            var allCgns = await GetAllCogenerationTariffs().ConfigureAwait(false);
+
+            var oldRes = allCgns.Where(cgn => cgn.Until.HasValue).ToList();
+            var newRes = allCgns.Where(cgn => !cgn.Until.HasValue).ToList();
+
+            oldRes.Count.Should().Be(2);
+            newRes.Count.Should().Be(2);
+
+            foreach (var res in oldRes)
+            {
+                res.Since.Should().Be(oldDate);
+                res.Until.Should().Be(newDate);
+                res.NaturalGasSellingPriceAmount.Should().Be(oldAmount);
+            }
+
+            foreach (var res in newRes)
+            {
+                res.Since.Should().Be(newDate);
+                res.Until.Should().BeNull();
+                res.NaturalGasSellingPriceAmount.Should().Be(newAmount);
+            }
         }
 
         private async Task CheckNewAndOldNgspAndCgnValues(int year, int month, decimal newAmount, string newRemark)

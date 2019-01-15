@@ -12,34 +12,45 @@ namespace Acme.Seps.Presentation.Web.Controllers
     [Route("api/[controller]")]
     public sealed class ParameterController : Controller
     {
-        private readonly ISepsCommandHandler<CalculateConsumerPriceIndexCommand> _calculateCpi;
-        private readonly ISepsCommandHandler<CalculateNaturalGasSellingPriceCommand> _calculateNaturalGas;
-        private readonly ISepsCommandHandler<CalculateNewAverageElectricEnergyProductionPriceCommand> _calculateAverageElectricEnergyProductionPrice;
+        private readonly ISepsCommandHandler<CalculateNewAverageElectricEnergyProductionPriceCommand> _calculateNewAeepp;
+        private readonly ISepsCommandHandler<CalculateNewConsumerPriceIndexCommand> _calculateNewCpi;
+        private readonly ISepsCommandHandler<CalculateNewNaturalGasSellingPriceCommand> _calculateNewNgsp;
+        private readonly ISepsCommandHandler<CorrectActiveAverageElectricEnergyProductionPriceCommand> _correctActiveAeepp;
         private readonly ISepsCommandHandler<CorrectActiveConsumerPriceIndexCommand> _correctActiveCpi;
-        private readonly ISepsCommandHandler<CorrectActiveNaturalGasSellingPriceCommand> _correctActiveNaturalGas;
+        private readonly ISepsCommandHandler<CorrectActiveNaturalGasSellingPriceCommand> _correctActiveNgsp;
         private readonly IQueryHandler<GetEconometricIndexQuery, IReadOnlyList<EconometricIndexQueryResult>> _econometricIndexesQuery;
         private readonly IQueryHandler<GetRenewableEnergySourceTariffQuery, IReadOnlyList<RenewableEnergySourceTariffQueryResult>> _renewableEnergySourceTariffsQuery;
         private readonly IQueryHandler<GetCogenerationTariffQuery, IReadOnlyList<CogenerationTariffQueryResult>> _cogenerationTariffsQuery;
 
         public ParameterController(
-            ISepsCommandHandler<CalculateConsumerPriceIndexCommand> calculateCpi,
-            ISepsCommandHandler<CalculateNaturalGasSellingPriceCommand> calculateNaturalGas,
-            ISepsCommandHandler<CalculateNewAverageElectricEnergyProductionPriceCommand> calculateAverageElectricEnergyProductionPrice,
+            ISepsCommandHandler<CalculateNewAverageElectricEnergyProductionPriceCommand> calculateNewAeepp,
+            ISepsCommandHandler<CalculateNewConsumerPriceIndexCommand> calculateNewCpi,
+            ISepsCommandHandler<CalculateNewNaturalGasSellingPriceCommand> calculateNewNgsp,
+            ISepsCommandHandler<CorrectActiveAverageElectricEnergyProductionPriceCommand> correctActiveAeepp,
             ISepsCommandHandler<CorrectActiveConsumerPriceIndexCommand> correctActiveCpi,
-            ISepsCommandHandler<CorrectActiveNaturalGasSellingPriceCommand> correctActiveNaturalGas,
+            ISepsCommandHandler<CorrectActiveNaturalGasSellingPriceCommand> correctActiveNgsp,
             IQueryHandler<GetEconometricIndexQuery, IReadOnlyList<EconometricIndexQueryResult>> econometricIndexesQuery,
             IQueryHandler<GetRenewableEnergySourceTariffQuery, IReadOnlyList<RenewableEnergySourceTariffQueryResult>> renewableEnergySourceTariffsQuery,
             IQueryHandler<GetCogenerationTariffQuery, IReadOnlyList<CogenerationTariffQueryResult>> cogenerationTariffsQuery)
         {
-            _calculateCpi = calculateCpi ?? throw new ArgumentNullException(nameof(calculateCpi));
-            _calculateNaturalGas = calculateNaturalGas ?? throw new ArgumentNullException(nameof(calculateNaturalGas));
-            _calculateAverageElectricEnergyProductionPrice = calculateAverageElectricEnergyProductionPrice ?? throw new ArgumentNullException(nameof(calculateAverageElectricEnergyProductionPrice));
+            _calculateNewCpi = calculateNewCpi ?? throw new ArgumentNullException(nameof(calculateNewCpi));
+            _calculateNewNgsp = calculateNewNgsp ?? throw new ArgumentNullException(nameof(calculateNewNgsp));
+            _calculateNewAeepp = calculateNewAeepp ?? throw new ArgumentNullException(nameof(calculateNewAeepp));
+            _correctActiveAeepp = correctActiveAeepp ?? throw new ArgumentNullException(nameof(correctActiveAeepp));
             _correctActiveCpi = correctActiveCpi ?? throw new ArgumentNullException(nameof(correctActiveCpi));
-            _correctActiveNaturalGas = correctActiveNaturalGas ?? throw new ArgumentNullException(nameof(correctActiveNaturalGas));
+            _correctActiveNgsp = correctActiveNgsp ?? throw new ArgumentNullException(nameof(correctActiveNgsp));
             _econometricIndexesQuery = econometricIndexesQuery ?? throw new ArgumentNullException(nameof(econometricIndexesQuery));
             _renewableEnergySourceTariffsQuery = renewableEnergySourceTariffsQuery ?? throw new ArgumentNullException(nameof(renewableEnergySourceTariffsQuery));
             _cogenerationTariffsQuery = cogenerationTariffsQuery ?? throw new ArgumentNullException(nameof(cogenerationTariffsQuery));
         }
+
+        [HttpGet]
+        [Route("GetAverageElectricEnergyProductionPrices")]
+        public IActionResult GetAverageElectricEnergyProductionPrices() =>
+            Ok(_econometricIndexesQuery.Handle(new GetEconometricIndexQuery
+            {
+                EconometricIndexType = typeof(AverageElectricEnergyProductionPrice)
+            }));
 
         [HttpGet]
         [Route("GetConsumerPriceIndexes")]
@@ -75,31 +86,42 @@ namespace Acme.Seps.Presentation.Web.Controllers
             return "value";
         }
 
-        [HttpPost("CalculateCpi")]
-        public IActionResult CalculateCpi([FromBody]CalculateConsumerPriceIndexCommand calculateCpiCommand)
+        [HttpPost]
+        [Route("CalculateAverageElectricEnergyProductionPrice")]
+        public IActionResult CalculateAverageElectricEnergyProductionPrice(
+            [FromBody]CalculateNewAverageElectricEnergyProductionPriceCommand calculateNewAeepp)
         {
-            _calculateCpi.UseCaseExecutionProcessing += CalculateCpi_UseCaseExecutionProcessing;
-            _calculateCpi.Handle(calculateCpiCommand);
+            _calculateNewAeepp.UseCaseExecutionProcessing +=
+                CalculateAverageElectricEnergyProductionPrice_UseCaseExecutionProcessing;
+            _calculateNewAeepp.Handle(calculateNewAeepp);
+            return Ok(); // ToDo: not in line with REST pattern, we could return latest value
+        }
+
+        [HttpPost("CalculateCpi")]
+        public IActionResult CalculateCpi([FromBody]CalculateNewConsumerPriceIndexCommand calculateNewCpi)
+        {
+            _calculateNewCpi.UseCaseExecutionProcessing += CalculateCpi_UseCaseExecutionProcessing;
+            _calculateNewCpi.Handle(calculateNewCpi);
             return Ok(); // ToDo: not in line with REST pattern, we could return latest value
         }
 
         [HttpPost]
         [Route("CalculateNaturalGas")]
-        public IActionResult CalculateNaturalGas([FromBody]CalculateNaturalGasSellingPriceCommand calculateNaturalGas)
+        public IActionResult CalculateNaturalGas([FromBody]CalculateNewNaturalGasSellingPriceCommand calculateNewNgsp)
         {
-            _calculateNaturalGas.UseCaseExecutionProcessing += CalculateNaturalGas_UseCaseExecutionProcessing;
-            _calculateNaturalGas.Handle(calculateNaturalGas);
+            _calculateNewNgsp.UseCaseExecutionProcessing += CalculateNaturalGas_UseCaseExecutionProcessing;
+            _calculateNewNgsp.Handle(calculateNewNgsp);
             return Ok(); // ToDo: not in line with REST pattern, we could return latest value
         }
 
-        [HttpPost]
-        [Route("CalculateAverageElectricEnergyProductionPrice")]
-        public IActionResult CalculateNaturalGas(
-            [FromBody]CalculateNewAverageElectricEnergyProductionPriceCommand calculateNewAverageElectricEnergyProductionPrice)
+        [HttpPut("{id}")] // not good, needs correction
+        [Route("CorrectActiveAverageElectricEnergyProductionPrice")]
+        public IActionResult CorrectActiveAverageElectricEnergyProductionPrice(
+            int id, [FromBody]CorrectActiveAverageElectricEnergyProductionPriceCommand correctActiveAeepp)
         {
-            _calculateAverageElectricEnergyProductionPrice.UseCaseExecutionProcessing +=
-                CalculateAverageElectricEnergyProductionPrice_UseCaseExecutionProcessing;
-            _calculateAverageElectricEnergyProductionPrice.Handle(calculateNewAverageElectricEnergyProductionPrice);
+            _correctActiveAeepp.UseCaseExecutionProcessing +=
+                CorrectActiveAverageElectricEnergyProductionPrice_UseCaseExecutionProcessing;
+            _correctActiveAeepp.Handle(correctActiveAeepp);
             return Ok(); // ToDo: not in line with REST pattern, we could return latest value
         }
 
@@ -114,9 +136,11 @@ namespace Acme.Seps.Presentation.Web.Controllers
 
         [HttpPut("{id}")] // not good, needs correction
         [Route("CorrectActiveNaturalGas")]
-        public void CorrectActiveNaturalGas(int id, [FromBody]CorrectActiveNaturalGasSellingPriceCommand correctActiveNaturalGas)
+        public IActionResult CorrectActiveNaturalGas(int id, [FromBody]CorrectActiveNaturalGasSellingPriceCommand correctActiveNgsp)
         {
-            _correctActiveNaturalGas.Handle(correctActiveNaturalGas);
+            _correctActiveNgsp.UseCaseExecutionProcessing += CorrectActiveNaturalGas_UseCaseExecutionProcessing;
+            _correctActiveNgsp.Handle(correctActiveNgsp);
+            return Ok(); // ToDo: not in line with REST pattern, we could return latest value
         }
 
         private void CalculateCpi_UseCaseExecutionProcessing(object sender, EntityExecutionLoggingEventArgs e)
@@ -132,7 +156,15 @@ namespace Acme.Seps.Presentation.Web.Controllers
         {
         }
 
+        private void CorrectActiveAverageElectricEnergyProductionPrice_UseCaseExecutionProcessing(object sender, EntityExecutionLoggingEventArgs e)
+        {
+        }
+
         private void CorrectActiveCpi_UseCaseExecutionProcessing(object sender, EntityExecutionLoggingEventArgs e)
+        {
+        }
+
+        private void CorrectActiveNaturalGas_UseCaseExecutionProcessing(object sender, EntityExecutionLoggingEventArgs e)
         {
         }
     }

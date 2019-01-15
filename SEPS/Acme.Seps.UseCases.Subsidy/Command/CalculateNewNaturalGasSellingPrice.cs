@@ -13,7 +13,7 @@ using System.Linq;
 namespace Acme.Seps.UseCases.Subsidy.Command
 {
     public sealed class CalculateNaturalGasSellingPriceCommandHandler
-        : BaseCommandHandler, ISepsCommandHandler<CalculateNaturalGasSellingPriceCommand>
+        : BaseCommandHandler, ISepsCommandHandler<CalculateNewNaturalGasSellingPriceCommand>
     {
         private readonly ICogenerationParameterService _cogenerationParameterService;
 
@@ -27,8 +27,8 @@ namespace Acme.Seps.UseCases.Subsidy.Command
             _cogenerationParameterService = cogenerationParameterService ?? throw new ArgumentNullException(nameof(cogenerationParameterService));
         }
 
-        void ICommandHandler<CalculateNaturalGasSellingPriceCommand>.Handle(
-            CalculateNaturalGasSellingPriceCommand command)
+        void ICommandHandler<CalculateNewNaturalGasSellingPriceCommand>.Handle(
+            CalculateNewNaturalGasSellingPriceCommand command)
         {
             var activeNgsp = GetActiveNaturalGasSellingPrice();
 
@@ -45,7 +45,7 @@ namespace Acme.Seps.UseCases.Subsidy.Command
             _repository.GetSingle(new ActiveSpecification<NaturalGasSellingPrice>());
 
         private NaturalGasSellingPrice CreateNewNaturalGasSellingPrice(
-            NaturalGasSellingPrice activeNgsp, CalculateNaturalGasSellingPriceCommand command)
+            NaturalGasSellingPrice activeNgsp, CalculateNewNaturalGasSellingPriceCommand command)
         {
             var newNgsp = activeNgsp.CreateNew(
                 command.Amount, command.Remark, command.Month, command.Year, _identityFactory);
@@ -102,7 +102,7 @@ namespace Acme.Seps.UseCases.Subsidy.Command
             ));
     }
 
-    public sealed class CalculateNaturalGasSellingPriceCommand
+    public sealed class CalculateNewNaturalGasSellingPriceCommand
     {
         public decimal Amount { get; set; }
         public string Remark { get; set; }

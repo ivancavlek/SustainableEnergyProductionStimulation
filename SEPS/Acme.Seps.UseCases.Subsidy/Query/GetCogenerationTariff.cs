@@ -32,14 +32,16 @@ namespace Acme.Seps.UseCases.Subsidy.Query
                 .AppendLine("trf.UpperProductionLimit,")
                 .AppendLine("trf.LowerRate,")
                 .AppendLine("trf.HigherRate,")
-                .AppendLine("NaturalGasSellingPriceAmount = eix.Amount,")
-                // ToDo: MonthlyAverageElectricEnergyProductionPrice
+                .AppendLine("NaturalGasSellingPriceAmount = nsp.Amount,")
+                .AppendLine("AverageElectricEnergyProductionPriceAmount = aep.Amount,")
                 .AppendLine("pte.ConsumesFuel")
                 .AppendLine("FROM parameter.Tariffs AS trf")
                 .AppendLine("INNER JOIN parameter.ProjectType AS pte")
                 .AppendLine("ON trf.ProjectTypeId = pte.Id")
-                .AppendLine("INNER JOIN parameter.EconometricIndexes AS eix")
-                .AppendLine("ON trf.NaturalGasSellingPriceId = eix.Id")
+                .AppendLine("INNER JOIN parameter.EconometricIndexes AS nsp")
+                .AppendLine("ON trf.NaturalGasSellingPriceId = nsp.Id")
+                .AppendLine("INNER JOIN parameter.EconometricIndexes AS aep")
+                .AppendLine("ON trf.AverageElectricEnergyProductionPriceId = aep.Id")
                 .AppendLine("WHERE trf.TariffType = 'CogenerationTariff'")
                 .AppendLine("ORDER BY trf.Since DESC, pte.Code, trf.LowerProductionLimit")
                 .ToString()).AsList();
@@ -61,6 +63,7 @@ namespace Acme.Seps.UseCases.Subsidy.Query
         public decimal LowerRate { get; set; }
         public decimal HigherRate { get; set; }
         public decimal NaturalGasSellingPriceAmount { get; set; }
+        public decimal AverageElectricEnergyProductionPriceAmount { get; set; }
         public decimal MonthlyAverageElectricEnergyProductionPriceAmount { get; set; }
         public bool ConsumesFuel { get; set; }
     }

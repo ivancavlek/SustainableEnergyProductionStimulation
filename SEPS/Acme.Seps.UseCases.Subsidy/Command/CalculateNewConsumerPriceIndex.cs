@@ -12,13 +12,13 @@ using System.Linq;
 namespace Acme.Seps.UseCases.Subsidy.Command
 {
     public sealed class CalculateCpiCommandHandler
-        : BaseCommandHandler, ISepsCommandHandler<CalculateConsumerPriceIndexCommand>
+        : BaseCommandHandler, ISepsCommandHandler<CalculateNewConsumerPriceIndexCommand>
     {
         public CalculateCpiCommandHandler(
             IRepository repository, IUnitOfWork unitOfWork, IIdentityFactory<Guid> identityFactory)
             : base(repository, unitOfWork, identityFactory) { }
 
-        void ICommandHandler<CalculateConsumerPriceIndexCommand>.Handle(CalculateConsumerPriceIndexCommand command)
+        void ICommandHandler<CalculateNewConsumerPriceIndexCommand>.Handle(CalculateNewConsumerPriceIndexCommand command)
         {
             var activeCpi = GetActiveConsumerPriceIndex();
             var newCpi = CreateNewConsumerPriceIndex(activeCpi, command);
@@ -35,7 +35,7 @@ namespace Acme.Seps.UseCases.Subsidy.Command
             _repository.GetSingle(new ActiveSpecification<ConsumerPriceIndex>());
 
         private ConsumerPriceIndex CreateNewConsumerPriceIndex(
-            ConsumerPriceIndex activeCpi, CalculateConsumerPriceIndexCommand command)
+            ConsumerPriceIndex activeCpi, CalculateNewConsumerPriceIndexCommand command)
         {
             var newCpi = activeCpi.CreateNew(command.Amount, command.Remark, _identityFactory);
 
@@ -86,7 +86,7 @@ namespace Acme.Seps.UseCases.Subsidy.Command
             ));
     }
 
-    public sealed class CalculateConsumerPriceIndexCommand
+    public sealed class CalculateNewConsumerPriceIndexCommand
     {
         public decimal Amount { get; set; }
         public string Remark { get; set; }

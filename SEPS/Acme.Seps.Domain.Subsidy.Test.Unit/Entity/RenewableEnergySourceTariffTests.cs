@@ -13,7 +13,7 @@ namespace Acme.Seps.Domain.Subsidy.Test.Unit.Entity
     {
         private readonly IIdentityFactory<Guid> _identityFactory;
         private IEconometricIndexFactory<ConsumerPriceIndex> _cpiFactory;
-        private ITariffFactory<RenewableEnergySourceTariff> _resFactory;
+        private IResTariffFactory<RenewableEnergySourceTariff> _resFactory;
 
         public RenewableEnergySourceTariffTests()
         {

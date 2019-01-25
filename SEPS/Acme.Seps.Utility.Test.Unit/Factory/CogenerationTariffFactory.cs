@@ -6,7 +6,7 @@ using System.Reflection;
 
 namespace Acme.Seps.Test.Unit.Utility.Factory
 {
-    public sealed class CogenerationTariffFactory : ITariffFactory<CogenerationTariff>
+    public sealed class CogenerationTariffFactory : ICogenerationTariffFactory<CogenerationTariff>
     {
         private readonly NaturalGasSellingPrice _naturalGasSellingPrice;
         private readonly AverageElectricEnergyProductionPrice _averageElectricEnergyProductionPrice;
@@ -21,7 +21,7 @@ namespace Acme.Seps.Test.Unit.Utility.Factory
                 throw new ArgumentNullException(nameof(averageElectricEnergyProductionPrice));
         }
 
-        CogenerationTariff ITariffFactory<CogenerationTariff>.Create() =>
+        CogenerationTariff ICogenerationTariffFactory<CogenerationTariff>.Create(DateTimeOffset activeSince) =>
             Activator.CreateInstance(
                 typeof(CogenerationTariff),
                 BindingFlags.Instance | BindingFlags.NonPublic,
@@ -34,8 +34,14 @@ namespace Acme.Seps.Test.Unit.Utility.Factory
                     500M,
                     10M,
                     10M,
+                    activeSince,
                     Guid.NewGuid(),
                     Substitute.For<IIdentityFactory<Guid>>() },
                 null) as CogenerationTariff;
+    }
+
+    public interface ICogenerationTariffFactory<TTariff> where TTariff : Tariff
+    {
+        TTariff Create(DateTimeOffset activeSince);
     }
 }

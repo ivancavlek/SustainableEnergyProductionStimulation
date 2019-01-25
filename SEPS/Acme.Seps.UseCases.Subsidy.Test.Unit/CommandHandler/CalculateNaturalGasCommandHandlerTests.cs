@@ -31,9 +31,9 @@ namespace Acme.Seps.UseCases.Subsidy.Test.Unit.CommandHandler
                     nineMonthsAgo.ToFirstDayOfTheYear().AddYears(-1));
             var activeAeepp = aeeppFactory.Create();
 
-            ITariffFactory<CogenerationTariff> cogenerationFactory =
+            ICogenerationTariffFactory<CogenerationTariff> cogenerationFactory =
                 new CogenerationTariffFactory(activeAeepp, activeNgsp);
-            var activeCogenerationTariff = cogenerationFactory.Create();
+            var activeCogenerationTariff = cogenerationFactory.Create(nineMonthsAgo);
 
             var repository = Substitute.For<IRepository>();
             repository

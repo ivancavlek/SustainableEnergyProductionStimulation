@@ -10,7 +10,7 @@ namespace Acme.Domain.Base.Repository
         public List<Expression<Func<TAggregateRoot, BaseEntity>>> Includes { get; } =
             new List<Expression<Func<TAggregateRoot, BaseEntity>>>();
 
-        protected void AddInclude(Expression<Func<TAggregateRoot, BaseEntity>> includeExpression) =>
+        public void AddInclude(Expression<Func<TAggregateRoot, BaseEntity>> includeExpression) =>
             Includes.Add(includeExpression);
 
         public bool IsSatisfiedBy(TAggregateRoot entity) =>

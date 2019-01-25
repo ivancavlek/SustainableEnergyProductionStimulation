@@ -27,4 +27,9 @@ namespace Acme.Seps.Test.Unit.Utility.Factory
                 new object[] { 100M, nameof(TEconomtricIndex), _activeFrom, _identityFactory },
                 null) as TEconomtricIndex;
     }
+
+    public interface IEconometricIndexFactory<TEconometricIndex> where TEconometricIndex : EconometricIndex
+    {
+        TEconometricIndex Create();
+    }
 }

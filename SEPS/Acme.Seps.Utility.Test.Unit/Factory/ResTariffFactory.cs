@@ -6,7 +6,7 @@ using System.Reflection;
 
 namespace Acme.Seps.Test.Unit.Utility.Factory
 {
-    public sealed class ResTariffFactory : ITariffFactory<RenewableEnergySourceTariff>
+    public sealed class ResTariffFactory : IResTariffFactory<RenewableEnergySourceTariff>
     {
         private readonly ConsumerPriceIndex _consumerPriceIndex;
 
@@ -15,7 +15,7 @@ namespace Acme.Seps.Test.Unit.Utility.Factory
             _consumerPriceIndex = consumerPriceIndex ?? throw new ArgumentNullException(nameof(consumerPriceIndex));
         }
 
-        RenewableEnergySourceTariff ITariffFactory<RenewableEnergySourceTariff>.Create() =>
+        RenewableEnergySourceTariff IResTariffFactory<RenewableEnergySourceTariff>.Create() =>
             Activator.CreateInstance(
                 typeof(RenewableEnergySourceTariff),
                 BindingFlags.Instance | BindingFlags.NonPublic,
@@ -30,5 +30,10 @@ namespace Acme.Seps.Test.Unit.Utility.Factory
                     Guid.NewGuid(),
                     Substitute.For<IIdentityFactory<Guid>>() },
                 null) as RenewableEnergySourceTariff;
+    }
+
+    public interface IResTariffFactory<TTariff> where TTariff : Tariff
+    {
+        TTariff Create();
     }
 }

@@ -36,17 +36,20 @@ namespace Acme.Seps.UseCases.Subsidy.Test.Unit.CommandHandler
                 new EconometricIndexFactory<AverageElectricEnergyProductionPrice>(nineMonthsAgo.AddMonths(-5));
             var previousActiveAeepp = aeeppFactory.Create();
 
+            var firstDayOfTheYearNineMonthsAgo = nineMonthsAgo.ToFirstDayOfTheYear().AddYears(-1);
             IEconometricIndexFactory<NaturalGasSellingPrice> ngspFactory =
-                new EconometricIndexFactory<NaturalGasSellingPrice>(
-                    nineMonthsAgo.ToFirstDayOfTheYear().AddYears(-1));
+                new EconometricIndexFactory<NaturalGasSellingPrice>(firstDayOfTheYearNineMonthsAgo);
             var activeNgsp = ngspFactory.Create();
 
-            ITariffFactory<CogenerationTariff> cogenerationFactory =
+            ICogenerationTariffFactory<CogenerationTariff> cogenerationFactory =
                 new CogenerationTariffFactory(previousActiveAeepp, activeNgsp);
-            var previousActiveCtfs = new List<CogenerationTariff> { cogenerationFactory.Create() };
+            var previousActiveCtfs = new List<CogenerationTariff>
+            {
+                cogenerationFactory.Create(firstDayOfTheYearNineMonthsAgo)
+            };
 
             cogenerationFactory = new CogenerationTariffFactory(activeAeepp, activeNgsp);
-            var activeCtfs = new List<CogenerationTariff> { cogenerationFactory.Create() };
+            var activeCtfs = new List<CogenerationTariff> { cogenerationFactory.Create(firstDayOfTheYearNineMonthsAgo) };
 
             var dummyGuid = Guid.NewGuid();
             typeof(CogenerationTariff).BaseType

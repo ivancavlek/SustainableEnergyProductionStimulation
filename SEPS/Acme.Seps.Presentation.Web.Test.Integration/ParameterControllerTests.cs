@@ -22,6 +22,7 @@ namespace Acme.Seps.Presentation.Web.Test.Integration
         private readonly Encoding _encoding;
         private readonly string _contentType;
         private readonly HttpClient _client;
+        private readonly DateTime _lastMonth;
 
         public ParameterControllerTests(IntegrationTestingWebApplicationFactory<Startup> factory)
         {
@@ -29,6 +30,7 @@ namespace Acme.Seps.Presentation.Web.Test.Integration
             _encoding = Encoding.UTF8;
             _contentType = "application/json";
             _client = factory.CreateClient();
+            _lastMonth = DateTime.Today.AddMonths(-3);
         }
 
         [Fact, TestPriority(1)]
@@ -131,13 +133,11 @@ namespace Acme.Seps.Presentation.Web.Test.Integration
         [Fact, TestPriority(8)]
         public async Task CalculateAverageElectricEnergyProductionPrice()
         {
-            var lastMonth = DateTime.Now.AddMonths(-3);
-
             var command = new CalculateNewAverageElectricEnergyProductionPriceCommand
             {
-                Amount = 1.32M,
-                Month = lastMonth.Month,
-                Year = lastMonth.Year,
+                Amount = 0.5M,
+                Month = _lastMonth.Month,
+                Year = _lastMonth.Year,
                 Remark = "Integration test calculate AEEPP remark"
             };
 
@@ -150,7 +150,7 @@ namespace Acme.Seps.Presentation.Web.Test.Integration
             response.EnsureSuccessStatusCode();
 
             await CheckNewAndOldAeeppAndCgnValues(
-                lastMonth.Year, lastMonth.Month, command.Amount, command.Remark).ConfigureAwait(false);
+                _lastMonth.Year, _lastMonth.Month, command.Amount, command.Remark).ConfigureAwait(false);
         }
 
         [Fact, TestPriority(9)]
@@ -176,13 +176,11 @@ namespace Acme.Seps.Presentation.Web.Test.Integration
         [Fact, TestPriority(10)]
         public async Task CalculateNaturalGas()
         {
-            var lastMonth = DateTime.Now.AddMonths(-3);
-
             var command = new CalculateNewNaturalGasSellingPriceCommand
             {
                 Amount = 1.32M,
-                Month = lastMonth.Month,
-                Year = lastMonth.Year,
+                Month = _lastMonth.Month,
+                Year = _lastMonth.Year,
                 Remark = "Integration test calculate NGSP remark"
             };
 
@@ -195,7 +193,7 @@ namespace Acme.Seps.Presentation.Web.Test.Integration
             response.EnsureSuccessStatusCode();
 
             await CheckNewAndOldNgspAndCgnValues(
-                lastMonth.Year, lastMonth.Month, command.Amount, command.Remark).ConfigureAwait(false);
+                _lastMonth.Year, _lastMonth.Month, command.Amount, command.Remark).ConfigureAwait(false);
         }
 
         [Fact, TestPriority(11)]
@@ -203,32 +201,11 @@ namespace Acme.Seps.Presentation.Web.Test.Integration
         {
             var allAeepps = await GetAllAverageElectricEnergyProductionPrices().ConfigureAwait(false);
 
-            var lastMonth = DateTime.Now.AddMonths(-3);
-
-            if (allAeepps.Count.Equals(1))
-            {
-                var command = new CalculateNewAverageElectricEnergyProductionPriceCommand
-                {
-                    Amount = 1.32M,
-                    Month = lastMonth.Month,
-                    Year = lastMonth.Year,
-                    Remark = "Integration test correct AEEPP remark"
-                };
-
-                var response = await _client
-                    .PostAsync(
-                        _baseUri + "CalculateAverageElectricEnergyProductionPrice",
-                        new StringContent(JsonConvert.SerializeObject(command), Encoding.UTF8, "application/json"))
-                    .ConfigureAwait(false);
-            }
-
-            lastMonth = DateTime.Now.AddMonths(-1);
-
             var correctCommand = new CorrectActiveAverageElectricEnergyProductionPriceCommand
             {
-                Amount = 1.32M,
-                Month = lastMonth.Month,
-                Year = lastMonth.Year,
+                Amount = 0.75M,
+                Month = _lastMonth.Month,
+                Year = _lastMonth.Year,
                 Remark = "Integration test correct AEEPP remark"
             };
 
@@ -241,7 +218,7 @@ namespace Acme.Seps.Presentation.Web.Test.Integration
             correctResponse.EnsureSuccessStatusCode();
 
             await CheckNewAndOldAeeppAndCgnValues(
-                lastMonth.Year, lastMonth.Month, correctCommand.Amount, correctCommand.Remark).ConfigureAwait(false);
+                _lastMonth.Year, _lastMonth.Month, correctCommand.Amount, correctCommand.Remark).ConfigureAwait(false);
         }
 
         [Fact, TestPriority(12)]
@@ -249,7 +226,7 @@ namespace Acme.Seps.Presentation.Web.Test.Integration
         {
             var allCpis = await GetAllConsumerPriceIndexes().ConfigureAwait(false);
 
-            if (allCpis.Count.Equals(1))
+            if (allCpis.Equals(1))
             {
                 var command = new CalculateNewConsumerPriceIndexCommand
                 {
@@ -288,32 +265,11 @@ namespace Acme.Seps.Presentation.Web.Test.Integration
         {
             var allNgsps = await GetAllNaturalGasSellingPrices().ConfigureAwait(false);
 
-            var lastMonth = DateTime.Now.AddMonths(-3);
-
-            if (allNgsps.Count.Equals(1))
-            {
-                var command = new CalculateNewNaturalGasSellingPriceCommand
-                {
-                    Amount = 1.32M,
-                    Month = lastMonth.Month,
-                    Year = lastMonth.Year,
-                    Remark = "Integration test correct NGSP remark"
-                };
-
-                var response = await _client
-                    .PostAsync(
-                        _baseUri + "CalculateNaturalGas",
-                        new StringContent(JsonConvert.SerializeObject(command), Encoding.UTF8, "application/json"))
-                    .ConfigureAwait(false);
-            }
-
-            lastMonth = DateTime.Now.AddMonths(-1);
-
             var correctCommand = new CorrectActiveNaturalGasSellingPriceCommand
             {
-                Amount = 1.32M,
-                Month = lastMonth.Month,
-                Year = lastMonth.Year,
+                Amount = 1.5M,
+                Month = _lastMonth.Month,
+                Year = _lastMonth.Year,
                 Remark = "Integration test correct NGSP remark"
             };
 
@@ -326,7 +282,7 @@ namespace Acme.Seps.Presentation.Web.Test.Integration
             correctResponse.EnsureSuccessStatusCode();
 
             await CheckNewAndOldNgspAndCgnValues(
-                lastMonth.Year, lastMonth.Month, correctCommand.Amount, correctCommand.Remark).ConfigureAwait(false);
+                _lastMonth.Year, _lastMonth.Month, correctCommand.Amount, correctCommand.Remark).ConfigureAwait(false);
         }
 
         private async Task<List<EconometricIndexQueryResult>> GetAllAverageElectricEnergyProductionPrices()
@@ -374,7 +330,7 @@ namespace Acme.Seps.Presentation.Web.Test.Integration
 
             var oldAeepp = allAeepps.Single(ngs => ngs.Until.HasValue);
             var newAeepp = allAeepps.Single(ngs => !ngs.Until.HasValue);
-            const decimal oldAmount = 1.07M;
+            const decimal oldAmount = 0.2625M;
             var oldDate = new DateTime(2007, 7, 1);
             var newDate = new DateTime(year, month, 1);
 
@@ -392,21 +348,18 @@ namespace Acme.Seps.Presentation.Web.Test.Integration
             var oldRes = allCgns.Where(cgn => cgn.Until.HasValue).ToList();
             var newRes = allCgns.Where(cgn => !cgn.Until.HasValue).ToList();
 
-            oldRes.Count.Should().Be(2);
             newRes.Count.Should().Be(2);
 
             foreach (var res in oldRes)
             {
-                res.Since.Should().Be(oldDate);
                 res.Until.Should().Be(newDate);
-                res.NaturalGasSellingPriceAmount.Should().Be(oldAmount);
             }
 
             foreach (var res in newRes)
             {
                 res.Since.Should().Be(newDate);
                 res.Until.Should().BeNull();
-                res.NaturalGasSellingPriceAmount.Should().Be(newAmount);
+                res.AverageElectricEnergyProductionPriceAmount.Should().Be(newAmount);
             }
         }
 
@@ -434,14 +387,11 @@ namespace Acme.Seps.Presentation.Web.Test.Integration
             var oldRes = allCgns.Where(cgn => cgn.Until.HasValue).ToList();
             var newRes = allCgns.Where(cgn => !cgn.Until.HasValue).ToList();
 
-            oldRes.Count.Should().Be(2);
             newRes.Count.Should().Be(2);
 
             foreach (var res in oldRes)
             {
-                res.Since.Should().Be(oldDate);
                 res.Until.Should().Be(newDate);
-                res.NaturalGasSellingPriceAmount.Should().Be(oldAmount);
             }
 
             foreach (var res in newRes)

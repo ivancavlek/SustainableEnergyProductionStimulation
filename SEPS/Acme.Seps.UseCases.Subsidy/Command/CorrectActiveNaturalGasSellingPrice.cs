@@ -55,21 +55,29 @@ namespace Acme.Seps.UseCases.Subsidy.Command
         private NaturalGasSellingPrice GetPreviousActiveNaturalGasSellingPrice(NaturalGasSellingPrice ngsp) =>
             _repository.GetSingle(new PreviousActiveSpecification<NaturalGasSellingPrice>(ngsp));
 
-        private IReadOnlyList<CogenerationTariff> GetPreviousActiveCogenerationTariffs(NaturalGasSellingPrice ngsp) =>
-            _repository.GetAll(new PreviousActiveSpecification<CogenerationTariff>(ngsp));
+        private IReadOnlyList<CogenerationTariff> GetPreviousActiveCogenerationTariffs(NaturalGasSellingPrice ngsp)
+        {
+            var specification = new PreviousActiveSpecification<CogenerationTariff>(ngsp);
+
+            specification.AddInclude(ice => ice.AverageElectricEnergyProductionPrice);
+            specification.AddInclude(ice => ice.NaturalGasSellingPrice);
+
+            return _repository.GetAll(specification);
+        }
 
         private void CorrectCogenerationTariffs(
             NaturalGasSellingPrice correctedNgsp, IEnumerable<CogenerationTariff> previousCogenerations)
         {
+            var activeAeepp = GetActiveAverageElectricEnergyProductionPrice();
+
             GetActiveCogenerationTariffs().ForEach(ctf =>
             {
-                var previousCogeneration = CogenerationTariffByProjectType(ctf.ProjectTypeId);
+                var previousCogeneration =
+                    CogenerationTariffByProjectTypeAndNgsp(ctf.ProjectTypeId) ??
+                    CogenerationTariffByProjectTypeAndAeepp(ctf.ProjectTypeId);
 
                 ctf.NaturalGasSellingPriceCorrection(
-                    _cogenerationParameterService,
-                    GetActiveAverageElectricEnergyProductionPrice(),
-                    correctedNgsp,
-                    previousCogeneration);
+                    _cogenerationParameterService, activeAeepp, correctedNgsp, previousCogeneration);
 
                 _unitOfWork.Update(ctf);
                 _unitOfWork.Update(previousCogeneration);
@@ -77,8 +85,13 @@ namespace Acme.Seps.UseCases.Subsidy.Command
                 LogNewCogenerationTariffCorrection(ctf);
             });
 
-            CogenerationTariff CogenerationTariffByProjectType(Guid projectTypeId) =>
-                previousCogenerations.Single(ctf => ctf.ProjectTypeId.Equals(projectTypeId));
+            CogenerationTariff CogenerationTariffByProjectTypeAndNgsp(Guid projectTypeId) =>
+                previousCogenerations.SingleOrDefault(ctf => ctf.ProjectTypeId.Equals(projectTypeId) &&
+                    ctf.NaturalGasSellingPrice.Id.Equals(correctedNgsp.Id));
+
+            CogenerationTariff CogenerationTariffByProjectTypeAndAeepp(Guid projectTypeId) =>
+                previousCogenerations.Single(ctf => ctf.ProjectTypeId.Equals(projectTypeId) &&
+                    ctf.AverageElectricEnergyProductionPrice.Id.Equals(activeAeepp.Id));
         }
 
         private List<CogenerationTariff> GetActiveCogenerationTariffs() =>

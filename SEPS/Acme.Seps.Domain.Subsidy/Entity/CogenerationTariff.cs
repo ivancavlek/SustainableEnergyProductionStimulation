@@ -20,6 +20,7 @@ namespace Acme.Seps.Domain.Subsidy.Entity
             decimal? upperProductionLimit,
             decimal lowerRate,
             decimal higherRate,
+            DateTimeOffset activeSince,
             Guid projectTypeId,
             IIdentityFactory<Guid> identityFactory)
             : base(lowerProductionLimit,
@@ -27,7 +28,7 @@ namespace Acme.Seps.Domain.Subsidy.Entity
                   lowerRate,
                   higherRate,
                   projectTypeId,
-                  naturalGasSellingPrice.Active.Since,
+                  activeSince,
                   identityFactory)
         {
             NaturalGasSellingPrice = naturalGasSellingPrice;
@@ -38,6 +39,7 @@ namespace Acme.Seps.Domain.Subsidy.Entity
             ICogenerationParameterService cogenerationParameterService,
             AverageElectricEnergyProductionPrice averageElectricEnergyProductionPrice,
             NaturalGasSellingPrice naturalGasSellingPrice,
+            DateTimeOffset activeSince,
             IIdentityFactory<Guid> identityFactory)
         {
             cogenerationParameterService.MustNotBeNull(message: SepsMessage.EntityNotSet(nameof(cogenerationParameterService)));
@@ -49,7 +51,7 @@ namespace Acme.Seps.Domain.Subsidy.Entity
             var cogenerationParameter = CalculateCogenerationParameter(
                 cogenerationParameterService, averageElectricEnergyProductionPrice, naturalGasSellingPrice);
 
-            SetInactive(naturalGasSellingPrice.Active.Since);
+            SetInactive(activeSince);
 
             return new CogenerationTariff
             (
@@ -59,6 +61,7 @@ namespace Acme.Seps.Domain.Subsidy.Entity
                 UpperProductionLimit,
                 Math.Round(cogenerationParameter * LowerRate, 4, MidpointRounding.AwayFromZero),
                 Math.Round(cogenerationParameter * HigherRate, 4, MidpointRounding.AwayFromZero),
+                activeSince,
                 ProjectTypeId,
                 identityFactory
             );

@@ -22,7 +22,7 @@ namespace Acme.Seps.UseCases.Subsidy.Test.Unit.CommandHandler
                 new EconometricIndexFactory<ConsumerPriceIndex>(DateTime.Now.AddYears(-4));
             var activeCpi = cpiFactory.Create();
 
-            ITariffFactory<RenewableEnergySourceTariff> resFactory = new ResTariffFactory(activeCpi);
+            IResTariffFactory<RenewableEnergySourceTariff> resFactory = new ResTariffFactory(activeCpi);
             var activeRenewableEnergySourceTariff = resFactory.Create();
 
             var repository = Substitute.For<IRepository>();

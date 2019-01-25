@@ -56,7 +56,7 @@ namespace Acme.Seps.UseCases.Subsidy.Command
             return newNgsp;
         }
 
-        private void CreateNewCogenerationTariffs(NaturalGasSellingPrice newNgsp)
+        private void CreateNewCogenerationTariffs(NaturalGasSellingPrice ngsp)
         {
             var activeAeepp = GetActiveAverageElectricEnergyProductionPrice();
 
@@ -71,7 +71,8 @@ namespace Acme.Seps.UseCases.Subsidy.Command
             });
 
             CogenerationTariff CreateNewCogenerationTariff(CogenerationTariff cogenerationTariff) =>
-                cogenerationTariff.CreateNewWith(_cogenerationParameterService, activeAeepp, newNgsp, _identityFactory);
+                cogenerationTariff.CreateNewWith(
+                    _cogenerationParameterService, activeAeepp, ngsp, ngsp.Active.Since, _identityFactory);
         }
 
         private AverageElectricEnergyProductionPrice GetActiveAverageElectricEnergyProductionPrice() =>

@@ -33,9 +33,9 @@ namespace Acme.Seps.UseCases.Subsidy.Test.Unit.CommandHandler
                 new EconometricIndexFactory<AverageElectricEnergyProductionPrice>(_period.ToFirstDayOfTheYear());
             var activeAeepp = aeeppFactory.Create();
 
-            ITariffFactory<CogenerationTariff> cogenerationFactory =
+            ICogenerationTariffFactory<CogenerationTariff> cogenerationFactory =
                 new CogenerationTariffFactory(activeAeepp, activeNgsp);
-            var activeCogenerationTariff = cogenerationFactory.Create();
+            var activeCogenerationTariff = cogenerationFactory.Create(_period.ToFirstDayOfTheYear());
 
             _repository = Substitute.For<IRepository>();
             _repository

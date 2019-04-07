@@ -9,7 +9,6 @@ using System.Collections.Generic;
 
 namespace Acme.Seps.Presentation.Web.Controllers
 {
-    [Route("api/[controller]")]
     public sealed class ParameterController : Controller
     {
         private readonly ISepsCommandHandler<CalculateNewAverageElectricEnergyProductionPriceCommand> _calculateNewAeepp;
@@ -45,7 +44,6 @@ namespace Acme.Seps.Presentation.Web.Controllers
         }
 
         [HttpGet]
-        [Route("GetAverageElectricEnergyProductionPrices")]
         public IActionResult GetAverageElectricEnergyProductionPrices() =>
             Ok(_econometricIndexesQuery.Handle(new GetEconometricIndexQuery
             {
@@ -53,7 +51,6 @@ namespace Acme.Seps.Presentation.Web.Controllers
             }));
 
         [HttpGet]
-        [Route("GetConsumerPriceIndexes")]
         public IActionResult GetConsumerPriceIndexes() =>
             Ok(_econometricIndexesQuery.Handle(new GetEconometricIndexQuery
             {
@@ -61,7 +58,6 @@ namespace Acme.Seps.Presentation.Web.Controllers
             }));
 
         [HttpGet]
-        [Route("GetNaturalGasSellingPrices")]
         public IActionResult GetNaturalGasSellingPrices() =>
             Ok(_econometricIndexesQuery.Handle(new GetEconometricIndexQuery
             {
@@ -69,25 +65,14 @@ namespace Acme.Seps.Presentation.Web.Controllers
             }));
 
         [HttpGet]
-        [Route("GetRenewableEnergySourceTariffs")]
         public IActionResult GetRenewableEnergySourceTariffs() =>
             Ok(_renewableEnergySourceTariffsQuery.Handle(new GetRenewableEnergySourceTariffQuery()));
 
         [HttpGet]
-        [Route("GetCogenerationTariffs")]
         public IActionResult GetCogenerationTariffs() =>
             Ok(_cogenerationTariffsQuery.Handle(new GetCogenerationTariffQuery()));
 
-        // GET api/<controller>/5
-        // questionable do we need this
-        [HttpGet("{id}")]
-        public string Get(int id)
-        {
-            return "value";
-        }
-
         [HttpPost]
-        [Route("CalculateAverageElectricEnergyProductionPrice")]
         public IActionResult CalculateAverageElectricEnergyProductionPrice(
             [FromBody]CalculateNewAverageElectricEnergyProductionPriceCommand calculateNewAeepp)
         {
@@ -97,7 +82,7 @@ namespace Acme.Seps.Presentation.Web.Controllers
             return Ok(); // ToDo: not in line with REST pattern, we could return latest value
         }
 
-        [HttpPost("CalculateCpi")]
+        [HttpPost]
         public IActionResult CalculateCpi([FromBody]CalculateNewConsumerPriceIndexCommand calculateNewCpi)
         {
             _calculateNewCpi.UseCaseExecutionProcessing += CalculateCpi_UseCaseExecutionProcessing;
@@ -106,7 +91,6 @@ namespace Acme.Seps.Presentation.Web.Controllers
         }
 
         [HttpPost]
-        [Route("CalculateNaturalGas")]
         public IActionResult CalculateNaturalGas([FromBody]CalculateNewNaturalGasSellingPriceCommand calculateNewNgsp)
         {
             _calculateNewNgsp.UseCaseExecutionProcessing += CalculateNaturalGas_UseCaseExecutionProcessing;
@@ -114,8 +98,7 @@ namespace Acme.Seps.Presentation.Web.Controllers
             return Ok(); // ToDo: not in line with REST pattern, we could return latest value
         }
 
-        [HttpPut("{id}")] // not good, needs correction
-        [Route("CorrectActiveAverageElectricEnergyProductionPrice")]
+        [HttpPut] // not good, needs correction
         public IActionResult CorrectActiveAverageElectricEnergyProductionPrice(
             int id, [FromBody]CorrectActiveAverageElectricEnergyProductionPriceCommand correctActiveAeepp)
         {
@@ -126,7 +109,6 @@ namespace Acme.Seps.Presentation.Web.Controllers
         }
 
         [HttpPut]
-        [Route("CorrectActiveCpi")]
         public IActionResult CorrectActiveCpi([FromBody]CorrectActiveConsumerPriceIndexCommand correctActiveCpi)
         {
             _correctActiveCpi.UseCaseExecutionProcessing += CorrectActiveCpi_UseCaseExecutionProcessing;
@@ -134,8 +116,7 @@ namespace Acme.Seps.Presentation.Web.Controllers
             return Ok(); // ToDo: not in line with REST pattern, we could return latest value
         }
 
-        [HttpPut("{id}")] // not good, needs correction
-        [Route("CorrectActiveNaturalGas")]
+        [HttpPut] // not good, needs correction
         public IActionResult CorrectActiveNaturalGas(int id, [FromBody]CorrectActiveNaturalGasSellingPriceCommand correctActiveNgsp)
         {
             _correctActiveNgsp.UseCaseExecutionProcessing += CorrectActiveNaturalGas_UseCaseExecutionProcessing;

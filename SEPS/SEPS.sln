@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.27130.2036
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.28803.156
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "BoundedContext", "BoundedContext", "{DD526306-A805-4E30-B15D-FBF6FB5D2320}"
 EndProject
@@ -47,7 +47,12 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Data", "Data", "{C94B5AED-1
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Plant", "Plant", "{0B469E57-F3E1-456C-97A6-F5AC0FB9BF9E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Acme.Seps.Text.Test.Unit", "Acme.Seps.Text.Test.Unit\Acme.Seps.Text.Test.Unit.csproj", "{5A88A061-B80E-4397-B01B-2C6C51C5B7F2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Acme.Seps.Text.Test.Unit", "Acme.Seps.Text.Test.Unit\Acme.Seps.Text.Test.Unit.csproj", "{5A88A061-B80E-4397-B01B-2C6C51C5B7F2}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{3A6C85DC-0606-4BE1-8521-9BFDAE70EEA1}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

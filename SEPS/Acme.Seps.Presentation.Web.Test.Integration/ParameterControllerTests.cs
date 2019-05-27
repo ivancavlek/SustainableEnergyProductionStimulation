@@ -288,7 +288,7 @@ namespace Acme.Seps.Presentation.Web.Test.Integration
         private async Task<List<EconometricIndexQueryResult>> GetAllAverageElectricEnergyProductionPrices()
         {
             var aeeppQueryResponse = await _client
-                .GetAsync(_baseUri + "GetAverageElectricEnergyProductionPrices").ConfigureAwait(false);
+                .GetAsync(_baseUri + "averageElectricEnergyProductionPrice/" + "GetAverageElectricEnergyProductionPrices").ConfigureAwait(false);
             var aeeppJsonResponse = await aeeppQueryResponse.Content.ReadAsStringAsync().ConfigureAwait(false);
             return JsonConvert.DeserializeObject<List<EconometricIndexQueryResult>>(aeeppJsonResponse);
         }

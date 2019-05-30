@@ -122,7 +122,7 @@ namespace Acme.Seps.UseCases.Subsidy.Command
             ));
     }
 
-    public sealed class CorrectActiveNaturalGasSellingPriceCommand
+    public sealed class CorrectActiveNaturalGasSellingPriceCommand : ISepsCommand
     {
         public decimal Amount { get; set; }
         public string Remark { get; set; }

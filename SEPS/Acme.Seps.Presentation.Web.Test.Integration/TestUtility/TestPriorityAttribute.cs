@@ -2,12 +2,12 @@
 
 namespace Acme.Seps.Presentation.Web.Test.Integration.TestUtility
 {
+    [AttributeUsage(AttributeTargets.All, AllowMultiple = false)]
     public class TestPriorityAttribute : Attribute
     {
-        public int Priority { get; set; }
-        public TestPriorityAttribute(int Priority)
-        {
-            this.Priority = Priority;
-        }
+        public int Priority { get; }
+
+        public TestPriorityAttribute(int priority) =>
+            Priority = priority;
     }
 }

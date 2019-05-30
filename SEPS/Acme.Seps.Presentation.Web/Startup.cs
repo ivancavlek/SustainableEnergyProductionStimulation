@@ -47,11 +47,9 @@ namespace Acme.Seps.Presentation.Web
             InitializeContainer(app, env);
 
             app.UseMvc(routes =>
-            {
                 routes.MapRoute(
                     name: "default",
-                    template: "api/{area}/{controller}/{action}/{id:guid?}");
-            });
+                    template: "api/{area}/{controller}/{action}/{id:guid?}"));
 
         }
 

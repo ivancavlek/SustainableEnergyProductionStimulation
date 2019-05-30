@@ -86,7 +86,7 @@ namespace Acme.Seps.UseCases.Subsidy.Command
             ));
     }
 
-    public sealed class CorrectActiveConsumerPriceIndexCommand
+    public sealed class CorrectActiveConsumerPriceIndexCommand : ISepsCommand
     {
         public decimal Amount { get; set; }
         public string Remark { get; set; }

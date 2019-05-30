@@ -125,7 +125,7 @@ namespace Acme.Seps.UseCases.Subsidy.Command
             ));
     }
 
-    public sealed class CorrectActiveAverageElectricEnergyProductionPriceCommand
+    public sealed class CorrectActiveAverageElectricEnergyProductionPriceCommand : ISepsCommand
     {
         public decimal Amount { get; set; }
         public string Remark { get; set; }

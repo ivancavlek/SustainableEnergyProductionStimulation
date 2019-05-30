@@ -105,7 +105,7 @@ namespace Acme.Seps.UseCases.Subsidy.Command
             ));
     }
 
-    public sealed class CalculateNewAverageElectricEnergyProductionPriceCommand
+    public sealed class CalculateNewAverageElectricEnergyProductionPriceCommand : ISepsCommand
     {
         public decimal Amount { get; set; }
         public string Remark { get; set; }

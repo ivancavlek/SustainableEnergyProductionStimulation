@@ -1,6 +1,7 @@
 ﻿using Acme.Domain.Base.Entity;
 using Acme.Domain.Base.Factory;
 using Acme.Repository.Base;
+using Acme.Seps.Domain.Base.CommandHandler;
 using Acme.Seps.Repository.Subsidy;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
@@ -33,7 +34,7 @@ namespace Acme.Seps.Presentation.Web.DependencyInjection
             var currentAssemblyPartedFullName = Assembly.GetExecutingAssembly().GetName().Name.Split(_onDot);
             _projectName = currentAssemblyPartedFullName[0];
             _executingProjectName = currentAssemblyPartedFullName.Last();
-            _connectionString = @"Server=DL006132\IVAN;Database=IntegrationTesting;Trusted_Connection=True;";
+            _connectionString = @"Server=(localdb)\MSSQLLocalDB;Database=IntegrationTesting;Trusted_Connection=True;";
 
             Options.DefaultLifestyle = new AsyncScopedLifestyle();
             Options.DefaultScopedLifestyle = new AsyncScopedLifestyle();
@@ -47,10 +48,8 @@ namespace Acme.Seps.Presentation.Web.DependencyInjection
             RegisterAbstractionsWithImplementation();
         }
 
-        public void RegisterForProduction()
-        {
+        public void RegisterForProduction() =>
             RegisterAbstractionsWithImplementation();
-        }
 
         private void RegisterAbstractionsWithImplementation()
         {
@@ -59,6 +58,7 @@ namespace Acme.Seps.Presentation.Web.DependencyInjection
             RegisterSepsAbstractionsWithImplementationsWith(typesFromAssemblies);
             RegisterFluentValidationAbstractionsWithImplementationsWith(typesFromAssemblies);
             Register(typeof(IDbConnection), () => new SqlConnection(_connectionString));
+            Register(typeof(ICqrsMediator), () => new CqrsMediator(this));
         }
 
         private IEnumerable<Type> GetTypesFromAssemblies()
@@ -92,7 +92,7 @@ namespace Acme.Seps.Presentation.Web.DependencyInjection
             bool TypeIsForInjection(Type type) =>
                 type.GetInterfaces().Any(NamespaceIsFromProject) &&
                 !type.IsAbstract &&
-                !type.GetInterfaces().Any(ite => ite == typeof(IAggregateRoot));
+                !type.GetInterfaces().Any(ite => ite == typeof(IAggregateRoot) || ite == typeof(ISepsCommand));
 
             (List<Type> Abstractions, Type Implementation) InterfaceAbstractionsWithImplementation(Type type) =>
                 (type.GetInterfaces().Where(NamespaceIsFromProject).ToList(), type);

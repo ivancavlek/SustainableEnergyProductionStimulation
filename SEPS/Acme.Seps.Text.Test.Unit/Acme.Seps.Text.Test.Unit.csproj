@@ -1,15 +1,8 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net7.0</TargetFramework>
-
-    <IsPackable>false</IsPackable>
   </PropertyGroup>
-
-  <ItemGroup>
-    <PackageReference Include="Fixie" Version="2.0.3" />
-    <PackageReference Include="FluentAssertions" Version="5.5.3" />
-  </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Acme.Seps.Text\Acme.Seps.Text.csproj" />

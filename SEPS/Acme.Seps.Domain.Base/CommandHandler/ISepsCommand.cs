@@ -1,6 +1,5 @@
-﻿namespace Acme.Seps.Domain.Base.CommandHandler
+﻿namespace Acme.Seps.Domain.Base.CommandHandler;
+
+public interface ISepsCommand
 {
-    public interface ISepsCommand
-    {
-    }
 }

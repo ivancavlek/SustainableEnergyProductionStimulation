@@ -1,8 +1,7 @@
-﻿namespace Acme.Seps.Domain.Subsidy.Entity
+﻿namespace Acme.Seps.Domain.Subsidy.Entity;
+
+public enum ProjectTypeGroup
 {
-    public enum ProjectTypeGroup
-    {
-        Cogeneration = 1,
-        RenewableEnergy
-    }
+    Cogeneration = 1,
+    RenewableEnergy
 }

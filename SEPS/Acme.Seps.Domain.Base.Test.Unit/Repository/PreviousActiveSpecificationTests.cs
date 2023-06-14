@@ -2,81 +2,67 @@
 using Acme.Seps.Domain.Base.Entity;
 using Acme.Seps.Domain.Base.Utility;
 using Acme.Seps.Text;
-using FluentAssertions;
-using NSubstitute;
 using System;
 
-namespace Acme.Seps.Domain.Base.Test.Unit.Repository
+namespace Acme.Seps.Domain.Base.Test.Unit.Repository;
+
+public class PreviousActiveSpecificationTests
 {
-    public class PreviousActiveSpecificationTests
+    private readonly DummySepsBaseAggregate _dummy;
+    private readonly IIdentityFactory<Guid> _identityFactory;
+
+    public PreviousActiveSpecificationTests()
     {
-        private readonly DummySepsBaseAggregate _dummy;
-        private readonly IIdentityFactory<Guid> _identityFactory;
+        _identityFactory = Substitute.For<IIdentityFactory<Guid>>();
+        _identityFactory.CreateIdentity().Returns(Guid.NewGuid());
+        var activeSince = SepsVersion.InitialDate();
 
-        public PreviousActiveSpecificationTests()
-        {
-            _identityFactory = Substitute.For<IIdentityFactory<Guid>>();
-            _identityFactory.CreateIdentity().Returns(Guid.NewGuid());
-            var activeSince = SepsVersion.InitialDate();
+        _dummy = new DummySepsBaseAggregate(activeSince, _identityFactory);
+    }
 
-            _dummy = new DummySepsBaseAggregate(activeSince, _identityFactory);
-        }
+    public void AggregateRootMustBeSet()
+    {
+        Action action = () => new PreviousActiveSpecification<DummySepsBaseAggregate>(null);
 
-        public void AggregateRootMustBeSet()
-        {
-            Action action = () => new PreviousActiveSpecification<DummySepsBaseAggregate>(null);
+        action
+            .Should()
+            .ThrowExactly<ArgumentNullException>();
+    }
 
-            action
-                .Should()
-                .ThrowExactly<ArgumentNullException>();
-        }
+    public void AggregateRootMustBeActive()
+    {
+        _dummy.SetInactive(SepsVersion.InitialDate().AddYears(1));
 
-        public void AggregateRootMustBeActive()
-        {
-            _dummy.SetInactive(SepsVersion.InitialDate().AddYears(1));
+        Action action = () => new PreviousActiveSpecification<DummySepsBaseAggregate>(_dummy);
 
-            Action action = () => new PreviousActiveSpecification<DummySepsBaseAggregate>(_dummy);
+        action
+            .Should()
+            .Throw<Exception>()
+            .WithMessage(SepsMessage.InactiveException("DummySepsBaseAggregate"));
+    }
 
-            action
-                .Should()
-                .Throw<Exception>()
-                .WithMessage(SepsMessage.InactiveException("DummySepsBaseAggregate"));
-        }
+    public void FiltersActiveEntitites()
+    {
+        var dummyDate = SepsVersion.InitialDate().AddYears(1);
 
-        public void FiltersActiveEntitites()
-        {
-            var dummyDate = SepsVersion.InitialDate().AddYears(1);
+        var previousActiveDummy = new DummySepsBaseAggregate(SepsVersion.InitialDate(), _identityFactory);
+        previousActiveDummy.SetInactive(dummyDate);
 
-            var previousActiveDummy = new DummySepsBaseAggregate(SepsVersion.InitialDate(), _identityFactory);
-            previousActiveDummy.SetInactive(dummyDate);
+        var activeDummy = new DummySepsBaseAggregate(dummyDate, _identityFactory);
 
-            var activeDummy = new DummySepsBaseAggregate(dummyDate, _identityFactory);
+        new PreviousActiveSpecification<DummySepsBaseAggregate>(activeDummy)
+            .IsSatisfiedBy(previousActiveDummy).Should().BeTrue();
+    }
 
-            new PreviousActiveSpecification<DummySepsBaseAggregate>(activeDummy)
-                .IsSatisfiedBy(previousActiveDummy).Should().BeTrue();
-        }
+    private class DummySepsBaseAggregate : SepsAggregateRoot
+    {
+        public DummySepsBaseAggregate(DateTimeOffset since, IIdentityFactory<Guid> identityFactory)
+            : base(since, identityFactory) { }
 
-        private class DummySepsBaseAggregate : SepsAggregateRoot
-        {
-            public DummySepsBaseAggregate(DateTimeOffset since, IIdentityFactory<Guid> identityFactory)
-                : base(since, identityFactory)
-            {
-            }
+        internal new void SetInactive(DateTimeOffset inactiveFrom) => base.SetInactive(inactiveFrom);
 
-            internal new void SetInactive(DateTimeOffset inactiveFrom)
-            {
-                base.SetInactive(inactiveFrom);
-            }
+        internal new void CorrectActiveSince(DateTimeOffset activeSince) => base.CorrectActiveSince(activeSince);
 
-            internal new void CorrectActiveSince(DateTimeOffset activeSince)
-            {
-                base.CorrectActiveSince(activeSince);
-            }
-
-            internal new void CorrectActiveUntil(DateTimeOffset activeUntil)
-            {
-                base.CorrectActiveUntil(activeUntil);
-            }
-        }
+        internal new void CorrectActiveUntil(DateTimeOffset activeUntil) => base.CorrectActiveUntil(activeUntil);
     }
 }

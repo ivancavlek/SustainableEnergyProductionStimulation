@@ -9,51 +9,50 @@ using NSubstitute;
 using System;
 using System.Collections.Generic;
 
-namespace Acme.Seps.UseCases.Subsidy.Test.Unit.CommandHandler
+namespace Acme.Seps.UseCases.Subsidy.Test.Unit.CommandHandler;
+
+public class CalculateCpiCommandHandlerTests
 {
-    public class CalculateCpiCommandHandlerTests
+    private readonly ISepsCommandHandler<CalculateNewConsumerPriceIndexCommand> _calculateCpi;
+    private readonly IUnitOfWork _unitOfWork;
+
+    public CalculateCpiCommandHandlerTests()
     {
-        private readonly ISepsCommandHandler<CalculateNewConsumerPriceIndexCommand> _calculateCpi;
-        private readonly IUnitOfWork _unitOfWork;
+        IEconometricIndexFactory<ConsumerPriceIndex> cpiFactory =
+            new EconometricIndexFactory<ConsumerPriceIndex>(DateTime.Now.AddYears(-4));
+        var activeCpi = cpiFactory.Create();
 
-        public CalculateCpiCommandHandlerTests()
+        IResTariffFactory<RenewableEnergySourceTariff> resFactory = new ResTariffFactory(activeCpi);
+        var activeRenewableEnergySourceTariff = resFactory.Create();
+
+        var repository = Substitute.For<IRepository>();
+        repository
+            .GetSingle(Arg.Any<ActiveSpecification<ConsumerPriceIndex>>())
+            .Returns(activeCpi);
+        repository
+            .GetAll(Arg.Any<ActiveSpecification<RenewableEnergySourceTariff>>())
+            .Returns(new List<RenewableEnergySourceTariff> { activeRenewableEnergySourceTariff });
+
+        _unitOfWork = Substitute.For<IUnitOfWork>();
+
+        _calculateCpi = new CalculateCpiCommandHandler(
+            repository, _unitOfWork, Substitute.For<IIdentityFactory<Guid>>());
+    }
+
+    public void ExecutesProperly()
+    {
+        var calculateCommand = new CalculateNewConsumerPriceIndexCommand
         {
-            IEconometricIndexFactory<ConsumerPriceIndex> cpiFactory =
-                new EconometricIndexFactory<ConsumerPriceIndex>(DateTime.Now.AddYears(-4));
-            var activeCpi = cpiFactory.Create();
+            Amount = 100M,
+            Remark = nameof(CalculateNewConsumerPriceIndexCommand)
+        };
 
-            IResTariffFactory<RenewableEnergySourceTariff> resFactory = new ResTariffFactory(activeCpi);
-            var activeRenewableEnergySourceTariff = resFactory.Create();
+        _calculateCpi.Handle(calculateCommand);
 
-            var repository = Substitute.For<IRepository>();
-            repository
-                .GetSingle(Arg.Any<ActiveSpecification<ConsumerPriceIndex>>())
-                .Returns(activeCpi);
-            repository
-                .GetAll(Arg.Any<ActiveSpecification<RenewableEnergySourceTariff>>())
-                .Returns(new List<RenewableEnergySourceTariff> { activeRenewableEnergySourceTariff });
-
-            _unitOfWork = Substitute.For<IUnitOfWork>();
-
-            _calculateCpi = new CalculateCpiCommandHandler(
-                repository, _unitOfWork, Substitute.For<IIdentityFactory<Guid>>());
-        }
-
-        public void ExecutesProperly()
-        {
-            var calculateCommand = new CalculateNewConsumerPriceIndexCommand
-            {
-                Amount = 100M,
-                Remark = nameof(CalculateNewConsumerPriceIndexCommand)
-            };
-
-            _calculateCpi.Handle(calculateCommand);
-
-            _unitOfWork.Received().Update(Arg.Any<ConsumerPriceIndex>());
-            _unitOfWork.Received().Insert(Arg.Any<ConsumerPriceIndex>());
-            _unitOfWork.Received().Update(Arg.Any<RenewableEnergySourceTariff>());
-            _unitOfWork.Received().Insert(Arg.Any<RenewableEnergySourceTariff>());
-            _unitOfWork.Received().Commit();
-        }
+        _unitOfWork.Received().Update(Arg.Any<ConsumerPriceIndex>());
+        _unitOfWork.Received().Insert(Arg.Any<ConsumerPriceIndex>());
+        _unitOfWork.Received().Update(Arg.Any<RenewableEnergySourceTariff>());
+        _unitOfWork.Received().Insert(Arg.Any<RenewableEnergySourceTariff>());
+        _unitOfWork.Received().Commit();
     }
 }

@@ -2,42 +2,37 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace Acme.Seps.Repository.Subsidy.Configuration
+namespace Acme.Seps.Repository.Subsidy.Configuration;
+
+internal sealed class EconometricIndexConfiguration
+    : BaseParameterConfiguration<EconometricIndex>, IEntityTypeConfiguration<EconometricIndex>
 {
-    internal sealed class EconometricIndexConfiguration
-        : BaseParameterConfiguration<EconometricIndex>, IEntityTypeConfiguration<EconometricIndex>
+    private readonly string _discriminator;
+
+    internal EconometricIndexConfiguration() =>
+        _discriminator = "EconometricIndexType";
+
+    public override void Configure(EntityTypeBuilder<EconometricIndex> builder)
     {
-        private readonly string _discriminator;
+        ConfigureProperties(builder);
+        ConfigureTables(builder);
 
-        internal EconometricIndexConfiguration()
-        {
-            _discriminator = "EconometricIndexType";
-        }
+        base.Configure(builder);
+    }
 
-        public override void Configure(EntityTypeBuilder<EconometricIndex> builder)
-        {
-            ConfigureProperties(builder);
-            ConfigureTables(builder);
+    private void ConfigureTables(EntityTypeBuilder<EconometricIndex> builder) =>
+        builder
+            .ToTable("EconometricIndexes")
+            .HasDiscriminator<string>(_discriminator)
+            .HasValue<ConsumerPriceIndex>(nameof(ConsumerPriceIndex))
+            .HasValue<NaturalGasSellingPrice>(nameof(NaturalGasSellingPrice))
+            .HasValue<AverageElectricEnergyProductionPrice>(
+                nameof(AverageElectricEnergyProductionPrice));
 
-            base.Configure(builder);
-        }
-
-        private void ConfigureTables(EntityTypeBuilder<EconometricIndex> builder)
-        {
-            builder
-                .ToTable("EconometricIndexes")
-                .HasDiscriminator<string>(_discriminator)
-                .HasValue<ConsumerPriceIndex>(nameof(ConsumerPriceIndex))
-                .HasValue<NaturalGasSellingPrice>(nameof(NaturalGasSellingPrice))
-                .HasValue<AverageElectricEnergyProductionPrice>(
-                    nameof(AverageElectricEnergyProductionPrice));
-        }
-
-        private void ConfigureProperties(EntityTypeBuilder<EconometricIndex> builder)
-        {
-            builder.Property<string>(_discriminator).HasMaxLength(50);
-            builder.Property(ppy => ppy.Remark).HasMaxLength(250).IsRequired();
-            builder.Property(ppy => ppy.Amount).HasColumnType("decimal(18, 4)");
-        }
+    private void ConfigureProperties(EntityTypeBuilder<EconometricIndex> builder)
+    {
+        builder.Property<string>(_discriminator).HasMaxLength(50);
+        builder.Property(ppy => ppy.Remark).HasMaxLength(250).IsRequired();
+        builder.Property(ppy => ppy.Amount).HasColumnType("decimal(18, 4)");
     }
 }

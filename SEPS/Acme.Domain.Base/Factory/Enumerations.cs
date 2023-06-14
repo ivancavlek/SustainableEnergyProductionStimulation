@@ -1,9 +1,8 @@
-﻿namespace Acme.Domain.Base.Factory
+﻿namespace Acme.Domain.Base.Factory;
+
+public enum SequentialGuidType
 {
-    public enum SequentialGuidType
-    {
-        SequentialAsString,
-        SequentialAsBinary,
-        SequentialAtEnd
-    }
+    SequentialAsString,
+    SequentialAsBinary,
+    SequentialAtEnd
 }

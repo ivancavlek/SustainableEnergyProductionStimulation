@@ -1,46 +1,42 @@
 ﻿using Acme.Seps.Domain.Base.Utility;
 using Acme.Seps.Domain.Subsidy.Entity;
+using Light.GuardClauses;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using System;
 
-namespace Acme.Seps.Repository.Subsidy.Configuration
+namespace Acme.Seps.Repository.Subsidy.Configuration;
+
+internal sealed class AverageElectricEnergyProductionPriceConfiguration
+    : BaseParameterConfiguration<AverageElectricEnergyProductionPrice>,
+    IEntityTypeConfiguration<AverageElectricEnergyProductionPrice>
 {
-    internal sealed class AverageElectricEnergyProductionPriceConfiguration
-        : BaseParameterConfiguration<AverageElectricEnergyProductionPrice>,
-        IEntityTypeConfiguration<AverageElectricEnergyProductionPrice>
+    private readonly Guid _id;
+
+    internal AverageElectricEnergyProductionPriceConfiguration(Guid id) =>
+        _id = id.MustNotBeDefault(nameof(id));
+
+    public override void Configure(EntityTypeBuilder<AverageElectricEnergyProductionPrice> builder)
     {
-        private readonly Guid _id;
+        base.Configure(builder);
+        SeedData(builder);
+    }
 
-        internal AverageElectricEnergyProductionPriceConfiguration(Guid id)
-        {
-            _id = id;
-        }
-
-        public override void Configure(EntityTypeBuilder<AverageElectricEnergyProductionPrice> builder)
-        {
-            base.Configure(builder);
-            SeedData(builder);
-        }
-
-        private void SeedData(EntityTypeBuilder<AverageElectricEnergyProductionPrice> builder)
-        {
-            builder.HasData(
-                new
-                {
-                    Id = _id,
-                    Amount = 0.2625M,
-                    Remark = "Initial value",
-                    EconometricIndexType = nameof(AverageElectricEnergyProductionPrice)
-                });
-            builder.OwnsOne(vte => vte.Active, vte =>
+    private void SeedData(EntityTypeBuilder<AverageElectricEnergyProductionPrice> builder)
+    {
+        builder.HasData(
+            new
             {
-                vte.HasData(new
-                {
-                    EconometricIndexId = _id,
-                    Since = SepsVersion.InitialDate(),
-                });
+                Id = _id,
+                Amount = 0.2625M,
+                Remark = "Initial value",
+                EconometricIndexType = nameof(AverageElectricEnergyProductionPrice)
             });
-        }
+        builder.OwnsOne(vte => vte.Active, vte =>
+            vte.HasData(new
+            {
+                EconometricIndexId = _id,
+                Since = SepsVersion.InitialDate(),
+            }));
     }
 }

@@ -1,6 +1,5 @@
-﻿namespace Acme.Domain.Base.Query
+﻿namespace Acme.Domain.Base.Query;
+
+public interface IQuery<TQueryResult>
 {
-    public interface IQuery<TQueryResult>
-    {
-    }
 }

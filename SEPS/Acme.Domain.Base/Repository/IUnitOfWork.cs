@@ -1,15 +1,14 @@
 ﻿using Acme.Domain.Base.Entity;
 
-namespace Acme.Domain.Base.Repository
+namespace Acme.Domain.Base.Repository;
+
+public interface IUnitOfWork
 {
-    public interface IUnitOfWork
-    {
-        void Commit();
+    void Commit();
 
-        void Delete<TAggregateRoot>(TAggregateRoot aggregateRoot) where TAggregateRoot : BaseEntity, IAggregateRoot;
+    void Delete<TAggregateRoot>(TAggregateRoot aggregateRoot) where TAggregateRoot : BaseEntity, IAggregateRoot;
 
-        void Insert<TAggregateRoot>(TAggregateRoot aggregateRoot) where TAggregateRoot : BaseEntity, IAggregateRoot;
+    void Insert<TAggregateRoot>(TAggregateRoot aggregateRoot) where TAggregateRoot : BaseEntity, IAggregateRoot;
 
-        void Update<TAggregateRoot>(TAggregateRoot aggregateRoot) where TAggregateRoot : BaseEntity, IAggregateRoot;
-    }
+    void Update<TAggregateRoot>(TAggregateRoot aggregateRoot) where TAggregateRoot : BaseEntity, IAggregateRoot;
 }

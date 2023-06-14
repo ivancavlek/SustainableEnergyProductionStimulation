@@ -15,127 +15,126 @@ using System.Data.SqlClient;
 using System.Linq;
 using System.Reflection;
 
-namespace Acme.Seps.Presentation.Web.DependencyInjection
+namespace Acme.Seps.Presentation.Web.DependencyInjection;
+
+public sealed class SepsSimpleInjectorContainer : Container
 {
-    public sealed class SepsSimpleInjectorContainer : Container
+    private readonly DbContextOptionsBuilder<BaseContext> _options;
+    private readonly char[] _onDot;
+    private readonly string _projectName;
+    private readonly string _executingProjectName;
+    private readonly string _connectionString;
+
+    public static SepsSimpleInjectorContainer Container { get; } = new SepsSimpleInjectorContainer();
+
+    private SepsSimpleInjectorContainer()
     {
-        private readonly DbContextOptionsBuilder<BaseContext> _options;
-        private readonly char[] _onDot;
-        private readonly string _projectName;
-        private readonly string _executingProjectName;
-        private readonly string _connectionString;
+        _options = new DbContextOptionsBuilder<BaseContext>();
+        _onDot = ".".ToCharArray();
+        var currentAssemblyPartedFullName = Assembly.GetExecutingAssembly().GetName().Name.Split(_onDot);
+        _projectName = currentAssemblyPartedFullName[0];
+        _executingProjectName = currentAssemblyPartedFullName.Last();
+        _connectionString = @"Server=(localdb)\MSSQLLocalDB;Database=IntegrationTesting;Trusted_Connection=True;";
 
-        public static SepsSimpleInjectorContainer Container { get; } = new SepsSimpleInjectorContainer();
+        Options.DefaultLifestyle = new AsyncScopedLifestyle();
+        Options.DefaultScopedLifestyle = new AsyncScopedLifestyle();
+    }
 
-        private SepsSimpleInjectorContainer()
-        {
-            _options = new DbContextOptionsBuilder<BaseContext>();
-            _onDot = ".".ToCharArray();
-            var currentAssemblyPartedFullName = Assembly.GetExecutingAssembly().GetName().Name.Split(_onDot);
-            _projectName = currentAssemblyPartedFullName[0];
-            _executingProjectName = currentAssemblyPartedFullName.Last();
-            _connectionString = @"Server=(localdb)\MSSQLLocalDB;Database=IntegrationTesting;Trusted_Connection=True;";
+    public void RegisterForTest()
+    {
+        _options.UseSqlServer(_connectionString);
+        var bla = new ParameterContext(_options.Options, new GuidIdentityFactory(SequentialGuidType.SequentialAtEnd));
+        bla.Database.EnsureCreated();
+        RegisterAbstractionsWithImplementation();
+    }
 
-            Options.DefaultLifestyle = new AsyncScopedLifestyle();
-            Options.DefaultScopedLifestyle = new AsyncScopedLifestyle();
-        }
+    public void RegisterForProduction() =>
+        RegisterAbstractionsWithImplementation();
 
-        public void RegisterForTest()
-        {
-            _options.UseSqlServer(_connectionString);
-            var bla = new ParameterContext(_options.Options, new GuidIdentityFactory(SequentialGuidType.SequentialAtEnd));
-            bla.Database.EnsureCreated();
-            RegisterAbstractionsWithImplementation();
-        }
+    private void RegisterAbstractionsWithImplementation()
+    {
+        var typesFromAssemblies = GetTypesFromAssemblies();
 
-        public void RegisterForProduction() =>
-            RegisterAbstractionsWithImplementation();
+        RegisterSepsAbstractionsWithImplementationsWith(typesFromAssemblies);
+        RegisterFluentValidationAbstractionsWithImplementationsWith(typesFromAssemblies);
+        Register(typeof(IDbConnection), () => new SqlConnection(_connectionString));
+        Register(typeof(ICqrsMediator), () => new CqrsMediator(this));
+    }
 
-        private void RegisterAbstractionsWithImplementation()
-        {
-            var typesFromAssemblies = GetTypesFromAssemblies();
+    private IEnumerable<Type> GetTypesFromAssemblies()
+    {
+        return DependencyContext.Default.RuntimeLibraries
+            .Where(RuntimeLibraryIsFromProject)
+            .Select(AssemblyFromRuntimeLibrary)
+            .SelectMany(TypesFromAssembly);
 
-            RegisterSepsAbstractionsWithImplementationsWith(typesFromAssemblies);
-            RegisterFluentValidationAbstractionsWithImplementationsWith(typesFromAssemblies);
-            Register(typeof(IDbConnection), () => new SqlConnection(_connectionString));
-            Register(typeof(ICqrsMediator), () => new CqrsMediator(this));
-        }
+        bool RuntimeLibraryIsFromProject(RuntimeLibrary runtimeLibrary) =>
+            runtimeLibrary.Name.Contains(_projectName) &&
+            !runtimeLibrary.Name.Contains(_executingProjectName);
 
-        private IEnumerable<Type> GetTypesFromAssemblies()
-        {
-            return DependencyContext.Default.RuntimeLibraries
-                .Where(RuntimeLibraryIsFromProject)
-                .Select(AssemblyFromRuntimeLibrary)
-                .SelectMany(TypesFromAssembly);
+        Assembly AssemblyFromRuntimeLibrary(RuntimeLibrary runtimeLibrary) =>
+            Assembly.Load(new AssemblyName(runtimeLibrary.Name));
 
-            bool RuntimeLibraryIsFromProject(RuntimeLibrary runtimeLibrary) =>
-                runtimeLibrary.Name.Contains(_projectName) &&
-                !runtimeLibrary.Name.Contains(_executingProjectName);
+        IEnumerable<Type> TypesFromAssembly(Assembly assembly) =>
+            assembly.GetExportedTypes();
+    }
 
-            Assembly AssemblyFromRuntimeLibrary(RuntimeLibrary runtimeLibrary) =>
-                Assembly.Load(new AssemblyName(runtimeLibrary.Name));
+    private void RegisterSepsAbstractionsWithImplementationsWith(IEnumerable<Type> types)
+    {
+        var identityFactory = new GuidIdentityFactory(SequentialGuidType.SequentialAtEnd);
 
-            IEnumerable<Type> TypesFromAssembly(Assembly assembly) =>
-                assembly.GetExportedTypes();
-        }
+        types
+            .Where(TypeIsForInjection)
+            .Select(InterfaceAbstractionsWithImplementation)
+            .ToList()
+            .ForEach(RegisterAbstractionsWithImplementation);
 
-        private void RegisterSepsAbstractionsWithImplementationsWith(IEnumerable<Type> types)
-        {
-            var identityFactory = new GuidIdentityFactory(SequentialGuidType.SequentialAtEnd);
+        bool TypeIsForInjection(Type type) =>
+            type.GetInterfaces().Any(NamespaceIsFromProject) &&
+            !type.IsAbstract &&
+            !type.GetInterfaces().Any(ite => ite == typeof(IAggregateRoot) || ite == typeof(ISepsCommand));
 
-            types
-                .Where(TypeIsForInjection)
-                .Select(InterfaceAbstractionsWithImplementation)
-                .ToList()
-                .ForEach(RegisterAbstractionsWithImplementation);
+        (List<Type> Abstractions, Type Implementation) InterfaceAbstractionsWithImplementation(Type type) =>
+            (type.GetInterfaces().Where(NamespaceIsFromProject).ToList(), type);
 
-            bool TypeIsForInjection(Type type) =>
-                type.GetInterfaces().Any(NamespaceIsFromProject) &&
-                !type.IsAbstract &&
-                !type.GetInterfaces().Any(ite => ite == typeof(IAggregateRoot) || ite == typeof(ISepsCommand));
+        bool NamespaceIsFromProject(Type type) =>
+            type.Namespace.Split(_onDot).First().Equals(_projectName);
 
-            (List<Type> Abstractions, Type Implementation) InterfaceAbstractionsWithImplementation(Type type) =>
-                (type.GetInterfaces().Where(NamespaceIsFromProject).ToList(), type);
-
-            bool NamespaceIsFromProject(Type type) =>
-                type.Namespace.Split(_onDot).First().Equals(_projectName);
-
-            void RegisterAbstractionsWithImplementation((List<Type> Abstractions, Type Implementation) registration) =>
-                registration.Abstractions.ForEach(asn =>
+        void RegisterAbstractionsWithImplementation((List<Type> Abstractions, Type Implementation) registration) =>
+            registration.Abstractions.ForEach(asn =>
+            {
+                switch (registration.Implementation.Name)
                 {
-                    switch (registration.Implementation.Name)
-                    {
-                        case nameof(GuidIdentityFactory):
-                            Register(asn, () => identityFactory);
-                            break;
-                        case nameof(ParameterContext):
-                            Register(asn, () => new ParameterContext(_options.Options, identityFactory));
-                            break;
-                        default:
-                            Register(asn, registration.Implementation);
-                            break;
-                    }
-                });
-        }
+                    case nameof(GuidIdentityFactory):
+                        Register(asn, () => identityFactory);
+                        break;
+                    case nameof(ParameterContext):
+                        Register(asn, () => new ParameterContext(_options.Options, identityFactory));
+                        break;
+                    default:
+                        Register(asn, registration.Implementation);
+                        break;
+                }
+            });
+    }
 
-        private void RegisterFluentValidationAbstractionsWithImplementationsWith(IEnumerable<Type> types)
-        {
-            types
-                .Where(TypeIsForInjection)
-                .Select(InterfaceAbstractionsWithImplementation)
-                .ToList()
-                .ForEach(RegisterAbstractionsWithImplementation);
+    private void RegisterFluentValidationAbstractionsWithImplementationsWith(IEnumerable<Type> types)
+    {
+        types
+            .Where(TypeIsForInjection)
+            .Select(InterfaceAbstractionsWithImplementation)
+            .ToList()
+            .ForEach(RegisterAbstractionsWithImplementation);
 
-            bool TypeIsForInjection(Type type) =>
-                type.BaseType?.IsGenericType is true &&
-                type.BaseType.GetGenericTypeDefinition() == typeof(AbstractValidator<>);
+        bool TypeIsForInjection(Type type) =>
+            type.BaseType?.IsGenericType is true &&
+            type.BaseType.GetGenericTypeDefinition() == typeof(AbstractValidator<>);
 
-            (Type Abstraction, Type Implementation) InterfaceAbstractionsWithImplementation(Type type) =>
-                (type.BaseType.GetInterfaces()
-                    .Single(t => t.IsGenericType && t.GetGenericTypeDefinition() == typeof(IValidator<>)), type);
+        (Type Abstraction, Type Implementation) InterfaceAbstractionsWithImplementation(Type type) =>
+            (type.BaseType.GetInterfaces()
+                .Single(t => t.IsGenericType && t.GetGenericTypeDefinition() == typeof(IValidator<>)), type);
 
-            void RegisterAbstractionsWithImplementation((Type Abstraction, Type Implementation) registration) =>
-                Register(registration.Abstraction, registration.Implementation);
-        }
+        void RegisterAbstractionsWithImplementation((Type Abstraction, Type Implementation) registration) =>
+            Register(registration.Abstraction, registration.Implementation);
     }
 }

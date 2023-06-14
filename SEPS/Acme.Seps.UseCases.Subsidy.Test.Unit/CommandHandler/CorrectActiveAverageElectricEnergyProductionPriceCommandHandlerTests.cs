@@ -12,91 +12,90 @@ using NSubstitute;
 using System;
 using System.Collections.Generic;
 
-namespace Acme.Seps.UseCases.Subsidy.Test.Unit.CommandHandler
+namespace Acme.Seps.UseCases.Subsidy.Test.Unit.CommandHandler;
+
+public class CorrectActiveAverageElectricEnergyProductionPriceCommandHandlerTests
 {
-    public class CorrectActiveAverageElectricEnergyProductionPriceCommandHandlerTests
+    private readonly ISepsCommandHandler<CorrectActiveAverageElectricEnergyProductionPriceCommand> _correctActiveAeepp;
+    private readonly IUnitOfWork _unitOfWork;
+
+    public CorrectActiveAverageElectricEnergyProductionPriceCommandHandlerTests()
     {
-        private readonly ISepsCommandHandler<CorrectActiveAverageElectricEnergyProductionPriceCommand> _correctActiveAeepp;
-        private readonly IUnitOfWork _unitOfWork;
+        DateTimeOffset nineMonthsAgo = DateTime.Now.AddMonths(-9);
 
-        public CorrectActiveAverageElectricEnergyProductionPriceCommandHandlerTests()
+        IEconometricIndexFactory<AverageElectricEnergyProductionPrice> aeeppFactory =
+            new EconometricIndexFactory<AverageElectricEnergyProductionPrice>(nineMonthsAgo);
+        var activeAeepp = aeeppFactory.Create();
+
+        var cogenerationParameterService = Substitute.For<ICogenerationParameterService>();
+        cogenerationParameterService
+            .Calculate(Arg.Any<AverageElectricEnergyProductionPrice>(), Arg.Any<NaturalGasSellingPrice>())
+            .Returns(1M);
+
+        aeeppFactory =
+            new EconometricIndexFactory<AverageElectricEnergyProductionPrice>(nineMonthsAgo.AddMonths(-5));
+        var previousActiveAeepp = aeeppFactory.Create();
+
+        var firstDayOfTheYearNineMonthsAgo = nineMonthsAgo.ToFirstDayOfTheYear().AddYears(-1);
+        IEconometricIndexFactory<NaturalGasSellingPrice> ngspFactory =
+            new EconometricIndexFactory<NaturalGasSellingPrice>(firstDayOfTheYearNineMonthsAgo);
+        var activeNgsp = ngspFactory.Create();
+
+        ICogenerationTariffFactory<CogenerationTariff> cogenerationFactory =
+            new CogenerationTariffFactory(previousActiveAeepp, activeNgsp);
+        var previousActiveCtfs = new List<CogenerationTariff>
         {
-            DateTimeOffset nineMonthsAgo = DateTime.Now.AddMonths(-9);
+            cogenerationFactory.Create(firstDayOfTheYearNineMonthsAgo)
+        };
 
-            IEconometricIndexFactory<AverageElectricEnergyProductionPrice> aeeppFactory =
-                new EconometricIndexFactory<AverageElectricEnergyProductionPrice>(nineMonthsAgo);
-            var activeAeepp = aeeppFactory.Create();
+        cogenerationFactory = new CogenerationTariffFactory(activeAeepp, activeNgsp);
+        var activeCtfs = new List<CogenerationTariff> { cogenerationFactory.Create(firstDayOfTheYearNineMonthsAgo) };
 
-            var cogenerationParameterService = Substitute.For<ICogenerationParameterService>();
-            cogenerationParameterService
-                .Calculate(Arg.Any<AverageElectricEnergyProductionPrice>(), Arg.Any<NaturalGasSellingPrice>())
-                .Returns(1M);
+        var dummyGuid = Guid.NewGuid();
+        typeof(CogenerationTariff).BaseType
+            .GetProperty("ProjectTypeId").SetValue(previousActiveCtfs[0], dummyGuid);
+        typeof(CogenerationTariff).BaseType
+            .GetProperty("ProjectTypeId").SetValue(activeCtfs[0], dummyGuid);
 
-            aeeppFactory =
-                new EconometricIndexFactory<AverageElectricEnergyProductionPrice>(nineMonthsAgo.AddMonths(-5));
-            var previousActiveAeepp = aeeppFactory.Create();
+        var repository = Substitute.For<IRepository>();
+        repository
+            .GetSingle(Arg.Any<ActiveSpecification<AverageElectricEnergyProductionPrice>>())
+            .Returns(activeAeepp);
+        repository
+            .GetSingle(Arg.Any<PreviousActiveSpecification<AverageElectricEnergyProductionPrice>>())
+            .Returns(previousActiveAeepp);
+        repository
+            .GetAll(Arg.Any<PreviousActiveSpecification<CogenerationTariff>>())
+            .Returns(previousActiveCtfs);
+        repository
+            .GetAll(Arg.Any<ActiveSpecification<CogenerationTariff>>())
+            .Returns(activeCtfs);
+        repository
+            .GetSingle(Arg.Any<ActiveSpecification<NaturalGasSellingPrice>>())
+            .Returns(activeNgsp);
 
-            var firstDayOfTheYearNineMonthsAgo = nineMonthsAgo.ToFirstDayOfTheYear().AddYears(-1);
-            IEconometricIndexFactory<NaturalGasSellingPrice> ngspFactory =
-                new EconometricIndexFactory<NaturalGasSellingPrice>(firstDayOfTheYearNineMonthsAgo);
-            var activeNgsp = ngspFactory.Create();
+        _unitOfWork = Substitute.For<IUnitOfWork>();
 
-            ICogenerationTariffFactory<CogenerationTariff> cogenerationFactory =
-                new CogenerationTariffFactory(previousActiveAeepp, activeNgsp);
-            var previousActiveCtfs = new List<CogenerationTariff>
-            {
-                cogenerationFactory.Create(firstDayOfTheYearNineMonthsAgo)
-            };
+        _correctActiveAeepp = new CorrectActiveAverageElectricEnergyProductionPriceCommandHandler(
+            cogenerationParameterService, repository, _unitOfWork, Substitute.For<IIdentityFactory<Guid>>());
+    }
 
-            cogenerationFactory = new CogenerationTariffFactory(activeAeepp, activeNgsp);
-            var activeCtfs = new List<CogenerationTariff> { cogenerationFactory.Create(firstDayOfTheYearNineMonthsAgo) };
+    public void ExecutesProperly()
+    {
+        var lastPeriod = DateTime.Now.AddMonths(-3);
 
-            var dummyGuid = Guid.NewGuid();
-            typeof(CogenerationTariff).BaseType
-                .GetProperty("ProjectTypeId").SetValue(previousActiveCtfs[0], dummyGuid);
-            typeof(CogenerationTariff).BaseType
-                .GetProperty("ProjectTypeId").SetValue(activeCtfs[0], dummyGuid);
-
-            var repository = Substitute.For<IRepository>();
-            repository
-                .GetSingle(Arg.Any<ActiveSpecification<AverageElectricEnergyProductionPrice>>())
-                .Returns(activeAeepp);
-            repository
-                .GetSingle(Arg.Any<PreviousActiveSpecification<AverageElectricEnergyProductionPrice>>())
-                .Returns(previousActiveAeepp);
-            repository
-                .GetAll(Arg.Any<PreviousActiveSpecification<CogenerationTariff>>())
-                .Returns(previousActiveCtfs);
-            repository
-                .GetAll(Arg.Any<ActiveSpecification<CogenerationTariff>>())
-                .Returns(activeCtfs);
-            repository
-                .GetSingle(Arg.Any<ActiveSpecification<NaturalGasSellingPrice>>())
-                .Returns(activeNgsp);
-
-            _unitOfWork = Substitute.For<IUnitOfWork>();
-
-            _correctActiveAeepp = new CorrectActiveAverageElectricEnergyProductionPriceCommandHandler(
-                cogenerationParameterService, repository, _unitOfWork, Substitute.For<IIdentityFactory<Guid>>());
-        }
-
-        public void ExecutesProperly()
+        var correctActiveNaturalGasCommand = new CorrectActiveAverageElectricEnergyProductionPriceCommand
         {
-            var lastPeriod = DateTime.Now.AddMonths(-3);
+            Amount = 100M,
+            Month = lastPeriod.Month,
+            Remark = nameof(CorrectActiveAverageElectricEnergyProductionPriceCommand),
+            Year = lastPeriod.Year,
+        };
 
-            var correctActiveNaturalGasCommand = new CorrectActiveAverageElectricEnergyProductionPriceCommand
-            {
-                Amount = 100M,
-                Month = lastPeriod.Month,
-                Remark = nameof(CorrectActiveAverageElectricEnergyProductionPriceCommand),
-                Year = lastPeriod.Year,
-            };
+        _correctActiveAeepp.Handle(correctActiveNaturalGasCommand);
 
-            _correctActiveAeepp.Handle(correctActiveNaturalGasCommand);
-
-            _unitOfWork.Received(2).Update(Arg.Any<CogenerationTariff>());
-            _unitOfWork.Received(2).Update(Arg.Any<AverageElectricEnergyProductionPrice>());
-            _unitOfWork.Received().Commit();
-        }
+        _unitOfWork.Received(2).Update(Arg.Any<CogenerationTariff>());
+        _unitOfWork.Received(2).Update(Arg.Any<AverageElectricEnergyProductionPrice>());
+        _unitOfWork.Received().Commit();
     }
 }

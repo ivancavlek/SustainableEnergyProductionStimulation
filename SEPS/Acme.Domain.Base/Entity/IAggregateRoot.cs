@@ -1,4 +1,3 @@
-﻿namespace Acme.Domain.Base.Entity
-{
-    public interface IAggregateRoot { }
-}
+﻿namespace Acme.Domain.Base.Entity;
+
+public interface IAggregateRoot { }

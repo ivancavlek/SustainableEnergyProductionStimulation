@@ -3,7 +3,7 @@
     <PackageReference Include="Light.GuardClauses"
                       Version="*" />
   </ItemGroup>
-  <ItemGroup Condition="'$(MSBuildProjectName.Contains(`Domain`))' And '$(MSBuildProjectName.Contains(`UseCases`))'">
+  <ItemGroup Condition="'$(MSBuildProjectName.Contains(`Domain`))' Or '$(MSBuildProjectName.Contains(`UseCases`))'">
     <Using Include="Light.GuardClauses" />
   </ItemGroup>
   <ItemGroup Condition="'$(MSBuildProjectName.Contains(`Test`))' And '$(OutputType)' == 'Exe'">

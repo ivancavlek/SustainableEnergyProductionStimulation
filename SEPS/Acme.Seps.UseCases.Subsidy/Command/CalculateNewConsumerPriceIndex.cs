@@ -9,86 +9,85 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Acme.Seps.UseCases.Subsidy.Command
+namespace Acme.Seps.UseCases.Subsidy.Command;
+
+public sealed class CalculateCpiCommandHandler
+    : BaseCommandHandler, ISepsCommandHandler<CalculateNewConsumerPriceIndexCommand>
 {
-    public sealed class CalculateCpiCommandHandler
-        : BaseCommandHandler, ISepsCommandHandler<CalculateNewConsumerPriceIndexCommand>
+    public CalculateCpiCommandHandler(
+        IRepository repository, IUnitOfWork unitOfWork, IIdentityFactory<Guid> identityFactory)
+        : base(repository, unitOfWork, identityFactory) { }
+
+    void ICommandHandler<CalculateNewConsumerPriceIndexCommand>.Handle(CalculateNewConsumerPriceIndexCommand command)
     {
-        public CalculateCpiCommandHandler(
-            IRepository repository, IUnitOfWork unitOfWork, IIdentityFactory<Guid> identityFactory)
-            : base(repository, unitOfWork, identityFactory) { }
+        var activeCpi = GetActiveConsumerPriceIndex();
+        var newCpi = CreateNewConsumerPriceIndex(activeCpi, command);
 
-        void ICommandHandler<CalculateNewConsumerPriceIndexCommand>.Handle(CalculateNewConsumerPriceIndexCommand command)
-        {
-            var activeCpi = GetActiveConsumerPriceIndex();
-            var newCpi = CreateNewConsumerPriceIndex(activeCpi, command);
+        CreateNewRenewableEnergySourceTariffs(newCpi);
 
-            CreateNewRenewableEnergySourceTariffs(newCpi);
+        Commit();
 
-            Commit();
-
-            LogNewConsumerPriceIndex(newCpi);
-            LogSuccessfulCommit();
-        }
-
-        private ConsumerPriceIndex GetActiveConsumerPriceIndex() =>
-            _repository.GetSingle(new ActiveSpecification<ConsumerPriceIndex>());
-
-        private ConsumerPriceIndex CreateNewConsumerPriceIndex(
-            ConsumerPriceIndex activeCpi, CalculateNewConsumerPriceIndexCommand command)
-        {
-            var newCpi = activeCpi.CreateNew(command.Amount, command.Remark, _identityFactory);
-
-            _unitOfWork.Update(activeCpi);
-            _unitOfWork.Insert(newCpi);
-
-            return newCpi;
-        }
-
-        private void CreateNewRenewableEnergySourceTariffs(ConsumerPriceIndex newCpi)
-        {
-            GetActiveRenewableEnergySourceTariffs().ForEach(res =>
-            {
-                var newRenewableEnergyTariff = CreateNewRenewableEnergySourceTariff(res);
-
-                _unitOfWork.Update(res);
-                _unitOfWork.Insert(newRenewableEnergyTariff);
-
-                LogNewRenewableEnergySourceTariff(newRenewableEnergyTariff);
-            });
-
-            RenewableEnergySourceTariff CreateNewRenewableEnergySourceTariff(RenewableEnergySourceTariff res) =>
-                res.CreateNewWith(newCpi, _identityFactory);
-        }
-
-        private List<RenewableEnergySourceTariff> GetActiveRenewableEnergySourceTariffs() =>
-            _repository.GetAll(new ActiveSpecification<RenewableEnergySourceTariff>()).ToList();
-
-        private void LogNewRenewableEnergySourceTariff(RenewableEnergySourceTariff renewableEnergySourceTariff) =>
-            Log(new EntityExecutionLoggingEventArgs
-            (
-                SepsMessage.InsertTariff(
-                    nameof(RenewableEnergySourceTariff),
-                    renewableEnergySourceTariff.Active.Since.Date,
-                    renewableEnergySourceTariff.Active.Until,
-                    renewableEnergySourceTariff.LowerRate,
-                    renewableEnergySourceTariff.HigherRate)
-            ));
-
-        private void LogNewConsumerPriceIndex(ConsumerPriceIndex consumerPriceIndex) =>
-            Log(new EntityExecutionLoggingEventArgs
-            (
-                SepsMessage.InsertParameter(
-                    nameof(ConsumerPriceIndex),
-                    consumerPriceIndex.Active.Since.Date,
-                    consumerPriceIndex.Active.Until,
-                    consumerPriceIndex.Amount)
-            ));
+        LogNewConsumerPriceIndex(newCpi);
+        LogSuccessfulCommit();
     }
 
-    public sealed class CalculateNewConsumerPriceIndexCommand : ISepsCommand
+    private ConsumerPriceIndex GetActiveConsumerPriceIndex() =>
+        _repository.GetSingle(new ActiveSpecification<ConsumerPriceIndex>());
+
+    private ConsumerPriceIndex CreateNewConsumerPriceIndex(
+        ConsumerPriceIndex activeCpi, CalculateNewConsumerPriceIndexCommand command)
     {
-        public decimal Amount { get; set; }
-        public string Remark { get; set; }
+        var newCpi = activeCpi.CreateNew(command.Amount, command.Remark, _identityFactory);
+
+        _unitOfWork.Update(activeCpi);
+        _unitOfWork.Insert(newCpi);
+
+        return newCpi;
     }
+
+    private void CreateNewRenewableEnergySourceTariffs(ConsumerPriceIndex newCpi)
+    {
+        GetActiveRenewableEnergySourceTariffs().ForEach(res =>
+        {
+            var newRenewableEnergyTariff = CreateNewRenewableEnergySourceTariff(res);
+
+            _unitOfWork.Update(res);
+            _unitOfWork.Insert(newRenewableEnergyTariff);
+
+            LogNewRenewableEnergySourceTariff(newRenewableEnergyTariff);
+        });
+
+        RenewableEnergySourceTariff CreateNewRenewableEnergySourceTariff(RenewableEnergySourceTariff res) =>
+            res.CreateNewWith(newCpi, _identityFactory);
+    }
+
+    private List<RenewableEnergySourceTariff> GetActiveRenewableEnergySourceTariffs() =>
+        _repository.GetAll(new ActiveSpecification<RenewableEnergySourceTariff>()).ToList();
+
+    private void LogNewRenewableEnergySourceTariff(RenewableEnergySourceTariff renewableEnergySourceTariff) =>
+        Log(new EntityExecutionLoggingEventArgs
+        (
+            SepsMessage.InsertTariff(
+                nameof(RenewableEnergySourceTariff),
+                renewableEnergySourceTariff.Active.Since.Date,
+                renewableEnergySourceTariff.Active.Until,
+                renewableEnergySourceTariff.LowerRate,
+                renewableEnergySourceTariff.HigherRate)
+        ));
+
+    private void LogNewConsumerPriceIndex(ConsumerPriceIndex consumerPriceIndex) =>
+        Log(new EntityExecutionLoggingEventArgs
+        (
+            SepsMessage.InsertParameter(
+                nameof(ConsumerPriceIndex),
+                consumerPriceIndex.Active.Since.Date,
+                consumerPriceIndex.Active.Until,
+                consumerPriceIndex.Amount)
+        ));
+}
+
+public sealed class CalculateNewConsumerPriceIndexCommand : ISepsCommand
+{
+    public decimal Amount { get; set; }
+    public string Remark { get; set; }
 }

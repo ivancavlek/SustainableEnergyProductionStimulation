@@ -1,25 +1,15 @@
 ﻿using Acme.Seps.UseCases.Subsidy.Command.Validation;
 using FluentValidation.TestHelper;
 
-namespace Acme.Seps.UseCases.Subsidy.Test.Unit.CommandValidation
+namespace Acme.Seps.UseCases.Subsidy.Test.Unit.CommandValidation;
+
+public class CorrectActiveCpiCommandValidatorTests
 {
-    public class CorrectActiveCpiCommandValidatorTests
-    {
-        private readonly CorrectActiveConsumerPriceIndexCommandValidator _validator;
+    private readonly CorrectActiveConsumerPriceIndexCommandValidator _validator;
 
-        public CorrectActiveCpiCommandValidatorTests()
-        {
-            _validator = new CorrectActiveConsumerPriceIndexCommandValidator();
-        }
+    public CorrectActiveCpiCommandValidatorTests() => _validator = new CorrectActiveConsumerPriceIndexCommandValidator();
 
-        public void ValidatorShouldHaveAnErrorOnAmount()
-        {
-            _validator.ShouldHaveValidationErrorFor(vlr => vlr.Amount, -2);
-        }
+    public void ValidatorShouldHaveAnErrorOnAmount() => _validator.ShouldHaveValidationErrorFor(vlr => vlr.Amount, -2);
 
-        public void ValidatorShouldHaveAnErrorOnRemark()
-        {
-            _validator.ShouldHaveValidationErrorFor(vlr => vlr.Remark, null as string);
-        }
-    }
+    public void ValidatorShouldHaveAnErrorOnRemark() => _validator.ShouldHaveValidationErrorFor(vlr => vlr.Remark, null as string);
 }

@@ -5,44 +5,41 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 
-namespace Acme.Seps.Repository.Subsidy
+namespace Acme.Seps.Repository.Subsidy;
+
+public class ParameterContext : BaseContext
 {
-    public class ParameterContext : BaseContext
+    private readonly IIdentityFactory<Guid> _identityFactory;
+
+    public ParameterContext(DbContextOptions<BaseContext> options, IIdentityFactory<Guid> identityFactory)
+        : base(options) =>
+        _identityFactory = identityFactory ?? throw new ArgumentNullException(nameof(identityFactory));
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        private readonly IIdentityFactory<Guid> _identityFactory;
+        var cpiGuid = _identityFactory.CreateIdentity();
+        var naturalGasSellingPriceGuid = _identityFactory.CreateIdentity();
+        var monthlyAverageElectricEnergyProductionPriceGuid = _identityFactory.CreateIdentity();
 
-        public ParameterContext(DbContextOptions<BaseContext> options, IIdentityFactory<Guid> identityFactory)
-            : base(options)
-        {
-            _identityFactory = identityFactory ?? throw new ArgumentNullException(nameof(identityFactory));
-        }
+        var projectTypeIds = new List<Guid>();
 
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
-        {
-            var cpiGuid = _identityFactory.CreateIdentity();
-            var naturalGasSellingPriceGuid = _identityFactory.CreateIdentity();
-            var monthlyAverageElectricEnergyProductionPriceGuid = _identityFactory.CreateIdentity();
+        for (var i = 0; i < 12; i++)
+            projectTypeIds.Add(_identityFactory.CreateIdentity());
 
-            var projectTypeIds = new List<Guid>();
-
-            for (int i = 0; i < 12; i++)
-                projectTypeIds.Add(_identityFactory.CreateIdentity());
-
-            modelBuilder.HasDefaultSchema("parameter");
-            modelBuilder.ApplyConfiguration(new EconometricIndexConfiguration());
-            modelBuilder.ApplyConfiguration(new ConsumerPriceIndexConfiguration(cpiGuid));
-            modelBuilder.ApplyConfiguration(new AverageElectricEnergyProductionPriceConfiguration(
-                monthlyAverageElectricEnergyProductionPriceGuid));
-            modelBuilder.ApplyConfiguration(new NaturalGasSellingPriceConfiguration(naturalGasSellingPriceGuid));
-            modelBuilder.ApplyConfiguration(new ProjectTypeConfiguration(projectTypeIds));
-            modelBuilder.ApplyConfiguration(new TariffConfiguration());
-            modelBuilder.ApplyConfiguration(new CogenerationTariffConfiguration(
-                naturalGasSellingPriceGuid,
-                monthlyAverageElectricEnergyProductionPriceGuid,
-                projectTypeIds,
-                _identityFactory));
-            modelBuilder.ApplyConfiguration(new RenewableEnergySourceTariffConfiguration(
-                cpiGuid, projectTypeIds, _identityFactory));
-        }
+        modelBuilder.HasDefaultSchema("parameter");
+        modelBuilder.ApplyConfiguration(new EconometricIndexConfiguration());
+        modelBuilder.ApplyConfiguration(new ConsumerPriceIndexConfiguration(cpiGuid));
+        modelBuilder.ApplyConfiguration(new AverageElectricEnergyProductionPriceConfiguration(
+            monthlyAverageElectricEnergyProductionPriceGuid));
+        modelBuilder.ApplyConfiguration(new NaturalGasSellingPriceConfiguration(naturalGasSellingPriceGuid));
+        modelBuilder.ApplyConfiguration(new ProjectTypeConfiguration(projectTypeIds));
+        modelBuilder.ApplyConfiguration(new TariffConfiguration());
+        modelBuilder.ApplyConfiguration(new CogenerationTariffConfiguration(
+            naturalGasSellingPriceGuid,
+            monthlyAverageElectricEnergyProductionPriceGuid,
+            projectTypeIds,
+            _identityFactory));
+        modelBuilder.ApplyConfiguration(new RenewableEnergySourceTariffConfiguration(
+            cpiGuid, projectTypeIds, _identityFactory));
     }
 }

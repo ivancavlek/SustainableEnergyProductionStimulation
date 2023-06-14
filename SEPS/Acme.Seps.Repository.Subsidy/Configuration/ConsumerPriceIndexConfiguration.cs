@@ -1,45 +1,41 @@
 ﻿using Acme.Seps.Domain.Base.Utility;
 using Acme.Seps.Domain.Subsidy.Entity;
+using Light.GuardClauses;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using System;
 
-namespace Acme.Seps.Repository.Subsidy.Configuration
+namespace Acme.Seps.Repository.Subsidy.Configuration;
+
+internal sealed class ConsumerPriceIndexConfiguration
+    : BaseParameterConfiguration<ConsumerPriceIndex>, IEntityTypeConfiguration<ConsumerPriceIndex>
 {
-    internal sealed class ConsumerPriceIndexConfiguration
-        : BaseParameterConfiguration<ConsumerPriceIndex>, IEntityTypeConfiguration<ConsumerPriceIndex>
+    private readonly Guid _id;
+
+    internal ConsumerPriceIndexConfiguration(Guid id) =>
+        _id = id.MustNotBeDefault(nameof(id));
+
+    public override void Configure(EntityTypeBuilder<ConsumerPriceIndex> builder)
     {
-        private readonly Guid _id;
+        base.Configure(builder);
+        SeedData(builder);
+    }
 
-        internal ConsumerPriceIndexConfiguration(Guid id)
-        {
-            _id = id;
-        }
-
-        public override void Configure(EntityTypeBuilder<ConsumerPriceIndex> builder)
-        {
-            base.Configure(builder);
-            SeedData(builder);
-        }
-
-        private void SeedData(EntityTypeBuilder<ConsumerPriceIndex> builder)
-        {
-            builder.HasData(
-                new
-                {
-                    Id = _id,
-                    Amount = 105.8M,
-                    Remark = "Initial value",
-                    EconometricIndexType = nameof(ConsumerPriceIndex)
-                });
-            builder.OwnsOne(vte => vte.Active, vte =>
+    private void SeedData(EntityTypeBuilder<ConsumerPriceIndex> builder)
+    {
+        builder.HasData(
+            new
             {
-                vte.HasData(new
-                {
-                    EconometricIndexId = _id,
-                    Since = SepsVersion.InitialDate()
-                });
+                Id = _id,
+                Amount = 105.8M,
+                Remark = "Initial value",
+                EconometricIndexType = nameof(ConsumerPriceIndex)
             });
-        }
+        builder.OwnsOne(vte => vte.Active, vte =>
+            vte.HasData(new
+            {
+                EconometricIndexId = _id,
+                Since = SepsVersion.InitialDate()
+            }));
     }
 }

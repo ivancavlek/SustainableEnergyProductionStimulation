@@ -9,39 +9,38 @@ using System.Text;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace Acme.Seps.Presentation.Web.Test.Integration
+namespace Acme.Seps.Presentation.Web.Test.Integration;
+
+[TestCaseOrderer(
+    "Acme.Seps.Presentation.Web.Test.Integration.TestUtility.TestCollectionOrderer",
+    "Acme.Seps.Presentation.Web.Test.Integration")]
+public class MvcSetupTests : IClassFixture<IntegrationTestingWebApplicationFactory<Startup>>
 {
-    [TestCaseOrderer(
-        "Acme.Seps.Presentation.Web.Test.Integration.TestUtility.TestCollectionOrderer",
-        "Acme.Seps.Presentation.Web.Test.Integration")]
-    public class MvcSetupTests : IClassFixture<IntegrationTestingWebApplicationFactory<Startup>>
+    private readonly HttpClient _client;
+
+    public MvcSetupTests(IntegrationTestingWebApplicationFactory<Startup> factory) =>
+        _client = factory.CreateClient();
+
+    [Fact, TestPriority(1)]
+    public void SepsSimpleInjectorContainerIsVerified()
     {
-        private readonly HttpClient _client;
+        var sepsContainer = SepsSimpleInjectorContainer.Container;
 
-        public MvcSetupTests(IntegrationTestingWebApplicationFactory<Startup> factory) =>
-            _client = factory.CreateClient();
+        sepsContainer.Verify();
+    }
 
-        [Fact, TestPriority(1)]
-        public void SepsSimpleInjectorContainerIsVerified()
-        {
-            var sepsContainer = SepsSimpleInjectorContainer.Container;
+    [Fact, TestPriority(2)]
+    public async Task ModelValidationSendsBadRequestOnErroneousModel()
+    {
+        var command = new CalculateNewConsumerPriceIndexCommand { Amount = -2, Remark = null };
 
-            sepsContainer.Verify();
-        }
+        var response = await _client
+            .PostAsync(
+                "/api/Parameter/AverageElectricEnergyProductionPrice/CalculateCpi",
+                new StringContent(JsonConvert.SerializeObject(command), Encoding.UTF8, "application/json"))
+            .ConfigureAwait(false);
 
-        [Fact, TestPriority(2)]
-        public async Task ModelValidationSendsBadRequestOnErroneousModel()
-        {
-            var command = new CalculateNewConsumerPriceIndexCommand { Amount = -2, Remark = null };
-
-            var response = await _client
-                .PostAsync(
-                    "/api/Parameter/AverageElectricEnergyProductionPrice/CalculateCpi",
-                    new StringContent(JsonConvert.SerializeObject(command), Encoding.UTF8, "application/json"))
-                .ConfigureAwait(false);
-
-            response.IsSuccessStatusCode.Should().BeFalse();
-            response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
-        }
+        response.IsSuccessStatusCode.Should().BeFalse();
+        response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
     }
 }

@@ -1,7 +1,6 @@
-﻿namespace Acme.Domain.Base.Entity
+﻿namespace Acme.Domain.Base.Entity;
+
+public abstract class BaseEntity
 {
-    public abstract class BaseEntity
-    {
-        protected BaseEntity() { }
-    }
+    protected BaseEntity() { }
 }

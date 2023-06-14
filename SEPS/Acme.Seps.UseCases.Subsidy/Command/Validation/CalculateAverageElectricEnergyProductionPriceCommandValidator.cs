@@ -2,26 +2,25 @@
 using Acme.Seps.Text;
 using FluentValidation;
 
-namespace Acme.Seps.UseCases.Subsidy.Command.Validation
+namespace Acme.Seps.UseCases.Subsidy.Command.Validation;
+
+public sealed class CalculateAverageElectricEnergyProductionPriceCommandValidator
+    : AbstractValidator<CalculateNewAverageElectricEnergyProductionPriceCommand>
 {
-    public sealed class CalculateAverageElectricEnergyProductionPriceCommandValidator
-        : AbstractValidator<CalculateNewAverageElectricEnergyProductionPriceCommand>
+    public CalculateAverageElectricEnergyProductionPriceCommandValidator()
     {
-        public CalculateAverageElectricEnergyProductionPriceCommandValidator()
-        {
-            RuleFor(cng => cng.Amount)
-                .GreaterThan(0M)
-                .WithMessage(cng => SepsMessage.ValueZeroOrAbove(nameof(cng.Amount)));
-            RuleFor(cng => cng.Remark)
-                .NotEmpty()
-                .WithMessage(cng => SepsMessage.EntityNotSet(nameof(cng.Remark)));
-            RuleFor(cng => cng.Year)
-                .GreaterThan(SepsVersion.InitialDate().Year)
-                .WithMessage(cng => SepsMessage.ValueHigherThanTheOther(cng.Year.ToString(), SepsVersion.InitialDate().Year.ToString()));
-            RuleFor(cng => cng.Month)
-                .GreaterThanOrEqualTo(1)
-                .LessThanOrEqualTo(12)
-                .WithMessage(cng => SepsMessage.ValueHigherThanTheOther(cng.Month.ToString(), "1 - 12"));
-        }
+        RuleFor(cng => cng.Amount)
+            .GreaterThan(0M)
+            .WithMessage(cng => SepsMessage.ValueZeroOrAbove(nameof(cng.Amount)));
+        RuleFor(cng => cng.Remark)
+            .NotEmpty()
+            .WithMessage(cng => SepsMessage.EntityNotSet(nameof(cng.Remark)));
+        RuleFor(cng => cng.Year)
+            .GreaterThan(SepsVersion.InitialDate().Year)
+            .WithMessage(cng => SepsMessage.ValueHigherThanTheOther(cng.Year.ToString(), SepsVersion.InitialDate().Year.ToString()));
+        RuleFor(cng => cng.Month)
+            .GreaterThanOrEqualTo(1)
+            .LessThanOrEqualTo(12)
+            .WithMessage(cng => SepsMessage.ValueHigherThanTheOther(cng.Month.ToString(), "1 - 12"));
     }
 }

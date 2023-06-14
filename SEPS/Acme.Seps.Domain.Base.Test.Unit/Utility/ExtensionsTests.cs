@@ -1,30 +1,25 @@
 ﻿using Acme.Seps.Domain.Base.Utility;
-using FluentAssertions;
 using System;
 
-namespace Acme.Seps.Domain.Base.Test.Unit.Utility
+namespace Acme.Seps.Domain.Base.Test.Unit.Utility;
+
+public class ExtensionsTests
 {
-    public class ExtensionsTests
+    private readonly DateTimeOffset _dateTime;
+
+    public ExtensionsTests() => _dateTime = new DateTimeOffset(new DateTime(2012, 5, 14, 18, 44, 12));
+
+    public void ToFirstDayOfTheMonthIsCorrectlyExecuted()
     {
-        private readonly DateTimeOffset _dateTime;
+        var result = _dateTime.ToFirstDayOfTheMonth();
 
-        public ExtensionsTests()
-        {
-            _dateTime = new DateTimeOffset(new DateTime(2012, 5, 14, 18, 44, 12));
-        }
+        result.Should().Be(new DateTime(2012, 5, 1));
+    }
 
-        public void ToFirstDayOfTheMonthIsCorrectlyExecuted()
-        {
-            var result = _dateTime.ToFirstDayOfTheMonth();
+    public void ToFirstMonthOfTheYearIsCorrectlyExecuted()
+    {
+        var result = _dateTime.ToFirstDayOfTheYear();
 
-            result.Should().Be(new DateTime(2012, 5, 1));
-        }
-
-        public void ToFirstMonthOfTheYearIsCorrectlyExecuted()
-        {
-            var result = _dateTime.ToFirstDayOfTheYear();
-
-            result.Should().Be(new DateTime(2012, 1, 1));
-        }
+        result.Should().Be(new DateTime(2012, 1, 1));
     }
 }

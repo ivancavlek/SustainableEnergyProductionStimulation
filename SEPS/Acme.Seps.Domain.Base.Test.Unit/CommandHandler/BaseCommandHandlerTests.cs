@@ -2,88 +2,85 @@
 using Acme.Domain.Base.Repository;
 using Acme.Seps.Domain.Base.CommandHandler;
 using Acme.Seps.Text;
-using FluentAssertions;
-using NSubstitute;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Acme.Seps.Domain.Base.Test.Unit.CommandHandler
+namespace Acme.Seps.Domain.Base.Test.Unit.CommandHandler;
+
+public class BaseCommandHandlerTests
 {
-    public class BaseCommandHandlerTests
+    private readonly DummyCommandHandler _dummyCommandHandler;
+    private readonly ICollection<string> _receivedMessages;
+
+    public BaseCommandHandlerTests()
     {
-        private readonly DummyCommandHandler _dummyCommandHandler;
-        private readonly ICollection<string> _receivedMessages;
+        _dummyCommandHandler = new DummyCommandHandler(
+            Substitute.For<IRepository>(), Substitute.For<IUnitOfWork>(), Substitute.For<IIdentityFactory<Guid>>());
+        _receivedMessages = new List<string>();
 
-        public BaseCommandHandlerTests()
-        {
-            _dummyCommandHandler = new DummyCommandHandler(
-                Substitute.For<IRepository>(), Substitute.For<IUnitOfWork>(), Substitute.For<IIdentityFactory<Guid>>());
-            _receivedMessages = new List<string>();
+        _dummyCommandHandler.UseCaseExecutionProcessing += (object sender, EntityExecutionLoggingEventArgs e) =>
+            _receivedMessages.Add(e.Message);
+    }
 
-            _dummyCommandHandler.UseCaseExecutionProcessing += (object sender, EntityExecutionLoggingEventArgs e) =>
-                _receivedMessages.Add(e.Message);
-        }
+    public void RepositoryIsCorrectlyInitialized()
+    {
+        Action action = () => new DummyCommandHandler(
+            null, Substitute.For<IUnitOfWork>(), Substitute.For<IIdentityFactory<Guid>>());
 
-        public void RepositoryIsCorrectlyInitialized()
-        {
-            Action action = () => new DummyCommandHandler(
-                null, Substitute.For<IUnitOfWork>(), Substitute.For<IIdentityFactory<Guid>>());
+        action
+            .Should()
+            .ThrowExactly<ArgumentNullException>();
+    }
 
-            action
-                .Should()
-                .ThrowExactly<ArgumentNullException>();
-        }
+    public void UnitOfWorkIsCorrectlyInitialized()
+    {
+        Action action = () => new DummyCommandHandler(
+            Substitute.For<IRepository>(), null, Substitute.For<IIdentityFactory<Guid>>());
 
-        public void UnitOfWorkIsCorrectlyInitialized()
-        {
-            Action action = () => new DummyCommandHandler(
-                Substitute.For<IRepository>(), null, Substitute.For<IIdentityFactory<Guid>>());
+        action
+            .Should()
+            .ThrowExactly<ArgumentNullException>();
+    }
 
-            action
-                .Should()
-                .ThrowExactly<ArgumentNullException>();
-        }
+    public void IdentityFactoryIsCorrectlyInitialized()
+    {
+        Action action = () => new DummyCommandHandler(
+            Substitute.For<IRepository>(), Substitute.For<IUnitOfWork>(), null);
 
-        public void IdentityFactoryIsCorrectlyInitialized()
-        {
-            Action action = () => new DummyCommandHandler(
-                Substitute.For<IRepository>(), Substitute.For<IUnitOfWork>(), null);
+        action
+            .Should()
+            .ThrowExactly<ArgumentNullException>();
+    }
 
-            action
-                .Should()
-                .ThrowExactly<ArgumentNullException>();
-        }
+    public void LogIsWritten()
+    {
+        const string message = "Test message";
 
-        public void LogIsWritten()
-        {
-            const string message = "Test message";
+        _dummyCommandHandler.TestLog(new EntityExecutionLoggingEventArgs(message));
 
-            _dummyCommandHandler.TestLog(new EntityExecutionLoggingEventArgs(message));
+        _receivedMessages.Count.Should().Be(1);
+        _receivedMessages.ElementAt(0).Should().Be(message);
+    }
 
-            _receivedMessages.Count.Should().Be(1);
-            _receivedMessages.ElementAt(0).Should().Be(message);
-        }
+    public void LogSuccessfulCommitIsWritten()
+    {
+        _dummyCommandHandler.TestSaveLog();
 
-        public void LogSuccessfulCommitIsWritten()
-        {
-            _dummyCommandHandler.TestSaveLog();
+        _receivedMessages.Count.Should().Be(1);
+        _receivedMessages.ElementAt(0).Should().Be(SepsMessage.SuccessfulSave());
+    }
 
-            _receivedMessages.Count.Should().Be(1);
-            _receivedMessages.ElementAt(0).Should().Be(SepsMessage.SuccessfulSave());
-        }
+    private class DummyCommandHandler : BaseCommandHandler
+    {
+        public DummyCommandHandler(
+            IRepository repository, IUnitOfWork unitOfWork, IIdentityFactory<Guid> identityFactory)
+            : base(repository, unitOfWork, identityFactory) { }
 
-        private class DummyCommandHandler : BaseCommandHandler
-        {
-            public DummyCommandHandler(
-                IRepository repository, IUnitOfWork unitOfWork, IIdentityFactory<Guid> identityFactory)
-                : base(repository, unitOfWork, identityFactory) { }
+        public void TestLog(EntityExecutionLoggingEventArgs test) =>
+            Log(test);
 
-            public void TestLog(EntityExecutionLoggingEventArgs test) =>
-                base.Log(test);
-
-            public void TestSaveLog() =>
-                base.LogSuccessfulCommit();
-        }
+        public void TestSaveLog() =>
+            LogSuccessfulCommit();
     }
 }

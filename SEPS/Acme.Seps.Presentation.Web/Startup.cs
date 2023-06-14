@@ -11,57 +11,53 @@ using Microsoft.Extensions.DependencyInjection;
 using SimpleInjector;
 using SimpleInjector.Integration.AspNetCore.Mvc;
 
-namespace Acme.Seps.Presentation.Web
+namespace Acme.Seps.Presentation.Web;
+
+public class Startup
 {
-    public class Startup
+    private readonly SepsSimpleInjectorContainer _container;
+
+    public Startup() => _container = SepsSimpleInjectorContainer.Container;
+
+    public void ConfigureServices(IServiceCollection services)
     {
-        private readonly SepsSimpleInjectorContainer _container;
+        services
+            .AddMvc(cfg => cfg.Filters.Add(new ValidateModelAttribute()))
+            .AddFluentValidation(fvn =>
+                fvn.ValidatorFactory = new DependencyInjectionFluentValidatorFactory(_container));
 
-        public Startup()
-        {
-            _container = SepsSimpleInjectorContainer.Container;
-        }
+        IntegrateSimpleInjector(services);
+    }
 
-        public void ConfigureServices(IServiceCollection services)
-        {
-            services
-                .AddMvc(cfg => cfg.Filters.Add(new ValidateModelAttribute()))
-                .AddFluentValidation(fvn =>
-                    fvn.ValidatorFactory = new DependencyInjectionFluentValidatorFactory(_container));
+    private void IntegrateSimpleInjector(IServiceCollection services)
+    {
+        services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+        services.AddSingleton<IControllerActivator>(new SimpleInjectorControllerActivator(_container));
+        services.AddSingleton<IViewComponentActivator>(new SimpleInjectorViewComponentActivator(_container));
 
-            IntegrateSimpleInjector(services);
-        }
+        services.EnableSimpleInjectorCrossWiring(_container);
+        services.UseSimpleInjectorAspNetRequestScoping(_container);
+    }
 
-        private void IntegrateSimpleInjector(IServiceCollection services)
-        {
-            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
-            services.AddSingleton<IControllerActivator>(new SimpleInjectorControllerActivator(_container));
-            services.AddSingleton<IViewComponentActivator>(new SimpleInjectorViewComponentActivator(_container));
+    public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+    {
+        InitializeContainer(app, env);
 
-            services.EnableSimpleInjectorCrossWiring(_container);
-            services.UseSimpleInjectorAspNetRequestScoping(_container);
-        }
+        app.UseMvc(routes =>
+            routes.MapRoute(
+                name: "default",
+                template: "api/{area}/{controller}/{action}/{id:guid?}"));
 
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
-        {
-            InitializeContainer(app, env);
+    }
 
-            app.UseMvc(routes =>
-                routes.MapRoute(
-                    name: "default",
-                    template: "api/{area}/{controller}/{action}/{id:guid?}"));
+    private void InitializeContainer(IApplicationBuilder app, IHostingEnvironment env)
+    {
+        _container.RegisterMvcControllers(app);
+        _container.RegisterMvcViewComponents(app);
 
-        }
+        if (env.IsEnvironment("IntegrationTesting"))
+            _container.RegisterForTest();
 
-        private void InitializeContainer(IApplicationBuilder app, IHostingEnvironment env)
-        {
-            _container.RegisterMvcControllers(app);
-            _container.RegisterMvcViewComponents(app);
-
-            if (env.IsEnvironment("IntegrationTesting"))
-                _container.RegisterForTest();
-
-            _container.AutoCrossWireAspNetComponents(app);
-        }
+        _container.AutoCrossWireAspNetComponents(app);
     }
 }

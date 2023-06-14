@@ -6,6 +6,7 @@ This is a never-ending project in which I continuously invest my time to improve
 By no means am I advocating that this solution is the best one for the presented problem.
 
 Technologies and architectures I used are the following
+- Clean Architecture
 - Domain Driven Design (DDD)
 - CQRS
 - Test Driven Development (TDD)
@@ -19,14 +20,14 @@ Technologies and architectures I used are the following
 - Fluent Validation
 - Humanizer
 - Light.GuardClauses
+- Dependency Injection (Unity, SimpleInjector, Autofac)
+- Dapper.
+- ASP.NET Core
 
 Planned
-- Dependency Injection (Unity, SimpleInjector, Autofac)
-- Dapper
-- NoSql (DocumentDb or MongoDb)
+
+- NoSql (Cosmos Db)
 - RabbitMQ
-- ASP.NET Core
 - JavaScript
 - jQuery
 - Bootstrap
-- Knockout or other JavaScript framework/library
